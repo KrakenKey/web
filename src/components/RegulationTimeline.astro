@@ -1,0 +1,135 @@
+---
+const milestones = [
+  { date: 'March 2026', days: '200 days', renewals: '~2 renewals/yr', status: 'active' },
+  { date: 'March 2027', days: '100 days', renewals: '~4 renewals/yr', status: 'upcoming' },
+  { date: 'March 2029', days: '47 days', renewals: '~8 renewals/yr', status: 'upcoming' },
+];
+---
+
+<section style="background-color: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);">
+  <div class="section-container">
+    <div class="section-header">
+      <h2 class="section-title">The certificate deadline is here</h2>
+      <p class="section-subtitle">
+        CA/Browser Forum Ballot SC-081v3 is phasing TLS certificate lifetimes down to 47 days. Manual renewal won't scale.
+      </p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-track"></div>
+      {milestones.map((milestone, i) => (
+        <div class={`timeline-item ${milestone.status === 'active' ? 'timeline-item--active' : ''}`}>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <span class="timeline-date">{milestone.date}</span>
+            <span class="timeline-days">{milestone.days}</span>
+            <span class="timeline-renewals text-muted">{milestone.renewals}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    max-width: 700px;
+    margin-inline: auto;
+    padding: 2rem 0;
+  }
+
+  .timeline-track {
+    position: absolute;
+    top: calc(2rem + 8px);
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: var(--color-border);
+  }
+
+  .timeline-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+  }
+
+  .timeline-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-border);
+    border: 3px solid var(--color-bg);
+    margin-bottom: 1rem;
+  }
+
+  .timeline-item--active .timeline-dot {
+    background: var(--color-accent);
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
+  }
+
+  .timeline-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.25rem;
+  }
+
+  .timeline-date {
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  .timeline-days {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  .timeline-renewals {
+    font-size: 0.8125rem;
+  }
+
+  .timeline-item--active .timeline-content {
+    color: var(--color-text);
+  }
+
+  @media (max-width: 480px) {
+    .timeline {
+      flex-direction: column;
+      gap: 2rem;
+      align-items: flex-start;
+      padding-left: 2rem;
+    }
+
+    .timeline-track {
+      top: 0;
+      bottom: 0;
+      left: 8px;
+      right: auto;
+      width: 2px;
+      height: auto;
+    }
+
+    .timeline-item {
+      flex-direction: row;
+      gap: 1.25rem;
+    }
+
+    .timeline-dot {
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+
+    .timeline-content {
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+</style>

@@ -1,0 +1,83 @@
+---
+const steps = [
+  {
+    number: '1',
+    title: 'Generate CSR in-browser',
+    description: 'Use the WebCrypto API to generate your Certificate Signing Request. Your private key never leaves your device.',
+  },
+  {
+    number: '2',
+    title: 'Submit via dashboard or API',
+    description: 'Upload your CSR through the web dashboard or submit it programmatically via REST API.',
+  },
+  {
+    number: '3',
+    title: 'Automatic DNS-01 challenge',
+    description: 'KrakenKey handles the ACME DNS-01 challenge automatically — no manual DNS records needed.',
+  },
+  {
+    number: '4',
+    title: 'Certificate issued in ~4 min',
+    description: 'Your TLS certificate is issued and ready to download. Set up auto-renewal so you never think about it again.',
+  },
+];
+---
+
+<section>
+  <div class="section-container">
+    <div class="section-header">
+      <h2 class="section-title">How it works</h2>
+      <p class="section-subtitle">
+        From CSR to issued certificate in four steps. Zero manual DNS.
+      </p>
+    </div>
+
+    <div class="steps-grid">
+      {steps.map((step) => (
+        <div class="step-item">
+          <div class="step-number">{step.number}</div>
+          <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">{step.title}</h3>
+          <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6;">{step.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  .step-item {
+    text-align: center;
+  }
+
+  .step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--color-accent);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .steps-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .steps-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

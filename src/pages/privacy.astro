@@ -1,0 +1,89 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+---
+
+<PageLayout title="Privacy Policy" description="KrakenKey privacy policy — how we collect, use, and protect your personal data.">
+  <div class="legal-page">
+    <h1>Privacy Policy</h1>
+    <p class="legal-updated">Last updated: February 16, 2026</p>
+
+    <h2>1. Introduction</h2>
+    <p>KrakenKey LLC ("we," "us," or "our") is committed to protecting your personal data. This privacy policy explains what data we collect, how we use it, and how we protect it when you use our automated TLS certificate issuance service.</p>
+
+    <h2>2. Data Controller</h2>
+    <p>KrakenKey LLC is the data controller responsible for your personal data. We can be contacted at:</p>
+    <ul>
+      <li>Email: support@krakenkey.io</li>
+    </ul>
+
+    <h2>3. Data We Collect</h2>
+    <p>We collect the following data when you use our service:</p>
+    <ul>
+      <li><strong>Account Information:</strong> Email address and authentication credentials</li>
+      <li><strong>Domain Information:</strong> Domain names you register for certificate issuance</li>
+      <li><strong>Certificate Data:</strong> Certificate Signing Requests (CSRs), issued certificate metadata, and issuance status</li>
+      <li><strong>Technical Data:</strong> IP address, browser type, and access logs</li>
+    </ul>
+    <p>We do not collect phone numbers, physical addresses, or payment information. Private keys generated using our in-browser CSR tool are created client-side and never sent to our servers.</p>
+
+    <h2>4. How We Use Your Data</h2>
+    <p>We use your data to:</p>
+    <ul>
+      <li>Provide and operate the certificate issuance service</li>
+      <li>Complete DNS-01 domain validation on your behalf</li>
+      <li>Communicate service updates and security notifications</li>
+      <li>Maintain service security and prevent abuse</li>
+      <li>Comply with legal obligations</li>
+    </ul>
+
+    <h2>5. Data Sharing</h2>
+    <p>We share data with the following third parties as necessary to operate the service:</p>
+    <ul>
+      <li><strong>Let's Encrypt (ISRG):</strong> CSR data is submitted to Let's Encrypt as the Certificate Authority to issue your TLS certificates</li>
+      <li><strong>Cloudflare:</strong> DNS records are created temporarily for DNS-01 challenge validation</li>
+    </ul>
+    <p>We do not sell your data. We do not share your data with third parties for marketing purposes.</p>
+
+    <h2>6. Data Retention</h2>
+    <p>We retain your data as follows:</p>
+    <ul>
+      <li><strong>Account Data:</strong> Retained while your account is active, deleted upon request</li>
+      <li><strong>Certificate Records:</strong> Retained for the lifetime of the issued certificate plus 90 days</li>
+      <li><strong>Access Logs:</strong> Retained for up to 90 days for security purposes</li>
+    </ul>
+
+    <h2>7. Data Security</h2>
+    <p>We protect your data with:</p>
+    <ul>
+      <li>Encryption of data in transit (TLS) and at rest</li>
+      <li>Access controls limiting data access to authorized personnel</li>
+      <li>Client-side private key generation — your private keys never touch our servers</li>
+    </ul>
+
+    <h2>8. Your Rights</h2>
+    <p>You have the right to:</p>
+    <ul>
+      <li>Access a copy of the personal data we hold about you</li>
+      <li>Request correction of inaccurate data</li>
+      <li>Request deletion of your data and account</li>
+      <li>Object to data processing where we rely on legitimate interest</li>
+    </ul>
+    <p>If you are located in the European Economic Area (EEA), you have additional rights under the GDPR, including data portability and the right to restrict processing.</p>
+    <p>To exercise any of these rights, contact us at support@krakenkey.io.</p>
+
+    <h2>9. Cookies</h2>
+    <p>The KrakenKey marketing website (krakenkey.io) does not use cookies or client-side tracking. The KrakenKey application (app.krakenkey.io) uses essential cookies for authentication and session management only. We do not use cookies for analytics, advertising, or personalization.</p>
+
+    <h2>10. Data Breach Response</h2>
+    <p>In the event of a data breach that affects your personal data, we will notify affected users by email as soon as reasonably possible and no later than 72 hours after becoming aware of the breach.</p>
+
+    <h2>11. Changes to This Policy</h2>
+    <p>We may update this privacy policy as our service evolves. We will notify you of significant changes via email or by posting a notice on our website.</p>
+
+    <h2>12. Contact Information</h2>
+    <p>If you have questions about this privacy policy or your data, contact us at:</p>
+    <ul>
+      <li>support@krakenkey.io</li>
+    </ul>
+  </div>
+</PageLayout>

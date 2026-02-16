@@ -1,0 +1,53 @@
+---
+import PageLayout from './PageLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  author?: string;
+  tags?: string[];
+}
+
+const { title, description, pubDate, updatedDate, author = 'KrakenKey Team', tags = [] } = Astro.props;
+
+const formattedPubDate = pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<PageLayout title={title} description={description} ogType="article">
+  <article class="section-container blog-post-content">
+    <div class="blog-post-header">
+      <h1 class="section-title">{title}</h1>
+      <p class="blog-post-meta">
+        {formattedPubDate} &middot; {author}
+        {updatedDate && <span> &middot; Updated {formattedUpdatedDate}</span>}
+      </p>
+      {tags.length > 0 && (
+        <div class="blog-card-tags" style="margin-top: 0.75rem;">
+          {tags.map((tag) => <span class="blog-tag">{tag}</span>)}
+        </div>
+      )}
+    </div>
+    <slot />
+  </article>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": title,
+    "description": description,
+    "datePublished": pubDate.toISOString(),
+    "dateModified": (updatedDate || pubDate).toISOString(),
+    "author": {
+      "@type": "Organization",
+      "name": author
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "KrakenKey",
+      "url": "https://krakenkey.io"
+    }
+  })} />
+</PageLayout>

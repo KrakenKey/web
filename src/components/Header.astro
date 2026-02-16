@@ -1,0 +1,26 @@
+---
+const pathname = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="header-logo">
+      <img src="/favicon.svg" alt="KrakenKey logo" width="32" height="32" />
+      KrakenKey
+    </a>
+
+    <input type="checkbox" id="menu-toggle" class="menu-toggle" aria-hidden="true" />
+    <label for="menu-toggle" class="hamburger" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+    <nav class="header-nav">
+      <a href="/" class:list={[{ active: pathname === '/' }]}>Home</a>
+      <a href="/pricing" class:list={[{ active: pathname === '/pricing' || pathname === '/pricing/' }]}>Pricing</a>
+      <a href="/blog" class:list={[{ active: pathname.startsWith('/blog') }]}>Blog</a>
+      <a href="https://app.krakenkey.io" class="btn btn-primary">Get Started</a>
+    </nav>
+  </div>
+</header>

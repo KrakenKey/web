@@ -1,0 +1,47 @@
+---
+---
+
+<section style="padding-top: 2rem;">
+  <div class="section-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;">
+    <div class="hero-content">
+      <h1 style="font-size: 3rem; font-weight: 800; line-height: 1.15; margin-bottom: 1.25rem;">
+        TLS certificate management, <span class="text-accent">automated.</span>
+      </h1>
+      <p style="font-size: 1.25rem; color: var(--color-muted); margin-bottom: 2rem; line-height: 1.6;">
+        Get a TLS certificate in 4 minutes. No manual DNS, no cron jobs, no forgotten renewals.
+      </p>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+        <a href="https://app.krakenkey.io" class="btn btn-primary btn-lg">Get Started Free</a>
+        <a href="/pricing" class="btn btn-outline btn-lg">Learn More</a>
+      </div>
+      <p class="text-muted" style="font-size: 0.875rem;">Free to use. No credit card required.</p>
+    </div>
+
+    <div class="code-block" style="font-size: 0.8125rem; line-height: 1.8;">
+      <div><span class="code-comment"># Submit your CSR via API</span></div>
+      <div><span class="code-cmd">$</span> <span class="code-string">curl -X POST https://api.krakenkey.io/certs/tls \</span></div>
+      <div>&nbsp;&nbsp;<span class="code-string">-H "Authorization: Bearer $API_KEY" \</span></div>
+      <div>&nbsp;&nbsp;<span class="code-string">-d '&#123;"csr": "-----BEGIN CERTIFICATE REQUEST..."&#125;'</span></div>
+      <div style="margin-top: 0.75rem;"><span class="code-comment"># Certificate issued in ~4 minutes</span></div>
+      <div><span class="code-cmd">$</span> <span class="code-string">curl https://api.krakenkey.io/certs/tls/abc123</span></div>
+      <div><span class="code-success">&#10003; Status: issued</span></div>
+      <div><span class="code-success">&#10003; Domain: example.com</span></div>
+      <div><span class="code-success">&#10003; Expires: 2026-09-03</span></div>
+      <div style="margin-top: 0.75rem;"><span class="code-comment"># Download your certificate</span></div>
+      <div><span class="code-cmd">$</span> <span class="code-string">curl https://api.krakenkey.io/certs/tls/abc123/download \</span></div>
+      <div>&nbsp;&nbsp;<span class="code-string">-o cert.pem</span></div>
+      <div><span class="code-success">&#10003; Saved to cert.pem</span></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @media (max-width: 768px) {
+    .section-container {
+      grid-template-columns: 1fr !important;
+    }
+    h1 {
+      font-size: 2.25rem !important;
+    }
+  }
+</style>

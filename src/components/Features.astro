@@ -1,0 +1,45 @@
+---
+const features = [
+  {
+    title: 'Client-Side CSR Generation',
+    description: 'Generate Certificate Signing Requests in your browser using WebCrypto API. Your private keys never leave your environment.',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>`,
+  },
+  {
+    title: 'ACME/Let\'s Encrypt Automation',
+    description: 'Fully automated DNS-01 challenge resolution via Cloudflare. Certificate issued and ready in approximately 4 minutes.',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  },
+  {
+    title: 'REST API',
+    description: 'Issue and retrieve certificates programmatically. Every action in the dashboard is also available via REST API.',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
+  },
+  {
+    title: 'Domain Management',
+    description: 'Register domains, verify ownership via DNS TXT records, and scope certificate issuance per domain.',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  },
+];
+---
+
+<section>
+  <div class="section-container">
+    <div class="section-header">
+      <h2 class="section-title">What KrakenKey does today</h2>
+      <p class="section-subtitle">
+        Privacy-first certificate issuance with automated DNS-01 challenges. No manual steps.
+      </p>
+    </div>
+
+    <div class="features-grid" style="grid-template-columns: repeat(2, 1fr);">
+      {features.map((feature) => (
+        <div class="card">
+          <div style="color: var(--color-accent); margin-bottom: 1rem;" set:html={feature.icon} />
+          <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">{feature.title}</h3>
+          <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6;">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

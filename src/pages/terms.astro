@@ -1,0 +1,105 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+---
+
+<PageLayout title="Terms of Use" description="KrakenKey terms of use — rules and guidelines for using our certificate issuance service.">
+  <div class="legal-page">
+    <h1>Terms of Use</h1>
+    <p class="legal-updated">Last updated: February 16, 2026</p>
+
+    <h2>1. Acceptance of Terms</h2>
+    <p>By creating an account or using the KrakenKey service, you agree to these Terms of Use. If you do not agree, do not use our service.</p>
+
+    <h2>2. Service Description</h2>
+    <p>KrakenKey LLC provides automated TLS certificate issuance, including:</p>
+    <ul>
+      <li>TLS certificate issuance via ACME / Let's Encrypt</li>
+      <li>Automated DNS-01 domain validation via Cloudflare</li>
+      <li>In-browser CSR generation with client-side private key creation</li>
+      <li>REST API for programmatic certificate issuance</li>
+      <li>Web dashboard for domain and certificate management</li>
+    </ul>
+    <p>The service is currently in early access and provided free of charge. Features, availability, and terms may change as the service develops.</p>
+
+    <h2>3. User Obligations</h2>
+    <p>You agree to:</p>
+    <ul>
+      <li>Provide accurate information when registering domains and requesting certificates</li>
+      <li>Use certificates only for domains you own or are authorized to manage</li>
+      <li>Not attempt to circumvent security measures or abuse the service</li>
+      <li>Not use certificates for illegal activities</li>
+      <li>Comply with all applicable laws and regulations</li>
+    </ul>
+
+    <h2>4. Certificate Usage</h2>
+    <ul>
+      <li>Certificates are issued by Let's Encrypt and subject to their <a href="https://letsencrypt.org/repository/" rel="noopener noreferrer" target="_blank">Subscriber Agreement</a></li>
+      <li>You are responsible for securing your private keys and installed certificates</li>
+      <li>You must not share private keys or certificate credentials with unauthorized parties</li>
+      <li>You must notify us immediately of any suspected certificate misuse or key compromise</li>
+    </ul>
+
+    <h2>5. Pricing and Payments</h2>
+    <p>KrakenKey is currently free to use. If we introduce paid plans in the future, we will:</p>
+    <ul>
+      <li>Notify existing users before any pricing changes take effect</li>
+      <li>Process payments through Stripe — we do not store or handle payment card data directly</li>
+      <li>Provide clear terms for any paid features at that time</li>
+    </ul>
+
+    <h2>6. Data Processing</h2>
+    <p>We process your data to operate the certificate issuance service. We do not sell or share your personal data with third parties for marketing purposes. See our <a href="/privacy">Privacy Policy</a> for full details on data collection, use, and your rights.</p>
+
+    <h2>7. Intellectual Property</h2>
+    <ul>
+      <li>All platform content, software, and tooling are the property of KrakenKey LLC</li>
+      <li>You may not reverse engineer, modify, or distribute our platform software</li>
+      <li>You may not use our service to infringe on the intellectual property rights of others</li>
+    </ul>
+
+    <h2>8. Service Availability and Disclaimers</h2>
+    <p>KrakenKey is provided "as is" and "as available" without warranty of any kind. As an early-access service:</p>
+    <ul>
+      <li>We do not guarantee uninterrupted availability or uptime</li>
+      <li>Features may change, be added, or be removed as the service develops</li>
+      <li>Certificate issuance depends on third-party services (Let's Encrypt, Cloudflare) outside our control</li>
+    </ul>
+
+    <h2>9. Limitation of Liability</h2>
+    <p>To the maximum extent permitted by law, KrakenKey LLC is not liable for:</p>
+    <ul>
+      <li>Any damage caused by certificate misuse or key compromise</li>
+      <li>Service interruptions or delays in certificate issuance</li>
+      <li>Any loss resulting from your failure to secure private keys or certificates</li>
+      <li>Any indirect, incidental, or consequential damages arising from use of the service</li>
+    </ul>
+
+    <h2>10. Termination</h2>
+    <p>We may suspend or terminate your access to the service if you:</p>
+    <ul>
+      <li>Violate these Terms of Use</li>
+      <li>Engage in fraudulent or abusive activities</li>
+      <li>Request certificates for domains you do not control</li>
+    </ul>
+    <p>You may delete your account at any time by contacting support@krakenkey.io.</p>
+
+    <h2>11. Dispute Resolution</h2>
+    <ul>
+      <li>We will attempt to resolve disputes amicably</li>
+      <li>If unresolved, disputes will be settled through mediation</li>
+      <li>If mediation fails, disputes will be resolved in the courts of the State of Florida</li>
+    </ul>
+
+    <h2>12. Governing Law</h2>
+    <p>These Terms of Use are governed by the laws of the State of Florida.</p>
+
+    <h2>13. Changes to Terms</h2>
+    <p>We may update these Terms of Use as the service evolves. We will notify users of significant changes via email or by posting a notice on our website.</p>
+
+    <h2>14. Contact Information</h2>
+    <p>If you have questions about these Terms of Use, contact us at:</p>
+    <ul>
+      <li>support@krakenkey.io</li>
+    </ul>
+  </div>
+</PageLayout>

@@ -1,0 +1,36 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('posts'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<PageLayout title="Blog" description="Articles on TLS certificate management, automation, and security best practices from the KrakenKey team.">
+  <div class="section-container">
+    <div class="section-header">
+      <h1 class="section-title">Blog</h1>
+      <p class="section-subtitle">
+        Insights on certificate management, automation, and the evolving TLS landscape.
+      </p>
+    </div>
+
+    <div class="blog-grid">
+      {posts.map((post) => (
+        <BlogCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          tags={post.data.tags}
+          slug={post.id}
+        />
+      ))}
+    </div>
+
+    {posts.length === 0 && (
+      <p style="text-align: center; color: var(--color-muted);">No posts yet. Check back soon.</p>
+    )}
+  </div>
+</PageLayout>
