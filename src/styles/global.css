@@ -324,8 +324,13 @@ ul, ol {
 }
 
 .header-logo img {
-  height: 32px;
-  width: 32px;
+  height: 48px;
+  width: 48px;
+}
+
+.footer-logo img {
+  height: 128px;
+  width: 128px;
 }
 
 .header-nav {
