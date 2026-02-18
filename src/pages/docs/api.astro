@@ -1,0 +1,142 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const pathname = Astro.url.pathname;
+const specUrl = `${import.meta.env.KK_API_URL}/swagger-json`;
+---
+
+<BaseLayout
+  title="API Reference"
+  description="Complete API reference for the KrakenKey TLS certificate management API."
+>
+  <header class="docs-header">
+    <div class="docs-header-inner">
+      <a href="/" class="header-logo">
+        <img src="/favicon.svg" alt="KrakenKey logo" width="32" height="32" />
+        KrakenKey
+      </a>
+      <nav class="docs-nav">
+        <a href="/" class:list={[{ active: pathname === '/' }]}>Home</a>
+        <a href="/pricing" class:list={[{ active: pathname === '/pricing' || pathname === '/pricing/' }]}>Pricing</a>
+        <a href="/blog" class:list={[{ active: pathname.startsWith('/blog') }]}>Blog</a>
+        <a href="/docs/api" class:list={[{ active: pathname.startsWith('/docs') }]}>API Docs</a>
+        <a href="https://app.krakenkey.io" class="btn btn-primary">Get Started</a>
+      </nav>
+    </div>
+  </header>
+
+  <div id="scalar-api-ref" data-spec-url={specUrl}></div>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+  <script is:inline>
+    Scalar.createApiReference('#scalar-api-ref', {
+      url: document.getElementById('scalar-api-ref').dataset.specUrl,
+      theme: 'none',
+      darkMode: true,
+      hideDarkModeToggle: true,
+      withDefaultFonts: false,
+      layout: 'modern',
+    });
+  </script>
+</BaseLayout>
+
+<style is:global>
+  /* Docs page: hide body scroll, let Scalar handle it */
+  body:has(#scalar-api-ref) {
+    overflow: hidden;
+  }
+
+  .dark-mode,
+  .scalar-app {
+    --scalar-background-1: #0c1222;
+    --scalar-background-2: #1e293b;
+    --scalar-background-3: #151d2e;
+    --scalar-background-accent: rgba(6, 182, 212, 0.1);
+
+    --scalar-color-1: #f1f5f9;
+    --scalar-color-2: #94a3b8;
+    --scalar-color-3: #64748b;
+    --scalar-color-accent: #06b6d4;
+
+    --scalar-border-color: #334155;
+
+    --scalar-sidebar-background-1: #0c1222;
+    --scalar-sidebar-color-1: #f1f5f9;
+    --scalar-sidebar-color-2: #94a3b8;
+    --scalar-sidebar-item-hover-background: #1e293b;
+    --scalar-sidebar-search-background: #1e293b;
+    --scalar-sidebar-search-border-color: #334155;
+
+    --scalar-button-1: #06b6d4;
+    --scalar-button-1-hover: #22d3ee;
+    --scalar-button-1-color: #0c1222;
+
+    --scalar-font: 'Inter', system-ui, -apple-system, sans-serif;
+    --scalar-font-code: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+  }
+
+  #scalar-api-ref {
+    height: calc(100vh - 72px);
+  }
+</style>
+
+<style>
+  .docs-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    height: 72px;
+    display: flex;
+    align-items: center;
+  }
+
+  .docs-header-inner {
+    max-width: var(--max-width);
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .docs-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .docs-nav a {
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+  }
+
+  .docs-nav a:hover,
+  .docs-nav a.active {
+    color: var(--color-text);
+  }
+
+  .docs-nav .btn-primary {
+    color: var(--color-bg);
+  }
+
+  @media (max-width: 768px) {
+    .docs-nav {
+      gap: 1rem;
+    }
+
+    .docs-nav a:not(.btn) {
+      font-size: 0.85rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .docs-nav a:not(.active):not(.btn) {
+      display: none;
+    }
+  }
+</style>

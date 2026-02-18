@@ -1,0 +1,760 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "KrakenKey API",
+    "description": "Public API for KrakenKey — TLS certificate management and domain verification",
+    "version": "0.1.0",
+    "contact": {}
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getInfo",
+        "summary": "Get API info",
+        "description": "Returns the current status and version of the API",
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "parameters": [],
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "AppController_health",
+        "summary": "Health check",
+        "parameters": [],
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "API is healthy"
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "get": {
+        "operationId": "AuthController_register",
+        "summary": "Redirect to registration",
+        "parameters": [],
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects to Authentik registration flow"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "get": {
+        "operationId": "AuthController_login",
+        "summary": "Redirect to SSO login",
+        "parameters": [],
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects to Authentik login flow"
+          }
+        }
+      }
+    },
+    "/auth/callback": {
+      "get": {
+        "operationId": "AuthController_callback",
+        "summary": "OAuth callback",
+        "parameters": [
+          {
+            "name": "code",
+            "required": true,
+            "in": "query",
+            "description": "Authorization code from Authentik",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns JWT access token"
+          }
+        }
+      }
+    },
+    "/auth/profile": {
+      "get": {
+        "operationId": "AuthController_getProfile",
+        "summary": "Get current user profile",
+        "parameters": [],
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/api-keys": {
+      "post": {
+        "operationId": "AuthController_createApiKey",
+        "summary": "Create an API key",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "my-api-key"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "API key created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/certs/tls": {
+      "get": {
+        "operationId": "TlsController_findAll",
+        "summary": "List all TLS certificates",
+        "parameters": [],
+        "tags": [
+          "TLS Certificates"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of certificates for the authenticated user"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "operationId": "TlsController_create",
+        "summary": "Request a new TLS certificate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTlsCrtDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "TLS Certificates"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Certificate request submitted"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/certs/tls/{id}": {
+      "get": {
+        "operationId": "TlsController_findOne",
+        "summary": "Get certificate details",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Certificate ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "TLS Certificates"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Certificate details"
+          },
+          "404": {
+            "description": "Certificate not found"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "TlsController_update",
+        "summary": "Update a certificate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Certificate ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTlsCrtDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "TLS Certificates"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Certificate updated"
+          },
+          "404": {
+            "description": "Certificate not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "TlsController_remove",
+        "summary": "Delete a certificate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Certificate ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "TLS Certificates"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Certificate deleted"
+          },
+          "404": {
+            "description": "Certificate not found"
+          }
+        }
+      }
+    },
+    "/certs/tls/{id}/renew": {
+      "post": {
+        "operationId": "TlsController_renew",
+        "summary": "Renew a certificate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Certificate ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "TLS Certificates"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Certificate renewal initiated"
+          },
+          "404": {
+            "description": "Certificate not found"
+          }
+        }
+      }
+    },
+    "/domains": {
+      "post": {
+        "operationId": "DomainsController_create",
+        "summary": "Register a new domain",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDomainDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Domains"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Domain registered"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "operationId": "DomainsController_findAll",
+        "summary": "List all domains",
+        "parameters": [],
+        "tags": [
+          "Domains"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of domains for the authenticated user"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/domains/{id}": {
+      "get": {
+        "operationId": "DomainsController_findOne",
+        "summary": "Get domain details",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Domain UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Domains"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Domain details"
+          },
+          "404": {
+            "description": "Domain not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "DomainsController_remove",
+        "summary": "Delete a domain",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Domain UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Domains"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Domain deleted"
+          },
+          "404": {
+            "description": "Domain not found"
+          }
+        }
+      }
+    },
+    "/domains/{id}/verify": {
+      "post": {
+        "operationId": "DomainsController_verify",
+        "summary": "Trigger DNS verification",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Domain UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Domains"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verification initiated"
+          },
+          "404": {
+            "description": "Domain not found"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "operationId": "UsersController_create",
+        "summary": "Create a new user",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "201": {
+            "description": "User created"
+          }
+        }
+      },
+      "get": {
+        "operationId": "UsersController_findAll",
+        "summary": "List all users",
+        "parameters": [],
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "UsersController_findOne",
+        "summary": "Get user by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "User details"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "UsersController_update",
+        "summary": "Update a user",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "UsersController_remove",
+        "summary": "Delete a user",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateTlsCrtDto": {
+        "type": "object",
+        "properties": {
+          "csrPem": {
+            "type": "string",
+            "description": "PEM-encoded Certificate Signing Request",
+            "example": "-----BEGIN CERTIFICATE REQUEST-----\n...\n-----END CERTIFICATE REQUEST-----"
+          }
+        },
+        "required": [
+          "csrPem"
+        ]
+      },
+      "UpdateTlsCrtDto": {
+        "type": "object",
+        "properties": {
+          "csrPem": {
+            "type": "string",
+            "description": "PEM-encoded Certificate Signing Request",
+            "example": "-----BEGIN CERTIFICATE REQUEST-----\n...\n-----END CERTIFICATE REQUEST-----"
+          }
+        }
+      },
+      "CreateDomainDto": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "description": "Fully qualified domain name",
+            "example": "example.com"
+          }
+        },
+        "required": [
+          "hostname"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Unique username",
+            "example": "jdoe"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email address",
+            "example": "jdoe@example.com"
+          },
+          "groups": {
+            "description": "User groups",
+            "example": [
+              "users"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "username",
+          "email"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Unique username",
+            "example": "jdoe"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email address",
+            "example": "jdoe@example.com"
+          },
+          "groups": {
+            "description": "User groups",
+            "example": [
+              "users"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "description": "JWT access token obtained from the /auth/callback OAuth flow"
+      },
+      "api-key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "API key prefixed with \"Bearer \" (e.g., \"Bearer kk_abc123...\")"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Health",
+      "description": "API status and health checks"
+    },
+    {
+      "name": "Authentication",
+      "description": "OAuth login, user profiles, and API key management"
+    },
+    {
+      "name": "Users",
+      "description": "User management"
+    },
+    {
+      "name": "Domains",
+      "description": "Domain registration and DNS verification"
+    },
+    {
+      "name": "TLS Certificates",
+      "description": "Certificate issuance, renewal, and management"
+    }
+  ],
+  "security": []
+}
