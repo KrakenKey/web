@@ -1,0 +1,30 @@
+# Cloudflare Pages _headers
+# Applied at the CDN edge — no server required.
+# https://developers.cloudflare.com/pages/configuration/headers/
+
+# ------------------------------------------------------------------
+# Security headers — applied to every response
+# ------------------------------------------------------------------
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'
+
+# ------------------------------------------------------------------
+# Cache: Astro's hashed static assets — immutable, cache forever
+# /_astro/file.[hash].js, /_astro/file.[hash].css, etc.
+# ------------------------------------------------------------------
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# ------------------------------------------------------------------
+# Cache: HTML pages — always revalidate so deploys are picked up
+# immediately without a purge step
+# ------------------------------------------------------------------
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
