@@ -6,7 +6,7 @@ import CTA from '../components/CTA.astro';
 const faqItems = [
   {
     question: 'What does KrakenKey do?',
-    answer: 'KrakenKey automates TLS certificate issuance via Let\'s Encrypt using the ACME protocol. You submit a Certificate Signing Request through our dashboard or REST API, and KrakenKey handles DNS-01 domain validation automatically. Your certificate is issued in approximately 4 minutes.',
+    answer: 'KrakenKey automates TLS certificate issuance via Let\'s Encrypt. One-time setup per domain: add two DNS records (a TXT record to verify ownership and a CNAME to delegate ACME challenges to KrakenKey). After that, submit a Certificate Signing Request through the dashboard or REST API and your certificate is issued in approximately 4 minutes — no further DNS work needed.',
   },
   {
     question: 'Why are certificate lifetimes getting shorter?',

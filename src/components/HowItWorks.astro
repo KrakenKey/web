@@ -1,24 +1,27 @@
 ---
-const steps = [
+const setupSteps = [
   {
     number: '1',
+    title: 'Add your domain',
+    description: 'Register your domain in the dashboard and add two DNS records: a TXT record to verify ownership and a CNAME to delegate ACME challenges to KrakenKey.',
+  },
+];
+
+const certSteps = [
+  {
+    number: '2',
     title: 'Generate CSR in-browser',
     description: 'Use the WebCrypto API to generate your Certificate Signing Request. Your private key never leaves your device.',
   },
   {
-    number: '2',
+    number: '3',
     title: 'Submit via dashboard or API',
     description: 'Upload your CSR through the web dashboard or submit it programmatically via REST API.',
   },
   {
-    number: '3',
-    title: 'Automatic DNS-01 challenge',
-    description: 'KrakenKey handles the ACME DNS-01 challenge automatically — no manual DNS records needed.',
-  },
-  {
     number: '4',
     title: 'Certificate issued in ~4 min',
-    description: 'Your TLS certificate is issued and ready to download. Set up auto-renewal so you never think about it again.',
+    description: 'KrakenKey resolves the ACME DNS-01 challenge automatically. Your certificate is issued and ready to download.',
   },
 ];
 ---
@@ -28,27 +31,57 @@ const steps = [
     <div class="section-header">
       <h2 class="section-title">How it works</h2>
       <p class="section-subtitle">
-        From CSR to issued certificate in four steps. Zero manual DNS.
+        One-time domain setup, then certificates on demand.
       </p>
     </div>
 
-    <div class="steps-grid">
-      {steps.map((step) => (
-        <div class="step-item">
-          <div class="step-number">{step.number}</div>
-          <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">{step.title}</h3>
-          <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6;">{step.description}</p>
-        </div>
-      ))}
+    <div style="margin-bottom: 2rem;">
+      <p class="phase-label">One-time setup</p>
+      <div class="steps-grid steps-grid--single">
+        {setupSteps.map((step) => (
+          <div class="step-item">
+            <div class="step-number">{step.number}</div>
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">{step.title}</h3>
+            <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6;">{step.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <p class="phase-label">Per certificate</p>
+      <div class="steps-grid">
+        {certSteps.map((step) => (
+          <div class="step-item">
+            <div class="step-number">{step.number}</div>
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">{step.title}</h3>
+            <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6;">{step.description}</p>
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 </section>
 
 <style>
+  .phase-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 1.25rem;
+  }
+
   .steps-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
+  }
+
+  .steps-grid--single {
+    grid-template-columns: repeat(1, 1fr);
+    max-width: 320px;
   }
 
   .step-item {
@@ -72,6 +105,9 @@ const steps = [
   @media (max-width: 768px) {
     .steps-grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+    .steps-grid--single {
+      max-width: 100%;
     }
   }
 
