@@ -1,0 +1,439 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import CTA from '../components/CTA.astro';
+---
+
+<PageLayout
+  title="Getting Started"
+  description="Step-by-step guide to issuing your first TLS certificate with KrakenKey. One-time domain setup, then certificates in 4 minutes."
+>
+  <div class="section-container guide">
+    <div class="section-header" style="margin-bottom: 3rem;">
+      <h1 class="section-title" style="font-size: 2.75rem;">Get started with <span class="text-accent">KrakenKey</span></h1>
+      <p class="section-subtitle">
+        From sign-up to a signed TLS certificate in under 10 minutes. This guide walks through every step.
+      </p>
+    </div>
+
+    <!-- Prerequisites -->
+    <div class="guide-section">
+      <h2 class="guide-heading">Before you begin</h2>
+      <p class="text-muted" style="margin-bottom: 1rem;">You'll need two things:</p>
+      <ul class="prereq-list">
+        <li>A domain name you own (e.g. <code>example.com</code>)</li>
+        <li>Access to your domain's DNS settings (Cloudflare, Route 53, Namecheap, etc.)</li>
+      </ul>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="guide-section">
+      <div class="step-marker">
+        <div class="step-number">1</div>
+        <h2 class="guide-heading">Create an account</h2>
+      </div>
+      <p class="text-muted">
+        Head to <a href="https://app.krakenkey.io" class="link">app.krakenkey.io</a> and click <strong>Sign Up</strong>.
+        You'll create an account through our identity provider. Once registered, you're redirected to the dashboard.
+      </p>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="guide-section">
+      <div class="step-marker">
+        <div class="step-number">2</div>
+        <h2 class="guide-heading">Add your domain</h2>
+      </div>
+      <p class="text-muted" style="margin-bottom: 1rem;">
+        In the dashboard, scroll to <strong>Domain Management</strong>, enter your domain, and click <strong>Add Domain</strong>.
+      </p>
+      <p class="text-muted" style="margin-bottom: 1rem;">
+        Or via the API:
+      </p>
+      <div class="code-block">
+        <pre><code set:html={`<span class="code-comment"># Add a domain</span>
+curl -X POST https://api.krakenkey.io/domains \\
+  -H "Authorization: Bearer YOUR_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{"hostname": "example.com"}'`} /></pre>
+      </div>
+      <p class="text-muted">
+        The response includes a <code>verificationCode</code> you'll need in the next step.
+      </p>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="guide-section">
+      <div class="step-marker">
+        <div class="step-number">3</div>
+        <h2 class="guide-heading">Add DNS records</h2>
+      </div>
+      <p class="text-muted" style="margin-bottom: 1.5rem;">
+        You need two DNS records. The dashboard shows exact values for your domain &mdash; here's what they look like:
+      </p>
+
+      <h3 class="guide-subheading">Record 1: TXT &mdash; Ownership verification</h3>
+      <p class="text-muted" style="margin-bottom: 1rem;">
+        Proves you control the domain. This record must stay in your DNS permanently.
+      </p>
+      <div class="dns-table-wrap">
+        <table class="dns-table">
+          <thead>
+            <tr><th>Type</th><th>Name</th><th>Value</th><th>TTL</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>TXT</code></td>
+              <td><code>@</code></td>
+              <td><code>krakenkey-site-verification=abc123...</code></td>
+              <td>Auto</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="guide-subheading" style="margin-top: 2rem;">Record 2: CNAME &mdash; ACME challenge delegation</h3>
+      <p class="text-muted" style="margin-bottom: 1rem;">
+        Lets KrakenKey respond to Let's Encrypt DNS-01 challenges on your behalf. This is what makes certificate issuance automatic.
+      </p>
+      <div class="dns-table-wrap">
+        <table class="dns-table">
+          <thead>
+            <tr><th>Type</th><th>Name</th><th>Target</th><th>TTL</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>CNAME</code></td>
+              <td><code>_acme-challenge</code></td>
+              <td><code>example-com.acme.krakenkey.io</code></td>
+              <td>Auto</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted" style="margin-top: 1rem;">
+        The CNAME target replaces dots with dashes in your hostname: <code>example.com</code> becomes <code>example-com.acme.krakenkey.io</code>.
+      </p>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="guide-section">
+      <div class="step-marker">
+        <div class="step-number">4</div>
+        <h2 class="guide-heading">Verify domain ownership</h2>
+      </div>
+      <p class="text-muted" style="margin-bottom: 1rem;">
+        Wait 1&ndash;5 minutes for DNS propagation, then click <strong>Verify Now</strong> in the dashboard.
+        You can check propagation with:
+      </p>
+      <div class="code-block">
+        <pre><code>dig TXT example.com +short</code></pre>
+      </div>
+      <p class="text-muted" style="margin-bottom: 1rem;">
+        Or verify via the API:
+      </p>
+      <div class="code-block">
+        <pre><code>curl -X POST https://api.krakenkey.io/domains/<span class="code-muted">DOMAIN_ID</span>/verify \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+      </div>
+      <p class="text-muted">
+        Once verified, the domain status changes to <strong style="color: var(--color-accent);">Verified</strong> and you can start issuing certificates.
+      </p>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="guide-section">
+      <div class="step-marker">
+        <div class="step-number">5</div>
+        <h2 class="guide-heading">Generate a Certificate Signing Request</h2>
+      </div>
+      <p class="text-muted" style="margin-bottom: 1.5rem;">
+        A CSR tells the certificate authority what domain(s) to include in the certificate. You have two options:
+      </p>
+
+      <div class="options-grid">
+        <div class="card" style="padding: 1.5rem;">
+          <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">In-browser generator</h3>
+          <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6;">
+            The dashboard includes a CSR generator that uses the WebCrypto API.
+            Your private key is generated in your browser and <strong>never leaves your device</strong>.
+            Fill in the form, click generate, and the CSR is ready to submit.
+          </p>
+        </div>
+        <div class="card" style="padding: 1.5rem;">
+          <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">OpenSSL (CLI)</h3>
+          <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6; margin-bottom: 1rem;">
+            Generate a CSR with OpenSSL on your own machine:
+          </p>
+          <div class="code-block" style="margin: 0;">
+            <pre><code>openssl req -new -newkey rsa:2048 \
+  -nodes -keyout key.pem \
+  -out csr.pem \
+  -subj "/CN=example.com"</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="guide-section">
+      <div class="step-marker">
+        <div class="step-number">6</div>
+        <h2 class="guide-heading">Submit CSR and download your certificate</h2>
+      </div>
+      <p class="text-muted" style="margin-bottom: 1rem;">
+        Paste your CSR PEM in the dashboard and click <strong>Submit</strong>, or use the API:
+      </p>
+      <div class="code-block">
+        <pre><code set:html={`<span class="code-comment"># Submit CSR</span>
+curl -X POST https://api.krakenkey.io/certs/tls \\
+  -H "Authorization: Bearer YOUR_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{"csrPem": "-----BEGIN CERTIFICATE REQUEST-----\\n...\\n-----END CERTIFICATE REQUEST-----"}'`} /></pre>
+      </div>
+      <p class="text-muted" style="margin-bottom: 1rem;">
+        KrakenKey creates a DNS-01 challenge record, Let's Encrypt validates it, and your certificate is issued &mdash; typically in about <strong class="text-accent">4 minutes</strong>.
+      </p>
+      <div class="code-block">
+        <pre><code><span class="code-comment"># Check status and download</span>
+curl https://api.krakenkey.io/certs/tls/<span class="code-muted">CERT_ID</span> \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+      </div>
+      <p class="text-muted">
+        When <code>status</code> is <code>"issued"</code>, the response includes your signed certificate PEM. Download it from the dashboard or copy it from the API response.
+      </p>
+    </div>
+
+    <!-- API Key section -->
+    <div class="guide-section">
+      <h2 class="guide-heading">Using an API key</h2>
+      <p class="text-muted" style="margin-bottom: 1rem;">
+        For programmatic access, generate an API key from the dashboard under your profile. API keys use the same <code>Authorization: Bearer</code> header as session tokens:
+      </p>
+      <div class="code-block">
+        <pre><code><span class="code-comment"># Generate an API key from the dashboard, then:</span>
+curl https://api.krakenkey.io/certs/tls \
+  -H "Authorization: Bearer kk_your_api_key_here"</code></pre>
+      </div>
+      <p class="text-muted">
+        See the <a href="/docs/api" class="link">API Reference</a> for the full endpoint documentation.
+      </p>
+    </div>
+
+    <!-- What's next -->
+    <div class="guide-section">
+      <h2 class="guide-heading">What's next</h2>
+      <ul class="next-list">
+        <li>
+          <strong>Add more domains</strong> &mdash; repeat steps 2&ndash;4 for each domain you want to issue certificates for
+        </li>
+        <li>
+          <strong>Automate with the API</strong> &mdash; integrate certificate issuance into your deployment pipeline using the <a href="/docs/api" class="link">REST API</a>
+        </li>
+        <li>
+          <strong>Wildcard certificates</strong> &mdash; submit a CSR with <code>*.example.com</code> as the common name (DNS-01 supports wildcards)
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <CTA />
+</PageLayout>
+
+<style>
+  .guide {
+    max-width: 800px;
+  }
+
+  .guide-section {
+    margin-bottom: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .guide-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 1rem;
+    padding-bottom: 0;
+  }
+
+  .step-marker {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--color-accent);
+    font-size: 1.25rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .guide-heading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .guide-subheading {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+  }
+
+  .prereq-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .prereq-list li {
+    padding: 0.375rem 0;
+    color: var(--color-muted);
+    font-size: 0.9375rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+
+  .prereq-list li::before {
+    content: '\2713';
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .code-block {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+
+  .code-block pre {
+    margin: 0;
+  }
+
+  .code-block code {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--color-text);
+  }
+
+  .code-comment {
+    color: var(--color-muted);
+  }
+
+  .code-string {
+    color: var(--color-accent);
+  }
+
+  .code-muted {
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  .dns-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+  }
+
+  .dns-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  .dns-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: var(--color-surface);
+    color: var(--color-muted);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .dns-table td {
+    padding: 0.75rem 1rem;
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+
+  .dns-table code {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-accent);
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .link {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .link:hover {
+    color: var(--color-accent-hover);
+  }
+
+  .next-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .next-list li {
+    padding: 0.5rem 0;
+    color: var(--color-muted);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+
+  .next-list li::before {
+    content: '\2192';
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    .options-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .dns-table td,
+    .dns-table th {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8125rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .step-marker {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+</style>
