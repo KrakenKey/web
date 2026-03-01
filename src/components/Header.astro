@@ -20,6 +20,7 @@ const pathname = Astro.url.pathname;
       <a href="/" class:list={[{ active: pathname === '/' }]}>Home</a>
       <a href="/pricing" class:list={[{ active: pathname === '/pricing' || pathname === '/pricing/' }]}>Pricing</a>
       <a href="/blog" class:list={[{ active: pathname.startsWith('/blog') }]}>Blog</a>
+      <a href="/getting-started" class:list={[{ active: pathname === '/getting-started' || pathname === '/getting-started/' }]}>Guide</a>
       <a href="/docs/api" class:list={[{ active: pathname.startsWith('/docs') }]}>API Docs</a>
       <a href="https://app.krakenkey.io" class="btn btn-primary">Get Started</a>
     </nav>

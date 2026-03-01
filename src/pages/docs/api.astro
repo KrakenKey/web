@@ -30,6 +30,7 @@ const pathname = Astro.url.pathname;
   <script is:inline>
     Scalar.createApiReference('#scalar-api-ref', {
       url: document.getElementById('scalar-api-ref').dataset.specUrl,
+      proxyUrl: 'https://proxy.scalar.com',
       theme: 'none',
       darkMode: true,
       hideDarkModeToggle: true,
