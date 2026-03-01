@@ -732,17 +732,15 @@
           "name": {
             "type": "string",
             "description": "A human-friendly name for this API key",
-            "example": "my-ci-key"
+            "example": "my-ci-key",
+            "default": "default"
           },
           "expiresAt": {
             "type": "string",
             "description": "ISO 8601 expiration date (optional, null = never expires)",
             "example": "2027-01-01T00:00:00.000Z"
           }
-        },
-        "required": [
-          "name"
-        ]
+        }
       },
       "CreateTlsCrtDto": {
         "type": "object",
