@@ -6,6 +6,11 @@
     "version": "0.1.0",
     "contact": {}
   },
+  "servers": [
+    {
+      "url": "https://api.krakenkey.io"
+    }
+  ],
   "paths": {
     "/": {
       "get": {
@@ -19,23 +24,8 @@
         },
         "parameters": [],
         "tags": [
-          "Health"
+          "Info"
         ]
-      }
-    },
-    "/health": {
-      "get": {
-        "operationId": "AppController_health",
-        "summary": "Health check",
-        "parameters": [],
-        "tags": [
-          "Health"
-        ],
-        "responses": {
-          "200": {
-            "description": "API is healthy"
-          }
-        }
       }
     },
     "/auth/register": {
@@ -346,6 +336,42 @@
         }
       }
     },
+    "/certs/tls/{id}/retry": {
+      "post": {
+        "operationId": "TlsController_retry",
+        "summary": "Retry a failed certificate issuance",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Certificate ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "TLS Certificates"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Certificate retry initiated"
+          },
+          "400": {
+            "description": "Certificate not in failed state"
+          },
+          "404": {
+            "description": "Certificate not found"
+          }
+        }
+      }
+    },
     "/domains": {
       "post": {
         "operationId": "DomainsController_create",
@@ -648,6 +674,10 @@
             "type": "string",
             "description": "PEM-encoded Certificate Signing Request",
             "example": "-----BEGIN CERTIFICATE REQUEST-----\n...\n-----END CERTIFICATE REQUEST-----"
+          },
+          "autoRenew": {
+            "type": "boolean",
+            "description": "Enable or disable automatic renewal"
           }
         }
       },

@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const pathname = Astro.url.pathname;
-const specUrl = `${import.meta.env.KK_API_URL}/swagger-json`;
 ---
 
 <BaseLayout
@@ -25,7 +24,7 @@ const specUrl = `${import.meta.env.KK_API_URL}/swagger-json`;
     </div>
   </header>
 
-  <div id="scalar-api-ref" data-spec-url={specUrl}></div>
+  <div id="scalar-api-ref" data-spec-url="/openapi.json"></div>
 
   <script is:inline src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
   <script is:inline>
