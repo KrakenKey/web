@@ -270,10 +270,12 @@
             "description": "Certificate not found"
           }
         }
-      },
-      "delete": {
-        "operationId": "TlsController_remove",
-        "summary": "Delete a certificate",
+      }
+    },
+    "/certs/tls/{id}/revoke": {
+      "post": {
+        "operationId": "TlsController_revoke",
+        "summary": "Revoke a certificate",
         "parameters": [
           {
             "name": "id",
@@ -285,6 +287,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevokeTlsCrtDto"
+              }
+            }
+          }
+        },
         "tags": [
           "TLS Certificates"
         ],
@@ -295,7 +307,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Certificate deleted"
+            "description": "Certificate revocation initiated"
+          },
+          "400": {
+            "description": "Certificate not in issued state"
           },
           "404": {
             "description": "Certificate not found"
@@ -523,48 +538,10 @@
         }
       }
     },
-    "/users": {
-      "post": {
-        "operationId": "UsersController_create",
-        "summary": "Create a new user",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            }
-          }
-        },
-        "tags": [
-          "Users"
-        ],
-        "responses": {
-          "201": {
-            "description": "User created"
-          }
-        }
-      },
-      "get": {
-        "operationId": "UsersController_findAll",
-        "summary": "List all users",
-        "parameters": [],
-        "tags": [
-          "Users"
-        ],
-        "responses": {
-          "200": {
-            "description": "List of users"
-          }
-        }
-      }
-    },
     "/users/{id}": {
       "get": {
         "operationId": "UsersController_findOne",
-        "summary": "Get user by ID",
+        "summary": "Get user by ID (own record only)",
         "parameters": [
           {
             "name": "id",
@@ -583,6 +560,9 @@
           "200": {
             "description": "User details"
           },
+          "403": {
+            "description": "Access denied"
+          },
           "404": {
             "description": "User not found"
           }
@@ -590,7 +570,7 @@
       },
       "patch": {
         "operationId": "UsersController_update",
-        "summary": "Update a user",
+        "summary": "Update a user (own record only)",
         "parameters": [
           {
             "name": "id",
@@ -619,6 +599,9 @@
           "200": {
             "description": "User updated"
           },
+          "403": {
+            "description": "Access denied"
+          },
           "404": {
             "description": "User not found"
           }
@@ -626,7 +609,7 @@
       },
       "delete": {
         "operationId": "UsersController_remove",
-        "summary": "Delete a user",
+        "summary": "Delete a user (own record only)",
         "parameters": [
           {
             "name": "id",
@@ -644,6 +627,9 @@
         "responses": {
           "200": {
             "description": "User deleted"
+          },
+          "403": {
+            "description": "Access denied"
           },
           "404": {
             "description": "User not found"
@@ -681,6 +667,18 @@
           }
         }
       },
+      "RevokeTlsCrtDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "number",
+            "description": "RFC 5280 revocation reason code: 0=unspecified, 1=keyCompromise, 3=affiliationChanged, 4=superseded, 5=cessationOfOperation",
+            "example": 0,
+            "minimum": 0,
+            "maximum": 10
+          }
+        }
+      },
       "CreateDomainDto": {
         "type": "object",
         "properties": {
@@ -692,35 +690,6 @@
         },
         "required": [
           "hostname"
-        ]
-      },
-      "CreateUserDto": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "description": "Unique username",
-            "example": "jdoe"
-          },
-          "email": {
-            "type": "string",
-            "description": "User email address",
-            "example": "jdoe@example.com"
-          },
-          "groups": {
-            "description": "User groups",
-            "example": [
-              "users"
-            ],
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "username",
-          "email"
         ]
       },
       "UpdateUserDto": {
