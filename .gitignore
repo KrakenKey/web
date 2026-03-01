@@ -3,6 +3,7 @@ dist/
 .astro/
 .wrangler/
 .claude/
+scripts/
 *.md
 
 # Environment files
