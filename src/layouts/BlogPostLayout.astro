@@ -25,7 +25,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', { year: 'n
         {updatedDate && <span> &middot; Updated {formattedUpdatedDate}</span>}
       </p>
       {tags.length > 0 && (
-        <div class="blog-card-tags" style="margin-top: 0.75rem;">
+        <div class="blog-card-tags blog-card-tags--inline">
           {tags.map((tag) => <span class="blog-tag">{tag}</span>)}
         </div>
       )}

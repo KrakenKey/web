@@ -6,7 +6,7 @@ const milestones = [
 ];
 ---
 
-<section style="background-color: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);">
+<section class="cta-section">
   <div class="section-container">
     <div class="section-header">
       <h2 class="section-title">The certificate deadline is here</h2>
@@ -38,7 +38,7 @@ const milestones = [
     position: relative;
     max-width: 700px;
     margin-inline: auto;
-    padding: 2rem 0;
+    padding: var(--space-xl) 0;
   }
 
   .timeline-track {
@@ -65,7 +65,7 @@ const milestones = [
     border-radius: 50%;
     background: var(--color-border);
     border: 3px solid var(--color-bg);
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-md);
   }
 
   .timeline-item--active .timeline-dot {
@@ -78,7 +78,7 @@ const milestones = [
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 0.25rem;
+    gap: var(--space-xs);
   }
 
   .timeline-date {
@@ -103,9 +103,9 @@ const milestones = [
   @media (max-width: 480px) {
     .timeline {
       flex-direction: column;
-      gap: 2rem;
+      gap: var(--space-xl);
       align-items: flex-start;
-      padding-left: 2rem;
+      padding-left: var(--space-xl);
     }
 
     .timeline-track {

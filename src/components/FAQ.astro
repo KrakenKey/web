@@ -16,7 +16,7 @@ const { items } = Astro.props;
     <h2 class="section-title">Frequently asked questions</h2>
   </div>
 
-  <div style="max-width: 720px; margin-inline: auto;">
+  <div class="faq-container">
     {items.map((item) => (
       <details class="faq-item">
         <summary>{item.question}</summary>
