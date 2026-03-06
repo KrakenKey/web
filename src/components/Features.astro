@@ -32,12 +32,12 @@ const features = [
       </p>
     </div>
 
-    <div class="features-grid" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="features-grid features-grid--2col">
       {features.map((feature) => (
         <div class="card">
-          <div style="color: var(--color-accent); margin-bottom: 1rem;" set:html={feature.icon} />
-          <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">{feature.title}</h3>
-          <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6;">{feature.description}</p>
+          <div class="card-icon" set:html={feature.icon} />
+          <h3 class="card-title">{feature.title}</h3>
+          <p class="card-description">{feature.description}</p>
         </div>
       ))}
     </div>

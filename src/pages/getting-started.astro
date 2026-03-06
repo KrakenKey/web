@@ -8,8 +8,8 @@ import CTA from '../components/CTA.astro';
   description="Step-by-step guide to issuing your first TLS certificate with KrakenKey. One-time domain setup, then certificates in 4 minutes."
 >
   <div class="section-container guide">
-    <div class="section-header" style="margin-bottom: 3rem;">
-      <h1 class="section-title" style="font-size: 2.75rem;">Get started with <span class="text-accent">KrakenKey</span></h1>
+    <div class="section-header section-header--lg">
+      <h1 class="section-title section-title--xl">Get started with <span class="text-accent">KrakenKey</span></h1>
       <p class="section-subtitle">
         From sign-up to a signed TLS certificate in under 10 minutes. This guide walks through every step.
       </p>
@@ -18,7 +18,7 @@ import CTA from '../components/CTA.astro';
     <!-- Prerequisites -->
     <div class="guide-section">
       <h2 class="guide-heading">Before you begin</h2>
-      <p class="text-muted" style="margin-bottom: 1rem;">You'll need two things:</p>
+      <p class="guide-text">You'll need two things:</p>
       <ul class="prereq-list">
         <li>A domain name you own (e.g. <code>example.com</code>)</li>
         <li>Access to your domain's DNS settings (Cloudflare, Route 53, Namecheap, etc.)</li>
@@ -43,10 +43,10 @@ import CTA from '../components/CTA.astro';
         <div class="step-number">2</div>
         <h2 class="guide-heading">Add your domain</h2>
       </div>
-      <p class="text-muted" style="margin-bottom: 1rem;">
+      <p class="guide-text">
         In the dashboard, scroll to <strong>Domain Management</strong>, enter your domain, and click <strong>Add Domain</strong>.
       </p>
-      <p class="text-muted" style="margin-bottom: 1rem;">
+      <p class="guide-text">
         Or via the API:
       </p>
       <div class="code-block">
@@ -67,12 +67,12 @@ curl -X POST https://api.krakenkey.io/domains \\
         <div class="step-number">3</div>
         <h2 class="guide-heading">Add DNS records</h2>
       </div>
-      <p class="text-muted" style="margin-bottom: 1.5rem;">
+      <p class="guide-text guide-text--lg">
         You need two DNS records. The dashboard shows exact values for your domain &mdash; here's what they look like:
       </p>
 
       <h3 class="guide-subheading">Record 1: TXT &mdash; Ownership verification</h3>
-      <p class="text-muted" style="margin-bottom: 1rem;">
+      <p class="guide-text">
         Proves you control the domain. This record must stay in your DNS permanently.
       </p>
       <div class="dns-table-wrap">
@@ -91,8 +91,8 @@ curl -X POST https://api.krakenkey.io/domains \\
         </table>
       </div>
 
-      <h3 class="guide-subheading" style="margin-top: 2rem;">Record 2: CNAME &mdash; ACME challenge delegation</h3>
-      <p class="text-muted" style="margin-bottom: 1rem;">
+      <h3 class="guide-subheading guide-subheading--spaced">Record 2: CNAME &mdash; ACME challenge delegation</h3>
+      <p class="guide-text">
         Lets KrakenKey respond to Let's Encrypt DNS-01 challenges on your behalf. This is what makes certificate issuance automatic.
       </p>
       <div class="dns-table-wrap">
@@ -110,7 +110,7 @@ curl -X POST https://api.krakenkey.io/domains \\
           </tbody>
         </table>
       </div>
-      <p class="text-muted" style="margin-top: 1rem;">
+      <p class="guide-note">
         The CNAME target replaces dots with dashes in your hostname: <code>example.com</code> becomes <code>example-com.acme.krakenkey.io</code>.
       </p>
     </div>
@@ -121,14 +121,14 @@ curl -X POST https://api.krakenkey.io/domains \\
         <div class="step-number">4</div>
         <h2 class="guide-heading">Verify domain ownership</h2>
       </div>
-      <p class="text-muted" style="margin-bottom: 1rem;">
+      <p class="guide-text">
         Wait 1&ndash;5 minutes for DNS propagation, then click <strong>Verify Now</strong> in the dashboard.
         You can check propagation with:
       </p>
       <div class="code-block">
         <pre><code>dig TXT example.com +short</code></pre>
       </div>
-      <p class="text-muted" style="margin-bottom: 1rem;">
+      <p class="guide-text">
         Or verify via the API:
       </p>
       <div class="code-block">
@@ -136,7 +136,7 @@ curl -X POST https://api.krakenkey.io/domains \\
   -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
       </div>
       <p class="text-muted">
-        Once verified, the domain status changes to <strong style="color: var(--color-accent);">Verified</strong> and you can start issuing certificates.
+        Once verified, the domain status changes to <strong class="text-accent">Verified</strong> and you can start issuing certificates.
       </p>
     </div>
 
@@ -146,25 +146,25 @@ curl -X POST https://api.krakenkey.io/domains \\
         <div class="step-number">5</div>
         <h2 class="guide-heading">Generate a Certificate Signing Request</h2>
       </div>
-      <p class="text-muted" style="margin-bottom: 1.5rem;">
+      <p class="guide-text guide-text--lg">
         A CSR tells the certificate authority what domain(s) to include in the certificate. You have two options:
       </p>
 
       <div class="options-grid">
-        <div class="card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">In-browser generator</h3>
-          <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6;">
+        <div class="card card--compact">
+          <h3 class="card-title">In-browser generator</h3>
+          <p class="card-description">
             The dashboard includes a CSR generator that uses the WebCrypto API.
             Your private key is generated in your browser and <strong>never leaves your device</strong>.
             Fill in the form, click generate, and the CSR is ready to submit.
           </p>
         </div>
-        <div class="card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">OpenSSL (CLI)</h3>
-          <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6; margin-bottom: 1rem;">
+        <div class="card card--compact">
+          <h3 class="card-title">OpenSSL (CLI)</h3>
+          <p class="card-description guide-text">
             Generate a CSR with OpenSSL on your own machine:
           </p>
-          <div class="code-block" style="margin: 0;">
+          <div class="code-block code-block--flush">
             <pre><code>openssl req -new -newkey rsa:2048 \
   -nodes -keyout key.pem \
   -out csr.pem \
@@ -180,7 +180,7 @@ curl -X POST https://api.krakenkey.io/domains \\
         <div class="step-number">6</div>
         <h2 class="guide-heading">Submit CSR and download your certificate</h2>
       </div>
-      <p class="text-muted" style="margin-bottom: 1rem;">
+      <p class="guide-text">
         Paste your CSR PEM in the dashboard and click <strong>Submit</strong>, or use the API:
       </p>
       <div class="code-block">
@@ -190,7 +190,7 @@ curl -X POST https://api.krakenkey.io/certs/tls \\
   -H "Content-Type: application/json" \\
   -d '{"csrPem": "-----BEGIN CERTIFICATE REQUEST-----\\n...\\n-----END CERTIFICATE REQUEST-----"}'`} /></pre>
       </div>
-      <p class="text-muted" style="margin-bottom: 1rem;">
+      <p class="guide-text">
         KrakenKey creates a DNS-01 challenge record, Let's Encrypt validates it, and your certificate is issued &mdash; typically in about <strong class="text-accent">4 minutes</strong>.
       </p>
       <div class="code-block">
@@ -206,7 +206,7 @@ curl https://api.krakenkey.io/certs/tls/<span class="code-muted">CERT_ID</span> 
     <!-- API Key section -->
     <div class="guide-section">
       <h2 class="guide-heading">Using an API key</h2>
-      <p class="text-muted" style="margin-bottom: 1rem;">
+      <p class="guide-text">
         For programmatic access, generate an API key from the dashboard under your profile. API keys use the same <code>Authorization: Bearer</code> header as session tokens:
       </p>
       <div class="code-block">
@@ -245,22 +245,36 @@ curl https://api.krakenkey.io/certs/tls \
   }
 
   .guide-section {
-    margin-bottom: 3rem;
-    padding-bottom: 3rem;
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-2xl);
     border-bottom: 1px solid var(--color-border);
   }
 
   .guide-section:last-of-type {
     border-bottom: none;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-md);
     padding-bottom: 0;
+  }
+
+  .guide-text {
+    color: var(--color-muted);
+    margin-bottom: var(--space-md);
+  }
+
+  .guide-text--lg {
+    margin-bottom: var(--space-lg);
+  }
+
+  .guide-note {
+    color: var(--color-muted);
+    margin-top: var(--space-md);
   }
 
   .step-marker {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
   }
 
   .step-number {
@@ -270,7 +284,7 @@ curl https://api.krakenkey.io/certs/tls \
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: rgba(6, 182, 212, 0.1);
+    background-color: var(--color-info-surface);
     color: var(--color-accent);
     font-size: 1.25rem;
     font-weight: 700;
@@ -289,6 +303,10 @@ curl https://api.krakenkey.io/certs/tls \
     font-weight: 600;
     color: var(--color-text);
     margin-bottom: 0.5rem;
+  }
+
+  .guide-subheading--spaced {
+    margin-top: var(--space-xl);
   }
 
   .prereq-list {
@@ -314,10 +332,14 @@ curl https://api.krakenkey.io/certs/tls \
   .code-block {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: 8px;
-    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    padding: var(--space-md) 1.25rem;
     overflow-x: auto;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .code-block--flush {
+    margin: 0;
   }
 
   .code-block pre {
@@ -347,7 +369,7 @@ curl https://api.krakenkey.io/certs/tls \
   .dns-table-wrap {
     overflow-x: auto;
     border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
   }
 
   .dns-table {
@@ -358,7 +380,7 @@ curl https://api.krakenkey.io/certs/tls \
 
   .dns-table th {
     text-align: left;
-    padding: 0.75rem 1rem;
+    padding: 0.75rem var(--space-md);
     background: var(--color-surface);
     color: var(--color-muted);
     font-weight: 600;
@@ -369,7 +391,7 @@ curl https://api.krakenkey.io/certs/tls \
   }
 
   .dns-table td {
-    padding: 0.75rem 1rem;
+    padding: 0.75rem var(--space-md);
     color: var(--color-text);
     white-space: nowrap;
   }
@@ -383,7 +405,7 @@ curl https://api.krakenkey.io/certs/tls \
   .options-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    gap: var(--space-lg);
   }
 
   .link {

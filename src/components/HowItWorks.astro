@@ -35,14 +35,14 @@ const certSteps = [
       </p>
     </div>
 
-    <div style="margin-bottom: 2rem;">
+    <div class="phase-group">
       <p class="phase-label">One-time setup</p>
       <div class="steps-grid steps-grid--single">
         {setupSteps.map((step) => (
           <div class="step-item">
             <div class="step-number">{step.number}</div>
-            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">{step.title}</h3>
-            <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6;">{step.description}</p>
+            <h3 class="card-title">{step.title}</h3>
+            <p class="card-description">{step.description}</p>
           </div>
         ))}
       </div>
@@ -54,8 +54,8 @@ const certSteps = [
         {certSteps.map((step) => (
           <div class="step-item">
             <div class="step-number">{step.number}</div>
-            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">{step.title}</h3>
-            <p class="text-muted" style="font-size: 0.9375rem; line-height: 1.6;">{step.description}</p>
+            <h3 class="card-title">{step.title}</h3>
+            <p class="card-description">{step.description}</p>
           </div>
         ))}
       </div>
@@ -73,10 +73,14 @@ const certSteps = [
     margin-bottom: 1.25rem;
   }
 
+  .phase-group {
+    margin-bottom: var(--space-xl);
+  }
+
   .steps-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    gap: var(--space-xl);
   }
 
   .steps-grid--single {
@@ -95,11 +99,11 @@ const certSteps = [
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: rgba(6, 182, 212, 0.1);
+    background-color: var(--color-info-surface);
     color: var(--color-accent);
     font-size: 1.25rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-md);
   }
 
   @media (max-width: 768px) {

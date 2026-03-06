@@ -3,10 +3,10 @@ import PageLayout from '../layouts/PageLayout.astro';
 ---
 
 <PageLayout title="404 — Page Not Found" noIndex={true}>
-  <div class="section-container" style="text-align: center; min-height: 50vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-    <h1 style="font-size: 5rem; font-weight: 800; color: var(--color-accent); margin-bottom: 1rem;">404</h1>
-    <p style="font-size: 1.25rem; margin-bottom: 0.5rem;">This page doesn't exist.</p>
-    <p class="text-muted" style="margin-bottom: 2rem;">Maybe the certificate expired.</p>
+  <div class="section-container error-page">
+    <h1 class="error-code">404</h1>
+    <p class="error-message">This page doesn't exist.</p>
+    <p class="error-submessage">Maybe the certificate expired.</p>
     <a href="/" class="btn btn-primary">Back to Home</a>
   </div>
 </PageLayout>

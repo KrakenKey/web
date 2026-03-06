@@ -30,7 +30,7 @@ const posts = (await getCollection('posts'))
     </div>
 
     {posts.length === 0 && (
-      <p style="text-align: center; color: var(--color-muted);">No posts yet. Check back soon.</p>
+      <p class="empty-state">No posts yet. Check back soon.</p>
     )}
   </div>
 </PageLayout>
