@@ -250,6 +250,42 @@
         }
       }
     },
+    "/certs/tls/{id}/details": {
+      "get": {
+        "operationId": "TlsController_getDetails",
+        "summary": "Get parsed certificate details from issued cert",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Certificate ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "TLS Certificates"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Parsed certificate details"
+          },
+          "400": {
+            "description": "Certificate not yet issued"
+          },
+          "404": {
+            "description": "Certificate not found"
+          }
+        }
+      }
+    },
     "/certs/tls/{id}": {
       "get": {
         "operationId": "TlsController_findOne",
