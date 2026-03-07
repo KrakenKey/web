@@ -86,7 +86,7 @@
     "/auth/profile": {
       "get": {
         "operationId": "AuthController_getProfile",
-        "summary": "Get current user profile",
+        "summary": "Get current user profile with resource counts",
         "parameters": [],
         "tags": [
           "Authentication"
@@ -98,7 +98,38 @@
         ],
         "responses": {
           "200": {
-            "description": "User profile data"
+            "description": "Full user profile data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "AuthController_updateProfile",
+        "summary": "Update current user profile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated user profile"
           },
           "401": {
             "description": "Unauthorized"
@@ -660,10 +691,33 @@
         }
       }
     },
+    "/users": {
+      "get": {
+        "operationId": "UsersController_findAll",
+        "summary": "List all users (admin only)",
+        "parameters": [],
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all users"
+          },
+          "403": {
+            "description": "Admin access required"
+          }
+        }
+      }
+    },
     "/users/{id}": {
       "get": {
         "operationId": "UsersController_findOne",
-        "summary": "Get user by ID (own record only)",
+        "summary": "Get user by ID (own record or admin)",
         "parameters": [
           {
             "name": "id",
@@ -677,6 +731,11 @@
         ],
         "tags": [
           "Users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
         ],
         "responses": {
           "200": {
@@ -692,7 +751,7 @@
       },
       "patch": {
         "operationId": "UsersController_update",
-        "summary": "Update a user (own record only)",
+        "summary": "Update a user (own record or admin)",
         "parameters": [
           {
             "name": "id",
@@ -717,6 +776,11 @@
         "tags": [
           "Users"
         ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "User updated"
@@ -731,7 +795,7 @@
       },
       "delete": {
         "operationId": "UsersController_remove",
-        "summary": "Delete a user (own record only)",
+        "summary": "Delete a user account with cascade (own record or admin)",
         "parameters": [
           {
             "name": "id",
@@ -746,9 +810,14 @@
         "tags": [
           "Users"
         ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "responses": {
           "200": {
-            "description": "User deleted"
+            "description": "User and all associated data deleted"
           },
           "403": {
             "description": "Access denied"
@@ -762,6 +831,17 @@
   },
   "components": {
     "schemas": {
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "description": "User display name",
+            "example": "John Doe",
+            "maxLength": 100
+          }
+        }
+      },
       "CreateApiKeyDto": {
         "type": "object",
         "properties": {
