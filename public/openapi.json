@@ -839,6 +839,14 @@
             "description": "User display name",
             "example": "John Doe",
             "maxLength": 100
+          },
+          "notificationPreferences": {
+            "type": "object",
+            "description": "Notification preferences (omitted keys default to enabled)",
+            "example": {
+              "cert_issued": true,
+              "cert_failed": false
+            }
           }
         }
       },
