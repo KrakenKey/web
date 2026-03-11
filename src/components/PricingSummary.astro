@@ -4,15 +4,14 @@
 <section>
   <div class="section-container">
     <div class="section-header">
-      <h2 class="section-title">Free to use</h2>
+      <h2 class="section-title">Pricing</h2>
       <p class="section-subtitle">
-        Get started with automated TLS certificate issuance at no cost. Paid plans with monitoring, auto-renewal, and team features launching this month.
+        Free tier includes full ACME automation. Paid plans add higher limits, auto-renewal, and team access.
       </p>
     </div>
 
-    <div class="narrow-container--sm">
-      <div class="card card-highlighted">
-        <span class="card-badge">Available Now</span>
+    <div class="pricing-grid pricing-grid--3">
+      <div class="card">
         <h3 class="card-title">Free</h3>
         <div class="pricing-price">
           <span>$0</span>
@@ -20,27 +19,68 @@
         <ul class="pricing-features">
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
-            ACME automation via Let's Encrypt
+            3 domains, 25 certificates
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
-            In-browser CSR generator
+            ACME automation
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
-            DNS-01 challenge automation
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            REST API for programmatic access
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Web dashboard
+            REST API &amp; dashboard
           </li>
         </ul>
-        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Get Started</a>
+        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Get Started Free</a>
       </div>
+
+      <div class="card card-highlighted">
+        <span class="card-badge">Popular</span>
+        <h3 class="card-title">Starter</h3>
+        <div class="pricing-price">
+          <span>$29</span><span class="pricing-sublabel">/mo</span>
+        </div>
+        <ul class="pricing-features">
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            10 domains, 75 certificates
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            30-day auto-renewal
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            Double API rate limits
+          </li>
+        </ul>
+        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Upgrade to Starter</a>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">Team</h3>
+        <div class="pricing-price">
+          <span>$79</span><span class="pricing-sublabel">/mo</span>
+        </div>
+        <ul class="pricing-features">
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            25 domains, 375 certificates
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            Organizations with RBAC
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            Higher rate limits
+          </li>
+        </ul>
+        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Upgrade to Team</a>
+      </div>
+    </div>
+
+    <div class="center-text" style="margin-top: var(--space-lg);">
+      <a href="/pricing" class="link">View full plan comparison &rarr;</a>
     </div>
   </div>
 </section>

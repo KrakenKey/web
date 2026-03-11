@@ -27,17 +27,7 @@ const pathname = Astro.url.pathname;
   <div id="scalar-api-ref" data-spec-url="/openapi.json"></div>
 
   <script is:inline src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
-  <script is:inline>
-    Scalar.createApiReference('#scalar-api-ref', {
-      url: document.getElementById('scalar-api-ref').dataset.specUrl,
-      proxyUrl: 'https://proxy.scalar.com',
-      theme: 'none',
-      darkMode: true,
-      hideDarkModeToggle: true,
-      withDefaultFonts: false,
-      layout: 'modern',
-    });
-  </script>
+  <script is:inline src="/scalar-init.js"></script>
 </BaseLayout>
 
 <style is:global>
