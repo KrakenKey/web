@@ -27,49 +27,7 @@ const pathname = Astro.url.pathname;
   <div id="scalar-api-ref" data-spec-url="/openapi.json"></div>
 
   <script is:inline src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
-  <script is:inline>
-    // CSP violation logging — reports which URL/directive is blocked
-    document.addEventListener('securitypolicyviolation', function(e) {
-      console.error('[CSP BLOCKED]', {
-        blockedURI: e.blockedURI,
-        violatedDirective: e.violatedDirective,
-        effectiveDirective: e.effectiveDirective,
-        originalPolicy: e.originalPolicy,
-        disposition: e.disposition,
-      });
-    });
-
-    // Unhandled promise rejections (catches most "failed to fetch" errors)
-    window.addEventListener('unhandledrejection', function(e) {
-      console.error('[UNHANDLED REJECTION]', e.reason);
-    });
-
-    // Patch fetch to log all outbound requests and failures
-    var _origFetch = window.fetch;
-    window.fetch = function(input, init) {
-      var url = typeof input === 'string' ? input : input instanceof Request ? input.url : String(input);
-      console.debug('[FETCH]', init && init.method || 'GET', url);
-      return _origFetch.apply(this, arguments).then(function(res) {
-        if (!res.ok) {
-          console.warn('[FETCH ERROR]', res.status, res.statusText, url);
-        }
-        return res;
-      }).catch(function(err) {
-        console.error('[FETCH FAILED]', url, err.message, err);
-        throw err;
-      });
-    };
-
-    Scalar.createApiReference('#scalar-api-ref', {
-      url: document.getElementById('scalar-api-ref').dataset.specUrl,
-      proxyUrl: 'https://proxy.scalar.com',
-      theme: 'none',
-      darkMode: true,
-      hideDarkModeToggle: true,
-      withDefaultFonts: false,
-      layout: 'modern',
-    });
-  </script>
+  <script is:inline src="/scalar-init.js"></script>
 </BaseLayout>
 
 <style is:global>
