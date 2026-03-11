@@ -191,6 +191,29 @@
         }
       }
     },
+    "/auth/confirm-auto-renewal": {
+      "post": {
+        "operationId": "AuthController_confirmAutoRenewal",
+        "summary": "Confirm intent to keep auto-renewal active (free tier)",
+        "parameters": [],
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Auto-renewal confirmation timestamp reset"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/auth/api-keys/{id}": {
       "delete": {
         "operationId": "AuthController_deleteApiKey",
