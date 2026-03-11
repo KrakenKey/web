@@ -25,70 +25,123 @@ const faqItems = [
     answer: 'Yes. Every action available in the dashboard is also available via REST API. You can submit CSRs, check certificate status, and download issued certificates programmatically.',
   },
   {
-    question: 'Will there be paid plans?',
-    answer: 'Yes. Paid plans are launching this month with expanded limits, 30-day auto-renewal windows, team access with RBAC, audit logs, and priority ACME queue. Starter ($29/mo), Team ($79/mo), and Business ($199/mo).',
+    question: 'Do I need a paid plan?',
+    answer: 'No. The free tier includes full ACME automation and certificate issuance via Let\'s Encrypt. Starter ($29/mo) adds more domains, auto-renewal, and expiry alerts. Team ($79/mo) adds organizations with role-based access control.',
   },
 ];
 ---
 
 <PageLayout
   title="Pricing"
-  description="KrakenKey is free to use for automated TLS certificate issuance via Let's Encrypt. Paid plans with monitoring, auto-renewal, and team features launching this month."
+  description="Free automated TLS certificate issuance via Let's Encrypt. Starter and Team plans for higher limits, auto-renewal, and team access."
 >
   <div class="section-container">
     <div class="section-header section-header--lg">
-      <h1 class="section-title section-title--xl">Free to get started</h1>
+      <h1 class="section-title section-title--xl">Pricing</h1>
       <p class="section-subtitle">
-        Automated TLS certificate issuance at no cost. Paid plans launching this month.
+        Free tier includes full ACME automation. Paid plans add higher limits, auto-renewal, and team access.
       </p>
     </div>
 
-    <!-- Free Tier -->
-    <div class="narrow-container">
-      <div class="card card-highlighted center-text">
-        <span class="card-badge">Available Now</span>
+    <!-- Pricing Grid -->
+    <div class="pricing-grid pricing-grid--3">
+      <!-- Free Tier -->
+      <div class="card center-text">
         <h3 class="pricing-label">Free</h3>
-        <p class="pricing-sublabel">Everything you need to issue certificates</p>
-        <div class="pricing-price--lg">
+        <p class="pricing-sublabel">Full ACME automation, no credit card</p>
+        <div class="pricing-price">
           <span>$0</span>
         </div>
         <ul class="pricing-features pricing-features--left">
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            3 domains, 25 active certificates
+          </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
             ACME automation via Let's Encrypt
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
-            In-browser CSR generator (private key stays client-side)
+            In-browser CSR generator
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
-            Automated DNS-01 challenge via Cloudflare
+            DNS-01 challenge via Cloudflare
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
-            REST API for programmatic certificate issuance
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Web dashboard with certificate management
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Domain verification
+            REST API &amp; web dashboard
           </li>
         </ul>
-        <a href="https://app.krakenkey.io" class="btn btn-primary btn-lg btn-full">Get Started</a>
+        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Get Started Free</a>
         <p class="pricing-cta-note">No credit card required</p>
       </div>
-    </div>
 
-    <!-- Coming Soon -->
-    <div class="coming-soon-section">
-      <h2 class="coming-soon-title">Paid plans launching this month</h2>
-      <p class="coming-soon-text">
-        Managed certificate lifecycle management with expiry alerts, automated renewal, 30-day renewal windows, team access with RBAC, audit logs, and priority ACME queue. Starter ($29/mo), Team ($79/mo), and Business ($199/mo) tiers.
-      </p>
+      <!-- Starter Tier -->
+      <div class="card card-highlighted center-text">
+        <span class="card-badge">Popular</span>
+        <h3 class="pricing-label">Starter</h3>
+        <p class="pricing-sublabel">More domains, auto-renewal, alerts</p>
+        <div class="pricing-price">
+          <span>$29</span><span class="pricing-sublabel">/mo</span>
+        </div>
+        <ul class="pricing-features pricing-features--left">
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            10 domains, 75 active certificates
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            30-day auto-renewal window
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            Certificate expiry notifications
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            Double API rate limits
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            Everything in Free
+          </li>
+        </ul>
+        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Upgrade to Starter</a>
+      </div>
+
+      <!-- Team Tier -->
+      <div class="card center-text">
+        <h3 class="pricing-label">Team</h3>
+        <p class="pricing-sublabel">Multi-user access with role-based control</p>
+        <div class="pricing-price">
+          <span>$79</span><span class="pricing-sublabel">/mo</span>
+        </div>
+        <ul class="pricing-features pricing-features--left">
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            25 domains, 375 active certificates
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            Organizations with RBAC
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            Invite team members (owner, admin, member, viewer)
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            Higher rate limits (300 reads/min)
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            Everything in Starter
+          </li>
+        </ul>
+        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Upgrade to Team</a>
+      </div>
     </div>
 
     <FAQ items={faqItems} />
