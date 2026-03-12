@@ -191,6 +191,29 @@
         }
       }
     },
+    "/auth/confirm-auto-renewal": {
+      "post": {
+        "operationId": "AuthController_confirmAutoRenewal",
+        "summary": "Confirm intent to keep auto-renewal active (free tier)",
+        "parameters": [],
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Auto-renewal confirmation timestamp reset"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/auth/api-keys/{id}": {
       "delete": {
         "operationId": "AuthController_deleteApiKey",
@@ -242,7 +265,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of certificates for the authenticated user"
+            "description": "List of certificates for the authenticated user or their org"
           },
           "401": {
             "description": "Unauthorized"
@@ -277,6 +300,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Viewers cannot request certificates"
           }
         }
       }
@@ -385,6 +411,9 @@
           "200": {
             "description": "Certificate updated"
           },
+          "403": {
+            "description": "Viewers cannot update certificates"
+          },
           "404": {
             "description": "Certificate not found"
           }
@@ -418,6 +447,9 @@
           },
           "400": {
             "description": "Certificate not in failed or revoked state"
+          },
+          "403": {
+            "description": "Viewers cannot delete certificates"
           },
           "404": {
             "description": "Certificate not found"
@@ -465,6 +497,9 @@
           "400": {
             "description": "Certificate not in issued state"
           },
+          "403": {
+            "description": "Viewers cannot revoke certificates"
+          },
           "404": {
             "description": "Certificate not found"
           }
@@ -497,6 +532,9 @@
         "responses": {
           "200": {
             "description": "Certificate renewal initiated"
+          },
+          "403": {
+            "description": "Viewers cannot renew certificates"
           },
           "404": {
             "description": "Certificate not found"
@@ -534,6 +572,9 @@
           "400": {
             "description": "Certificate not in failed state"
           },
+          "403": {
+            "description": "Viewers cannot retry certificates"
+          },
           "404": {
             "description": "Certificate not found"
           }
@@ -569,6 +610,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Viewers cannot register domains"
           }
         }
       },
@@ -586,7 +630,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of domains for the authenticated user"
+            "description": "List of domains for the authenticated user or their org"
           },
           "401": {
             "description": "Unauthorized"
@@ -652,6 +696,9 @@
           "200": {
             "description": "Domain deleted"
           },
+          "403": {
+            "description": "Viewers cannot delete domains"
+          },
           "404": {
             "description": "Domain not found"
           }
@@ -684,6 +731,9 @@
         "responses": {
           "200": {
             "description": "Verification initiated"
+          },
+          "403": {
+            "description": "Viewers cannot verify domains"
           },
           "404": {
             "description": "Domain not found"
