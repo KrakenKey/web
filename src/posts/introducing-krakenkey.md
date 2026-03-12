@@ -1,7 +1,7 @@
 ---
 title: "Introducing KrakenKey: Automated TLS Certificate Management"
 description: "KrakenKey automates TLS certificate issuance for developers. Privacy-first with client-side CSR generation, automated DNS-01 challenges, and certificates issued in ~4 minutes."
-pubDate: 2026-03-10
+pubDate: 2026-03-12
 author: "KrakenKey Team"
 tags: ["launch", "product", "certificates"]
 draft: true
@@ -58,7 +58,7 @@ KrakenKey already handles the full certificate lifecycle:
 - Web dashboard with full certificate management
 - Free tier with 3 domains, 10 active certs, and auto-renewal
 
-Paid plans with expanded limits, team access (RBAC), audit logs, and priority ACME queue are launching this month. Check our [pricing page](/pricing) for details.
+Starter ($29/mo) and Team ($79/mo) plans are available now with expanded limits, 30-day auto-renewal windows, and team access with RBAC. Check our [pricing page](/pricing) for details.
 
 We'd love your feedback. Sign up at [app.krakenkey.io](https://app.krakenkey.io) and let us know what you think.
 
