@@ -71,6 +71,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "state",
+            "required": true,
+            "in": "query",
+            "description": "OAuth state parameter for CSRF protection",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "tags": [
