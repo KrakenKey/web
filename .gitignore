@@ -5,6 +5,7 @@ dist/
 .claude/
 scripts/
 *.md
+!README.md
 !src/posts/**/*.md
 
 # Environment files

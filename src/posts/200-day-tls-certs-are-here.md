@@ -1,7 +1,7 @@
 ---
-title: "The 200-Day TLS Deadline Arrives in 5 Days — And It's Just the Beginning"
-description: "CA/B Forum SC-081 takes effect March 15. TLS certificate lifetimes drop to 200 days, then 100, then 47. Here's what changes, why certbot isn't enough, and how KrakenKey keeps you ahead of it."
-pubDate: 2026-03-10
+title: "The 200-Day TLS Era Is Here — And It's Just the Beginning"
+description: "CA/B Forum SC-081 is now in effect. TLS certificate lifetimes have dropped to 200 days, then 100, then 47. Here's what changed, why certbot isn't enough, and how KrakenKey keeps you ahead of it."
+pubDate: 2026-03-27
 author: "KrakenKey Team"
 tags: ["certificates", "compliance", "automation", "SC-081v3", "lets-encrypt"]
 draft: false
@@ -9,9 +9,9 @@ draft: false
 
 For the last decade, TLS certificates lasted up to 398 days. You'd issue a cert, set a reminder, maybe set up a cron job, and move on. Most years, that worked.
 
-That era ends in five days.
+That era is over.
 
-CA/B Forum Ballot SC-081 takes effect March 15, 2026. Any TLS certificate issued after that date has a maximum lifetime of **200 days** — roughly 6.5 months. What took one renewal per year now requires two. And this is not the last change.
+CA/B Forum Ballot SC-081 took effect on March 15, 2026. Any TLS certificate issued since that date has a maximum lifetime of **200 days** — roughly 6.5 months. What took one renewal per year now requires two. And this is not the last change.
 
 | Date | Max Lifetime | Renewals/Year |
 |------|-------------|---------------|
@@ -113,9 +113,9 @@ On the other end, Certbot and cert-manager are free and excellent — but they'r
 
 There's nothing in between.
 
-That gap matters more every year. The 200-day deadline next Sunday doubles renewal frequency. The 100-day deadline in 2027 doubles it again. By the time certs are 47 days in 2029, organizations that haven't automated their certificate lifecycle will be firefighting renewals full-time.
+That gap matters more every year. The 200-day deadline that took effect March 15 doubles renewal frequency. The 100-day deadline in 2027 doubles it again. By the time certs are 47 days in 2029, organizations that haven't automated their certificate lifecycle will be firefighting renewals full-time.
 
-The right time to get certificate automation in place is before you need it. March 15 is the forcing function.
+The right time to get certificate automation in place is now — before the next deadline hits.
 
 ---
 
@@ -126,3 +126,5 @@ The right time to get certificate automation in place is before you need it. Mar
 ---
 
 *Stack: NestJS · React · PostgreSQL · BullMQ · Let's Encrypt ACME · Cloudflare DNS · Terraform — [View on GitHub](https://github.com/krakenkey/krakenkey)*
+
+*Last updated: March 27, 2026*
