@@ -6,27 +6,27 @@ import CTA from '../components/CTA.astro';
 const faqItems = [
   {
     question: 'What does KrakenKey do?',
-    answer: 'KrakenKey automates TLS certificate issuance via Let\'s Encrypt. One-time setup per domain: add two DNS records (a TXT record to verify ownership and a CNAME to delegate ACME challenges to KrakenKey). After that, submit a Certificate Signing Request through the dashboard or REST API and your certificate is issued in approximately 4 minutes — no further DNS work needed.',
+    answer: 'KrakenKey automates TLS certificate lifecycle management — issuance, renewal, monitoring, and revocation. Issue certificates via Let\'s Encrypt in ~4 minutes through the dashboard, REST API, or CLI. Monitor your TLS endpoints from distributed probes to catch expiring certs, broken chains, and misconfigurations before they cause outages.',
   },
   {
     question: 'Why are certificate lifetimes getting shorter?',
     answer: 'The CA/Browser Forum approved Ballot SC-081v3, which phases TLS certificate maximum lifetimes from 398 days down to 47 days by March 2029. Shorter lifetimes reduce the window of exposure if a key is compromised. This makes automation essential.',
   },
   {
+    question: 'How does endpoint monitoring work?',
+    answer: 'Register any TLS endpoint (host:port) and KrakenKey scans it on a schedule using distributed probes. Each scan performs a real TLS handshake and reports connection health, certificate details, chain validation, and latency. Use our hosted probes for zero-ops monitoring from multiple regions, or run the open-source probe on your own infrastructure for internal services.',
+  },
+  {
     question: 'How does client-side CSR generation work?',
     answer: 'KrakenKey uses the WebCrypto API built into modern browsers to generate your Certificate Signing Request entirely client-side. Your private key is generated in your browser and never leaves your device. Only the CSR (which contains your public key) is sent to our servers.',
   },
   {
-    question: 'What DNS providers do you support?',
-    answer: 'Currently, KrakenKey supports Cloudflare for automated DNS-01 challenge resolution. Support for additional DNS providers is on our roadmap.',
-  },
-  {
-    question: 'Is there a REST API?',
-    answer: 'Yes. Every action available in the dashboard is also available via REST API. You can submit CSRs, check certificate status, and download issued certificates programmatically.',
+    question: 'Is there a REST API and CLI?',
+    answer: 'Yes. Every action available in the dashboard is also available via REST API and the krakenkey CLI. Issue certificates, manage domains, configure endpoint monitoring, and export scan results — all programmatically. AI agent tool definitions are included for automated workflows.',
   },
   {
     question: 'Do I need a paid plan?',
-    answer: 'No. The free tier includes full ACME automation and certificate issuance via Let\'s Encrypt. Starter ($29/mo) adds more domains, auto-renewal, and expiry alerts. Team ($79/mo) adds organizations with role-based access control.',
+    answer: 'No. The free tier includes ACME automation, certificate issuance, and 3 monitored endpoints with connected probes. Starter ($29/mo) adds 10 endpoints, 2 hosted probe regions, auto-renewal, and expiry alerts. Team ($79/mo) adds 50 endpoints, 5 hosted regions, organizations with RBAC, and 5-minute scan intervals.',
   },
 ];
 ---
@@ -73,9 +73,13 @@ const faqItems = [
             <span class="pricing-feature-check">&#10003;</span>
             REST API &amp; web dashboard
           </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            3 monitored endpoints (connected probes)
+          </li>
         </ul>
-        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Get Started Free</a>
         <p class="pricing-cta-note">No credit card required</p>
+        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Get Started Free</a>
       </div>
 
       <!-- Starter Tier -->
@@ -102,6 +106,10 @@ const faqItems = [
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
             Double API rate limits
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            10 endpoints, 2 hosted probe regions
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
@@ -134,6 +142,10 @@ const faqItems = [
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
             Higher rate limits (300 reads/min)
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            50 endpoints, 5 hosted regions, 5-min scans
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>

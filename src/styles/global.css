@@ -220,6 +220,8 @@ ul, ol {
 
 /* ===== Cards ===== */
 .card {
+  display: flex;
+  flex-direction: column;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -318,6 +320,10 @@ ul, ol {
 .pricing-feature-check {
   color: var(--color-accent);
   flex-shrink: 0;
+}
+
+.card > .btn-full {
+  margin-top: auto;
 }
 
 .pricing-cta-note {
@@ -566,6 +572,11 @@ ul, ol {
   font-weight: 500;
   font-size: 0.9375rem;
   transition: color 0.2s;
+}
+
+.header-nav a.btn {
+  font-size: 1rem;
+  color: var(--color-bg);
 }
 
 .header-nav a:hover,
