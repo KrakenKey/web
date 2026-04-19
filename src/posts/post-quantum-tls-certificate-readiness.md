@@ -121,11 +121,11 @@ We built KrakenKey because we believe certificate management should be automated
 
 ## Resources
 
-- [NIST IR 8547: Transition to Post-Quantum Cryptography](https://csrc.nist.gov/pubs/ir/8547/final)
+- [NIST IR 8547: Transition to Post-Quantum Cryptography Standards](https://csrc.nist.gov/pubs/ir/8547/ipd)
 - [FIPS 204: ML-DSA (Module-Lattice-Based Digital Signature Algorithm)](https://csrc.nist.gov/pubs/fips/204/final)
-- [CA/Browser Forum Ballot SC-081: Certificate Lifetime Reduction](https://cabforum.org/2025/04/11/ballot-sc-081v3-introduce-schedule-of-reducing-validity-and-data-reuse-periods/)
+- [CA/Browser Forum Ballot SC-081: Certificate Lifetime Reduction](https://cabforum.org/2025/04/11/ballot-sc081v3-introduce-schedule-of-reducing-validity-and-data-reuse-periods/)
 - [KrakenKey: Free Certificate Lifecycle Management](https://krakenkey.io)
 
 [**Start automating your certificates today. Free at krakenkey.io.**](https://krakenkey.io)
 
-_KrakenKey is free for individuals and open-source projects. No credit card required._
+_Get started on the free tier. No credit card required._

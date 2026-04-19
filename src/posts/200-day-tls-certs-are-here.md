@@ -48,7 +48,7 @@ That's the gap KrakenKey fills.
 
 ## What We Built
 
-KrakenKey is certificate lifecycle management for developers and teams. Free for individuals and open-source projects. Paid plans for teams that need more.
+KrakenKey is certificate lifecycle management for developers and teams. Get started on the free tier, with paid plans for teams that need more.
 
 ### Issue certificates without server access
 
@@ -121,7 +121,7 @@ The right time to get certificate automation in place is now — before the next
 
 [**Sign up free at app.krakenkey.io →**](https://app.krakenkey.io)
 
-*KrakenKey is free for individuals and open-source projects. No credit card required.*
+*Get started on the free tier. No credit card required.*
 
 ---
 
