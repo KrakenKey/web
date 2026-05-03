@@ -63,11 +63,13 @@ import CTA from '../components/CTA.astro';
           <div id="result-conn" class="result-details"></div>
         </div>
 
-        <div class="card result-card">
+        <div class="card result-card result-chain">
           <h3 class="result-card-title">Chain &amp; Trust</h3>
           <div id="result-chain" class="result-details"></div>
         </div>
       </div>
+
+      <p id="scan-timestamp" class="scan-timestamp"></p>
 
       <div class="scanner-upsell">
         <div class="upsell-grid">
@@ -206,9 +208,21 @@ import CTA from '../components/CTA.astro';
     const certEl = document.getElementById('result-cert');
     const cert = data.certificate;
     if (cert) {
+      let sansHtml = '';
+      if (cert.sans && cert.sans.length) {
+        const MAX_SANS = 5;
+        const visible = cert.sans.slice(0, MAX_SANS).map(s => escapeHtml(s)).join(', ');
+        if (cert.sans.length > MAX_SANS) {
+          const hidden = cert.sans.slice(MAX_SANS).map(s => escapeHtml(s)).join(', ');
+          sansHtml = `<div class="result-row result-row--wrap"><span class="result-label">SANs</span><span class="result-value">${visible}<span id="sans-hidden" style="display:none">, ${hidden}</span> <button class="sans-toggle" id="sans-toggle" type="button">+${cert.sans.length - MAX_SANS} more</button></span></div>`;
+        } else {
+          sansHtml = `<div class="result-row result-row--wrap"><span class="result-label">SANs</span><span class="result-value">${visible}</span></div>`;
+        }
+      }
+
       certEl.innerHTML = [
         detail('Subject', cert.subject),
-        cert.sans && cert.sans.length ? detail('SANs', cert.sans.join(', ')) : '',
+        sansHtml,
         detail('Issuer', cert.issuer),
         detail('Not Before', cert.notBefore ? cert.notBefore.split('T')[0] : ''),
         detail('Not After', cert.notAfter ? cert.notAfter.split('T')[0] : ''),
@@ -218,6 +232,20 @@ import CTA from '../components/CTA.astro';
         mono('Serial', cert.serialNumber),
         mono('Fingerprint', cert.fingerprint),
       ].join('');
+
+      const toggle = document.getElementById('sans-toggle');
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const hidden = document.getElementById('sans-hidden')!;
+          if (hidden.style.display === 'none') {
+            hidden.style.display = 'inline';
+            toggle.textContent = 'show less';
+          } else {
+            hidden.style.display = 'none';
+            toggle.textContent = `+${cert.sans.length - 5} more`;
+          }
+        });
+      }
     } else {
       certEl.innerHTML = '<p class="result-empty">No certificate data available</p>';
     }
@@ -244,6 +272,12 @@ import CTA from '../components/CTA.astro';
       ].join('');
     } else {
       chainEl.innerHTML = '<p class="result-empty">No chain data available</p>';
+    }
+
+    if (data.scannedAt) {
+      const ts = document.getElementById('scan-timestamp')!;
+      const d = new Date(data.scannedAt);
+      ts.textContent = `Scanned at ${d.toLocaleString()} from ${data.endpoint.host}`;
     }
 
     results.style.display = 'block';
@@ -292,7 +326,7 @@ import CTA from '../components/CTA.astro';
   });
 </script>
 
-<style>
+<style is:global>
   .scanner-page {
     max-width: 860px;
   }
@@ -501,10 +535,40 @@ import CTA from '../components/CTA.astro';
   .result-value--warning { color: var(--color-warning); }
   .result-value--danger { color: var(--color-danger); }
 
+  .result-row--wrap {
+    flex-wrap: wrap;
+  }
+
   .result-empty {
     color: var(--color-muted);
     font-size: 0.875rem;
     font-style: italic;
+  }
+
+  .result-chain {
+    grid-column: 1 / -1;
+  }
+
+  .sans-toggle {
+    background: none;
+    border: none;
+    color: var(--color-accent);
+    font-size: 0.8125rem;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 0.25rem;
+    font-family: var(--font-sans);
+  }
+
+  .sans-toggle:hover {
+    color: var(--color-accent-hover);
+  }
+
+  .scan-timestamp {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    margin-bottom: var(--space-2xl);
   }
 
   .upsell-grid {
