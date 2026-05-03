@@ -17,7 +17,7 @@ import CTA from '../components/CTA.astro';
     </div>
 
     <div class="scanner-form-container">
-      <form id="scan-form" class="scanner-form">
+      <form id="scan-form" class="scanner-form" data-api-url={import.meta.env.PUBLIC_API_URL || 'https://api.krakenkey.io'}>
         <div class="scanner-input-group">
           <input
             type="text"
@@ -94,14 +94,15 @@ import CTA from '../components/CTA.astro';
 
   <CTA />
 
-<script is:inline define:vars={{ apiUrl: import.meta.env.PUBLIC_API_URL || 'https://api.krakenkey.io' }}>
-  const form = document.getElementById('scan-form');
-  const input = document.getElementById('hostname');
-  const btn = document.getElementById('scan-btn');
-  const loading = document.getElementById('scan-loading');
-  const loadingHost = document.getElementById('scan-loading-host');
-  const results = document.getElementById('scan-results');
-  const errorEl = document.getElementById('scan-error');
+<script>
+  const form = document.getElementById('scan-form') as HTMLFormElement;
+  const apiUrl = form.dataset.apiUrl!;
+  const input = document.getElementById('hostname') as HTMLInputElement;
+  const btn = document.getElementById('scan-btn') as HTMLButtonElement;
+  const loading = document.getElementById('scan-loading')!;
+  const loadingHost = document.getElementById('scan-loading-host')!;
+  const results = document.getElementById('scan-results')!;
+  const errorEl = document.getElementById('scan-error')!;
 
   function escapeHtml(str) {
     const div = document.createElement('div');
