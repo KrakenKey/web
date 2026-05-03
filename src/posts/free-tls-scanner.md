@@ -78,6 +78,6 @@ This is v1 of the scanner. We want to know:
 - Would you use an API endpoint for this in CI/CD?
 - Would a CLI flag like `krakenkey scan example.com` be useful?
 
-Email us at [feedback@krakenkey.io](mailto:feedback@krakenkey.io?subject=TLS Scanner Feedback) or open an issue on [GitHub](https://github.com/krakenkey/probe/issues). Every piece of feedback directly shapes what we build next.
+Email us at <a href="mailto:feedback@krakenkey.io?subject=TLS Scanner Feedback">feedback@krakenkey.io</a> or open an issue on [GitHub](https://github.com/krakenkey/probe/issues). Every piece of feedback directly shapes what we build next.
 
 [Try the scanner now →](/scanner)
