@@ -1,0 +1,550 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import CTA from '../components/CTA.astro';
+---
+
+<PageLayout
+  title="Free TLS Scanner — Check Any Certificate Instantly"
+  description="Scan any TLS endpoint for free. Certificate details, chain validation, cipher suites, and trust status in seconds. No signup required. Powered by KrakenKey's open-source probe."
+>
+  <div class="section-container scanner-page">
+    <div class="section-header">
+      <h1 class="section-title section-title--xl">Free TLS Scanner</h1>
+      <p class="section-subtitle">
+        Check any site's TLS configuration instantly. No signup required.<br />
+        Powered by the same <a href="https://github.com/krakenkey/probe" target="_blank" rel="noopener noreferrer">open-source probe</a> you can self-host.
+      </p>
+    </div>
+
+    <div class="scanner-form-container">
+      <form id="scan-form" class="scanner-form">
+        <div class="scanner-input-group">
+          <input
+            type="text"
+            id="hostname"
+            class="scanner-input"
+            placeholder="example.com"
+            autocomplete="off"
+            spellcheck="false"
+            required
+          />
+          <button type="submit" id="scan-btn" class="btn btn-primary btn-scan">
+            Scan
+          </button>
+        </div>
+        <p class="scanner-hint">Enter a hostname (e.g. <code>github.com</code>, <code>api.stripe.com</code>). Port 443 is used by default.</p>
+      </form>
+    </div>
+
+    <div id="scan-error" class="scanner-error" style="display:none"></div>
+
+    <div id="scan-loading" class="scanner-loading" style="display:none">
+      <div class="scanner-spinner"></div>
+      <p>Scanning <span id="scan-loading-host"></span>...</p>
+    </div>
+
+    <div id="scan-results" style="display:none">
+      <div class="results-grid">
+        <div class="card result-card result-health" id="result-health">
+          <div class="result-card-header">
+            <h3>Overall Health</h3>
+            <span id="health-badge" class="health-badge"></span>
+          </div>
+          <div id="health-summary" class="result-summary"></div>
+        </div>
+
+        <div class="card result-card">
+          <h3 class="result-card-title">Certificate</h3>
+          <div id="result-cert" class="result-details"></div>
+        </div>
+
+        <div class="card result-card">
+          <h3 class="result-card-title">Connection</h3>
+          <div id="result-conn" class="result-details"></div>
+        </div>
+
+        <div class="card result-card">
+          <h3 class="result-card-title">Chain &amp; Trust</h3>
+          <div id="result-chain" class="result-details"></div>
+        </div>
+      </div>
+
+      <div class="scanner-upsell">
+        <div class="upsell-grid">
+          <div class="card card--compact">
+            <h4 class="card-title">Want continuous monitoring?</h4>
+            <p class="card-description">KrakenKey monitors your endpoints 24/7 from multiple regions. Get alerts before certificates expire or chains break.</p>
+            <a href="https://app.krakenkey.io" class="btn btn-primary btn-full" style="margin-top: var(--space-md)">Start Free</a>
+          </div>
+          <div class="card card--compact">
+            <h4 class="card-title">Self-host our probe</h4>
+            <p class="card-description">This scanner runs on our open-source probe. Run it behind your firewall in standalone mode — unlimited endpoints, no account needed.</p>
+            <a href="https://github.com/krakenkey/probe" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-full" style="margin-top: var(--space-md)">View on GitHub</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scanner-feedback">
+      <h3>Help us improve</h3>
+      <p>This scanner is new. What's missing? What would make you come back?</p>
+      <a href="mailto:feedback@krakenkey.io?subject=TLS Scanner Feedback" class="btn btn-outline">Send Feedback</a>
+    </div>
+  </div>
+
+  <CTA />
+</PageLayout>
+
+<script is:inline define:vars={{ apiUrl: import.meta.env.PUBLIC_API_URL || 'https://api.krakenkey.io' }}>
+  const form = document.getElementById('scan-form');
+  const input = document.getElementById('hostname');
+  const btn = document.getElementById('scan-btn');
+  const loading = document.getElementById('scan-loading');
+  const loadingHost = document.getElementById('scan-loading-host');
+  const results = document.getElementById('scan-results');
+  const errorEl = document.getElementById('scan-error');
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function parseHostname(raw) {
+    let val = raw.trim();
+    val = val.replace(/^https?:\/\//, '');
+    val = val.replace(/\/.*$/, '');
+
+    let host = val;
+    let port = undefined;
+
+    const bracketMatch = val.match(/^\[([^\]]+)\]:(\d+)$/);
+    if (bracketMatch) {
+      host = bracketMatch[1];
+      port = parseInt(bracketMatch[2], 10);
+    } else if (val.includes(':') && !val.includes('[')) {
+      const lastColon = val.lastIndexOf(':');
+      const maybPort = parseInt(val.slice(lastColon + 1), 10);
+      if (!isNaN(maybPort) && maybPort > 0 && maybPort <= 65535) {
+        host = val.slice(0, lastColon);
+        port = maybPort;
+      }
+    }
+
+    return { hostname: host, port };
+  }
+
+  function detail(label, value, cls) {
+    if (value === undefined || value === null || value === '') return '';
+    const extraClass = cls ? ` ${cls}` : '';
+    return `<div class="result-row"><span class="result-label">${escapeHtml(label)}</span><span class="result-value${extraClass}">${escapeHtml(String(value))}</span></div>`;
+  }
+
+  function mono(label, value) {
+    if (!value) return '';
+    return `<div class="result-row"><span class="result-label">${escapeHtml(label)}</span><span class="result-value result-mono">${escapeHtml(value)}</span></div>`;
+  }
+
+  function healthColor(data) {
+    if (!data.connection.success) return 'danger';
+    const cert = data.certificate;
+    if (!cert) return 'danger';
+    if (!cert.trusted) return 'danger';
+    if (cert.daysUntilExpiry <= 0) return 'danger';
+    if (cert.daysUntilExpiry <= 7) return 'danger';
+    if (cert.daysUntilExpiry <= 30) return 'warning';
+    const ver = data.connection.tlsVersion || '';
+    if (ver === 'TLS 1.0' || ver === 'TLS 1.1') return 'warning';
+    return 'success';
+  }
+
+  function healthLabel(color) {
+    if (color === 'success') return 'Healthy';
+    if (color === 'warning') return 'Warning';
+    return 'Critical';
+  }
+
+  function healthSummaryItems(data) {
+    const items = [];
+    if (!data.connection.success) {
+      items.push({ ok: false, text: 'Connection failed: ' + (data.connection.error || 'unknown error') });
+      return items;
+    }
+    const cert = data.certificate;
+    if (!cert) {
+      items.push({ ok: false, text: 'No certificate presented' });
+      return items;
+    }
+    items.push({ ok: cert.trusted, text: cert.trusted ? 'Certificate is trusted' : 'Certificate is NOT trusted' });
+    if (cert.daysUntilExpiry > 30) {
+      items.push({ ok: true, text: `Expires in ${cert.daysUntilExpiry} days` });
+    } else if (cert.daysUntilExpiry > 0) {
+      items.push({ ok: false, text: `Expires in ${cert.daysUntilExpiry} days` });
+    } else {
+      items.push({ ok: false, text: 'Certificate has expired' });
+    }
+    const ver = data.connection.tlsVersion || '';
+    items.push({ ok: ver === 'TLS 1.3' || ver === 'TLS 1.2', text: ver || 'Unknown TLS version' });
+    if (cert.chainComplete !== undefined) {
+      items.push({ ok: cert.chainComplete, text: cert.chainComplete ? 'Chain is complete' : 'Chain is incomplete' });
+    }
+    return items;
+  }
+
+  function renderResults(data) {
+    const color = healthColor(data);
+    const badge = document.getElementById('health-badge');
+    badge.textContent = healthLabel(color);
+    badge.className = `health-badge health-badge--${color}`;
+
+    const summaryEl = document.getElementById('health-summary');
+    const items = healthSummaryItems(data);
+    summaryEl.innerHTML = items
+      .map(i => `<div class="health-item health-item--${i.ok ? 'ok' : 'bad'}">${i.ok ? '&#10003;' : '&#10007;'} ${escapeHtml(i.text)}</div>`)
+      .join('');
+
+    const certEl = document.getElementById('result-cert');
+    const cert = data.certificate;
+    if (cert) {
+      certEl.innerHTML = [
+        detail('Subject', cert.subject),
+        cert.sans && cert.sans.length ? detail('SANs', cert.sans.join(', ')) : '',
+        detail('Issuer', cert.issuer),
+        detail('Not Before', cert.notBefore ? cert.notBefore.split('T')[0] : ''),
+        detail('Not After', cert.notAfter ? cert.notAfter.split('T')[0] : ''),
+        detail('Days Until Expiry', cert.daysUntilExpiry, cert.daysUntilExpiry <= 30 ? 'result-value--warning' : ''),
+        detail('Key', cert.keyType && cert.keySize ? `${cert.keyType} ${cert.keySize}-bit` : ''),
+        detail('Signature', cert.signatureAlgorithm),
+        mono('Serial', cert.serialNumber),
+        mono('Fingerprint', cert.fingerprint),
+      ].join('');
+    } else {
+      certEl.innerHTML = '<p class="result-empty">No certificate data available</p>';
+    }
+
+    const connEl = document.getElementById('result-conn');
+    const conn = data.connection;
+    connEl.innerHTML = [
+      detail('Status', conn.success ? 'Connected' : 'Failed', conn.success ? 'result-value--success' : 'result-value--danger'),
+      conn.error ? detail('Error', conn.error, 'result-value--danger') : '',
+      detail('TLS Version', conn.tlsVersion,
+        conn.tlsVersion === 'TLS 1.3' ? 'result-value--success' :
+        conn.tlsVersion === 'TLS 1.2' ? '' : 'result-value--warning'),
+      mono('Cipher Suite', conn.cipherSuite),
+      detail('OCSP Stapled', conn.ocspStapled ? 'Yes' : 'No'),
+      detail('Latency', conn.latencyMs !== undefined ? `${conn.latencyMs}ms` : ''),
+    ].join('');
+
+    const chainEl = document.getElementById('result-chain');
+    if (cert) {
+      chainEl.innerHTML = [
+        detail('Chain Depth', cert.chainDepth),
+        detail('Chain Complete', cert.chainComplete ? 'Yes' : 'No', cert.chainComplete ? 'result-value--success' : 'result-value--danger'),
+        detail('Trusted', cert.trusted ? 'Yes' : 'No', cert.trusted ? 'result-value--success' : 'result-value--danger'),
+      ].join('');
+    } else {
+      chainEl.innerHTML = '<p class="result-empty">No chain data available</p>';
+    }
+
+    results.style.display = 'block';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const raw = input.value;
+    if (!raw.trim()) return;
+
+    const { hostname, port } = parseHostname(raw);
+
+    errorEl.style.display = 'none';
+    results.style.display = 'none';
+    loading.style.display = 'flex';
+    loadingHost.textContent = hostname;
+    btn.disabled = true;
+    btn.textContent = 'Scanning...';
+
+    try {
+      const body = { hostname };
+      if (port) body.port = port;
+
+      const resp = await fetch(`${apiUrl}/public-scan`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.message || `Scan failed (${resp.status})`);
+      }
+
+      const data = await resp.json();
+      loading.style.display = 'none';
+      renderResults(data);
+    } catch (err) {
+      loading.style.display = 'none';
+      errorEl.textContent = err.message || 'Something went wrong. Please try again.';
+      errorEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Scan';
+    }
+  });
+</script>
+
+<style>
+  .scanner-page {
+    max-width: 860px;
+  }
+
+  .scanner-form-container {
+    margin-bottom: var(--space-xl);
+  }
+
+  .scanner-input-group {
+    display: flex;
+    gap: var(--space-sm);
+    max-width: 600px;
+    margin-inline: auto;
+  }
+
+  .scanner-input {
+    flex: 1;
+    padding: 0.875rem 1.25rem;
+    font-size: 1.0625rem;
+    font-family: var(--font-mono);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .scanner-input:focus {
+    border-color: var(--color-accent);
+    box-shadow: var(--focus-ring);
+  }
+
+  .scanner-input::placeholder {
+    color: var(--color-muted);
+    opacity: 0.6;
+  }
+
+  .btn-scan {
+    padding: 0.875rem 2rem;
+    font-size: 1.0625rem;
+    white-space: nowrap;
+  }
+
+  .btn-scan:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .scanner-hint {
+    text-align: center;
+    margin-top: var(--space-sm);
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+  }
+
+  .scanner-hint code {
+    font-family: var(--font-mono);
+    background-color: var(--color-surface);
+    padding: 0.1rem 0.35rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8125rem;
+  }
+
+  .scanner-error {
+    max-width: 600px;
+    margin: 0 auto var(--space-xl);
+    padding: var(--space-md) var(--space-lg);
+    background-color: var(--color-danger-surface);
+    border: 1px solid var(--color-danger);
+    border-radius: var(--radius-md);
+    color: var(--color-danger);
+    text-align: center;
+  }
+
+  .scanner-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-2xl) 0;
+    color: var(--color-muted);
+  }
+
+  .scanner-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .result-health {
+    grid-column: 1 / -1;
+  }
+
+  .result-card {
+    padding: var(--space-lg) !important;
+  }
+
+  .result-card:hover {
+    transform: none;
+  }
+
+  .result-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+  }
+
+  .result-card-header h3,
+  .result-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+  }
+
+  .result-card-header h3 {
+    margin-bottom: 0;
+  }
+
+  .health-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .health-badge--success {
+    background-color: var(--color-success-surface);
+    color: var(--color-success);
+    border: 1px solid var(--color-success);
+  }
+
+  .health-badge--warning {
+    background-color: var(--color-warning-surface);
+    color: var(--color-warning);
+    border: 1px solid var(--color-warning);
+  }
+
+  .health-badge--danger {
+    background-color: var(--color-danger-surface);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger);
+  }
+
+  .health-item {
+    padding: 0.25rem 0;
+    font-size: 0.9375rem;
+  }
+
+  .health-item--ok {
+    color: var(--color-success);
+  }
+
+  .health-item--bad {
+    color: var(--color-danger);
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.375rem 0;
+    border-bottom: 1px solid var(--color-border);
+    gap: var(--space-md);
+  }
+
+  .result-row:last-child {
+    border-bottom: none;
+  }
+
+  .result-label {
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    flex-shrink: 0;
+  }
+
+  .result-value {
+    font-size: 0.8125rem;
+    color: var(--color-text);
+    text-align: right;
+    word-break: break-all;
+  }
+
+  .result-mono {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .result-value--success { color: var(--color-success); }
+  .result-value--warning { color: var(--color-warning); }
+  .result-value--danger { color: var(--color-danger); }
+
+  .result-empty {
+    color: var(--color-muted);
+    font-size: 0.875rem;
+    font-style: italic;
+  }
+
+  .upsell-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+
+  .scanner-upsell {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .scanner-feedback {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-lg);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .scanner-feedback h3 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .scanner-feedback p {
+    color: var(--color-muted);
+    margin-bottom: var(--space-lg);
+  }
+
+  @media (max-width: 768px) {
+    .scanner-input-group {
+      flex-direction: column;
+    }
+
+    .results-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .upsell-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
