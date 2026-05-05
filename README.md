@@ -23,7 +23,7 @@ This repo contains the public-facing website for [KrakenKey](https://krakenkey.i
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+|-------|----------|
 | Framework | [Astro 5](https://astro.build) (static output) |
 | Styling | Custom CSS with design tokens (CSS variables) |
 | Fonts | Inter (sans), JetBrains Mono (mono) — loaded via Google Fonts |
@@ -62,6 +62,7 @@ web/
 │   │   ├── index.astro            # Home page
 │   │   ├── pricing.astro          # Plans, FAQ
 │   │   ├── getting-started.astro  # Step-by-step setup guide
+│   │   ├── scanner.astro          # Free TLS scanner
 │   │   ├── terms.astro            # Terms of service
 │   │   ├── privacy.astro          # Privacy policy
 │   │   ├── 404.astro              # Custom 404
@@ -72,7 +73,8 @@ web/
 │   │       └── api.astro          # Interactive API reference (Scalar)
 │   ├── posts/                     # Blog content (Markdown)
 │   │   ├── introducing-krakenkey.md
-│   │   └── 200-day-tls-certs-are-here.md
+│   │   ├── 200-day-tls-certs-are-here.md
+│   │   └── free-tls-scanner.md
 │   ├── styles/
 │   │   └── global.css             # Design tokens, reset, typography
 │   └── content.config.ts          # Astro content collection config
@@ -124,6 +126,7 @@ If you're working from the [main KrakenKey repo](https://github.com/krakenkey/kr
 | `/` | Home — hero, features, how it works, regulation timeline, CTA |
 | `/pricing` | Plans (Free, Starter, Team) with feature comparison and FAQ |
 | `/getting-started` | Step-by-step guide with DNS setup and API examples |
+| `/scanner` | Free TLS scanner — enter any public hostname to inspect its certificate chain, trust, and TLS configuration |
 | `/blog` | Blog listing page |
 | `/blog/:slug` | Individual blog posts (rendered from Markdown) |
 | `/docs/api` | Interactive API reference powered by Scalar + OpenAPI spec |
@@ -154,6 +157,7 @@ The site is deployed to **Cloudflare Pages** as a fully static site.
 - HTML pages use `max-age=0, must-revalidate` so deploys are picked up instantly
 - Security headers (CSP, X-Frame-Options, etc.) are configured in [`public/_headers`](public/_headers)
 - The `/docs/api` page has a relaxed CSP to allow the Scalar API reference viewer
+- The `/scanner` and `/scanner/` paths set a dedicated CSP that adds `api.krakenkey.io` to `connect-src` so the scanner page can call the public scan API. Cloudflare Pages enforces **all** matching header rules simultaneously, so both the global CSP and the path-level CSP must permit the required origins — the global `connect-src` includes `api.krakenkey.io` for this reason.
 
 ## Design System
 
