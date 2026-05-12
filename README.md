@@ -18,7 +18,7 @@
 
 ## Overview
 
-This repo contains the public-facing website for [KrakenKey](https://krakenkey.io), an automated TLS certificate management platform. It includes the marketing pages, blog, pricing, getting started guide, and interactive API documentation.
+This repo contains the public-facing website for [KrakenKey](https://krakenkey.io), an automated TLS certificate management platform. It includes the marketing pages, blog, pricing, getting started guide, interactive API documentation, and the free TLS scanner.
 
 ## Tech Stack
 
@@ -37,9 +37,10 @@ This repo contains the public-facing website for [KrakenKey](https://krakenkey.i
 web/
 ├── public/
 │   ├── openapi.json          # OpenAPI 3.0 spec served to Scalar viewer
-│   ├── _headers              # Cloudflare Pages security + cache headers
+│   ├── _headers              # Cloudflare Pages security + cache headers (CSP, caching)
 │   ├── robots.txt
 │   ├── scalar-init.js        # Scalar API reference initialization
+│   ├── scanner.js            # External scanner script (loaded by scanner.astro)
 │   ├── favicon.svg
 │   └── og-image.png
 ├── src/
@@ -62,6 +63,7 @@ web/
 │   │   ├── index.astro            # Home page
 │   │   ├── pricing.astro          # Plans, FAQ
 │   │   ├── getting-started.astro  # Step-by-step setup guide
+│   │   ├── scanner.astro          # Free TLS scanner
 │   │   ├── terms.astro            # Terms of service
 │   │   ├── privacy.astro          # Privacy policy
 │   │   ├── 404.astro              # Custom 404
@@ -72,7 +74,11 @@ web/
 │   │       └── api.astro          # Interactive API reference (Scalar)
 │   ├── posts/                     # Blog content (Markdown)
 │   │   ├── introducing-krakenkey.md
-│   │   └── 200-day-tls-certs-are-here.md
+│   │   ├── 200-day-tls-certs-are-here.md
+│   │   ├── ai-agents-cert-management.md
+│   │   ├── endpoint-monitoring.md
+│   │   ├── post-quantum-tls-certificate-readiness.md
+│   │   └── free-tls-scanner.md
 │   ├── styles/
 │   │   └── global.css             # Design tokens, reset, typography
 │   └── content.config.ts          # Astro content collection config
@@ -124,6 +130,7 @@ If you're working from the [main KrakenKey repo](https://github.com/krakenkey/kr
 | `/` | Home — hero, features, how it works, regulation timeline, CTA |
 | `/pricing` | Plans (Free, Starter, Team) with feature comparison and FAQ |
 | `/getting-started` | Step-by-step guide with DNS setup and API examples |
+| `/scanner` | Free TLS scanner — submit a host and get full certificate details |
 | `/blog` | Blog listing page |
 | `/blog/:slug` | Individual blog posts (rendered from Markdown) |
 | `/docs/api` | Interactive API reference powered by Scalar + OpenAPI spec |
@@ -154,6 +161,10 @@ The site is deployed to **Cloudflare Pages** as a fully static site.
 - HTML pages use `max-age=0, must-revalidate` so deploys are picked up instantly
 - Security headers (CSP, X-Frame-Options, etc.) are configured in [`public/_headers`](public/_headers)
 - The `/docs/api` page has a relaxed CSP to allow the Scalar API reference viewer
+
+### CSP — Cloudflare Pages `_headers` behaviour
+
+Cloudflare Pages enforces **all** matching `_headers` rules simultaneously, not just the most-specific match. A page-level CSP for `/scanner` is combined with the global CSP — any domain needed by the scanner (e.g., `api.krakenkey.io` for `connect-src`) must also be present in the **global** CSP entry, not only the page-level rule. Keep this in mind when adding new pages that call external APIs: add the required `connect-src` origins to the global `/*` block in `_headers`.
 
 ## Design System
 
