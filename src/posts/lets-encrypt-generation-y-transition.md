@@ -4,7 +4,7 @@ description: "On May 8, Let's Encrypt stopped issuing certificates for 2.5 hours
 pubDate: 2026-05-13
 author: "KrakenKey Team"
 tags: ["lets-encrypt", "pki", "acme", "certificates", "incident", "generation-y"]
-draft: true
+draft: false
 ---
 
 On May 8, 2026, Let's Encrypt halted all certificate issuance at 18:37 UTC after engineers identified a problem with the cross-signed certificate linking their Generation X root to the new Generation Y root. Issuance resumed at 21:03 UTC — roughly 2.5 hours later — via a fallback to the Generation X hierarchy while the cross-signing issue was investigated. Today, May 13, the originally planned transitions complete: the `classic` ACME profile (the default for the vast majority of ACME clients) switches to Generation Y intermediates, and the opt-in `tlsserver` profile begins issuing 45-day certificates.
