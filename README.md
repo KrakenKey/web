@@ -78,7 +78,8 @@ web/
 │   │   ├── ai-agents-cert-management.md
 │   │   ├── endpoint-monitoring.md
 │   │   ├── post-quantum-tls-certificate-readiness.md
-│   │   └── free-tls-scanner.md
+│   │   ├── free-tls-scanner.md
+│   │   └── lets-encrypt-generation-y-transition.md
 │   ├── styles/
 │   │   └── global.css             # Design tokens, reset, typography
 │   └── content.config.ts          # Astro content collection config
