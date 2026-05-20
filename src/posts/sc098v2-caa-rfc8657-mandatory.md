@@ -4,7 +4,7 @@ description: "CA/Browser Forum Ballot SC-098v2 passed on May 13, requiring all p
 pubDate: 2026-05-20
 author: "KrakenKey Team"
 tags: ["caa", "pki", "acme", "cabforum", "rfc8657", "dns"]
-draft: true
+draft: false
 ---
 
 CA/Browser Forum Ballot SC-098v2 passed on May 13, 2026, with 22 of 23 Certificate Issuer votes in favor and unanimous support from the three Certificate Consumer members (Apple, Google, Mozilla). Starting March 15, 2027, every publicly-trusted CA must process the `accounturi` and `validationmethods` parameters defined in RFC 8657 when those parameters appear in a CAA record. CAs that currently ignore these parameters and issue certificates anyway will be out of compliance.
