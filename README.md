@@ -79,7 +79,8 @@ web/
 │   │   ├── endpoint-monitoring.md
 │   │   ├── post-quantum-tls-certificate-readiness.md
 │   │   ├── free-tls-scanner.md
-│   │   └── lets-encrypt-generation-y-transition.md
+│   │   ├── lets-encrypt-generation-y-transition.md
+│   │   └── sc098v2-caa-rfc8657-mandatory.md
 │   ├── styles/
 │   │   └── global.css             # Design tokens, reset, typography
 │   └── content.config.ts          # Astro content collection config
