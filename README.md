@@ -23,7 +23,7 @@ This repo contains the public-facing website for [KrakenKey](https://krakenkey.i
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+|-------|----------|
 | Framework | [Astro 5](https://astro.build) (static output) |
 | Styling | Custom CSS with design tokens (CSS variables) |
 | Fonts | Inter (sans), JetBrains Mono (mono) — loaded via Google Fonts |
@@ -80,7 +80,8 @@ web/
 │   │   ├── post-quantum-tls-certificate-readiness.md
 │   │   ├── free-tls-scanner.md
 │   │   ├── lets-encrypt-generation-y-transition.md
-│   │   └── sc098v2-caa-rfc8657-mandatory.md
+│   │   ├── sc098v2-caa-rfc8657-mandatory.md
+│   │   └── public-ca-eku-separation-june-2026.md
 │   ├── styles/
 │   │   └── global.css             # Design tokens, reset, typography
 │   └── content.config.ts          # Astro content collection config
@@ -88,6 +89,8 @@ web/
 ├── tsconfig.json
 └── package.json
 ```
+
+> **Upcoming:** PR #32 adds `lets-encrypt-merkle-tree-certificates.md` (draft, not yet merged). Update the tree above once merged.
 
 ## Getting Started
 
