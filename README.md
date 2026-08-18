@@ -80,7 +80,8 @@ web/
 │   │   ├── post-quantum-tls-certificate-readiness.md
 │   │   ├── free-tls-scanner.md
 │   │   ├── lets-encrypt-generation-y-transition.md
-│   │   └── sc098v2-caa-rfc8657-mandatory.md
+│   │   ├── sc098v2-caa-rfc8657-mandatory.md
+│   │   └── public-ca-eku-separation-june-2026.md
 │   ├── styles/
 │   │   └── global.css             # Design tokens, reset, typography
 │   └── content.config.ts          # Astro content collection config
@@ -154,6 +155,26 @@ Post content here...
 ```
 
 Astro's content collections handle parsing and validation. Posts are rendered via the `BlogPostLayout` and listed on `/blog` using the `BlogCard` component.
+
+**Published posts** (9 total, newest last in `src/posts/`):
+1. `introducing-krakenkey.md`
+2. `200-day-tls-certs-are-here.md`
+3. `ai-agents-cert-management.md`
+4. `endpoint-monitoring.md`
+5. `post-quantum-tls-certificate-readiness.md`
+6. `free-tls-scanner.md`
+7. `lets-encrypt-generation-y-transition.md`
+8. `sc098v2-caa-rfc8657-mandatory.md`
+9. `public-ca-eku-separation-june-2026.md`
+
+**Upcoming** (open draft PRs, not yet merged):
+- PR #30: CT Transparency post
+- PR #35: `lets-encrypt-merkle-tree-certs-post-quantum.md` (opened 2026-06-24)
+- PR #38: Mozilla Root Store Policy v3.1 / Mass Revocation Planning post (opened 2026-07-08)
+- PR #40: HARICA clientAuth incident / Chrome CP/CPS compliance post (opened 2026-07-22)
+- PR #42: HARICA CP/CPS drift, two mass revocations post (opened 2026-07-29)
+- PR #44: FreeRDP TLS certificate validation bypass (CVE-2026-66402) post (opened 2026-08-05)
+- PR #46: SC100 DNSSEC validation requirements consolidation post (opened 2026-08-12)
 
 ## Deployment
 
