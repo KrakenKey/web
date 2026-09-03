@@ -74,13 +74,23 @@ web/
 │   │       └── api.astro          # Interactive API reference (Scalar)
 │   ├── posts/                     # Blog content (Markdown)
 │   │   ├── introducing-krakenkey.md
-│   │   ├── 200-day-tls-certs-are-here.md
 │   │   ├── ai-agents-cert-management.md
+│   │   ├── 200-day-tls-certs-are-here.md
 │   │   ├── endpoint-monitoring.md
 │   │   ├── post-quantum-tls-certificate-readiness.md
 │   │   ├── free-tls-scanner.md
 │   │   ├── lets-encrypt-generation-y-transition.md
-│   │   └── sc098v2-caa-rfc8657-mandatory.md
+│   │   ├── sc098v2-caa-rfc8657-mandatory.md
+│   │   ├── public-ca-eku-separation-june-2026.md
+│   │   ├── ct-logging-opt-out-ended.md
+│   │   ├── lets-encrypt-merkle-tree-certs-post-quantum.md
+│   │   ├── mozilla-mrsp-v3-1-mass-revocation-planning.md
+│   │   ├── harica-cpcps-drift-mass-revocations-july-2026.md
+│   │   ├── freerdp-tls-certificate-validation-bypass.md
+│   │   ├── sc100-dnssec-validation-clarification.md
+│   │   ├── apache-httpcomponents-async-hostname-verification-cve-2026-71290.md
+│   │   ├── netty-cve-2026-62243-hostname-verification-regression.md
+│   │   └── acme-proof-of-possession-kem-extension.md
 │   ├── styles/
 │   │   └── global.css             # Design tokens, reset, typography
 │   └── content.config.ts          # Astro content collection config
