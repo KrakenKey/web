@@ -99,6 +99,16 @@ web/
 └── package.json
 ```
 
+### Generated files — do not edit by hand
+
+`public/openapi.json` is **generated**, not authored here. It is the OpenAPI spec exported from the [`app`](https://github.com/krakenkey/app) backend and copied into this repo by a workflow in that repo, which opens a `bot/sync-openapi` branch and squash-merges it. The `/docs/api` page renders whatever this file contains via Scalar.
+
+Consequences:
+
+- Edits to `public/openapi.json` in this repo are overwritten by the next sync. Fix the spec at its source — the NestJS decorators in `app`, exported at `/swagger-json`.
+- Sync commits are titled `chore: sync OpenAPI spec from app@<sha>`, which is the record of when the published spec last moved. Commits before 2026-08-31 read `core-int@<sha>` — the app repo's former name.
+- If `/docs/api` looks out of date, check that the sync workflow in `app` is succeeding rather than looking for a problem here. The spec went stale between 2026-05-14 and 2026-08-31 because this repo gained a ruleset requiring pull requests and the sync was still pushing directly to `main`, so every run failed with `GH013` without anything visibly breaking on this side.
+
 ## Getting Started
 
 ### Prerequisites
