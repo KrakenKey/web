@@ -3,7 +3,7 @@ title: "ACME's Persistent DNS Challenge Drops the Plaintext Account URL"
 description: "draft-ietf-acme-dns-persist-02 replaces the accounturi in _validation-persist records with a hash bound to the account key and the domain it sits on. Records provisioned against -01 stop validating, and the value can no longer be templated across a fleet."
 pubDate: 2026-09-23
 author: "KrakenKey Team"
-tags: ["acme", "dns", "pki", "ietf", "dns-persist", "validation"]
+tags: ["acme", "dns", "pki"]
 draft: false
 ---
 
