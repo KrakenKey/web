@@ -13,6 +13,8 @@ SSL.com filed a preliminary incident report on September 11 after its annual Web
 
 The incident is tracked in [Mozilla Bugzilla bug 2071491](https://bugzilla.mozilla.org/show_bug.cgi?id=2071491), whiteboarded `[ca-compliance] [dv-misissuance]`. The cited policies are [TLS Baseline Requirements](https://github.com/cabforum/servercert/blob/main/docs/BR.md) v2.3.0 Section 3.2.2.9 and SSL.com CP/CPS v1.33 Section 3.2.2.13. The preliminary report does not identify which validation method the affected path used; the full incident report is due on or before September 25.
 
+**Update, September 25, 2026:** SSL.com had not yet posted its full incident report to [bug 2071491](https://bugzilla.mozilla.org/show_bug.cgi?id=2071491) as of today's deadline, so the root cause and the affected validation method are still unpublished.
+
 Section 3.2.2.9 arrived with [Ballot SC-067](https://cabforum.org/2024/08/05/ballot-sc067v3-require-domain-validation-and-caa-checks-to-be-performed-from-multiple-network-perspectives-corroboration/) and requires that the domain validation and CAA determinations made by a CA's Primary Network Perspective be corroborated from remote Network Perspectives before issuance. Perspectives count as distinct only when the straight-line distance between them is at least 500 km, results from one perspective cannot be reused or cached by another, and the relied-upon DNS resolvers must fall in the same Regional Internet Registry service region as the perspective using them. The defense it buys is against equally-specific prefix BGP hijacks, where an attacker who can pull traffic for a prefix along one path cannot pull it along all of them.
 
 The requirement is phased, and the current step landed three months ago:
