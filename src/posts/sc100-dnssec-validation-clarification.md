@@ -3,7 +3,7 @@ title: "SC100 Passes: DNSSEC Validation Requirements Move to Section 4.2.2.2"
 description: "CA/Browser Forum Ballot SC100 passed on August 6, consolidating scattered DNSSEC validation language into a single section and clarifying that DNSSEC validation is mandatory only on the Primary Network Perspective. Here's what that means for DNSSEC-signed zones."
 pubDate: 2026-08-12
 author: "KrakenKey Team"
-tags: ["dnssec", "caa", "pki", "cabforum", "dns", "mpic"]
+tags: ["dns", "cabforum"]
 draft: false
 ---
 

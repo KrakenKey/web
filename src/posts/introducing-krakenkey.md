@@ -3,7 +3,7 @@ title: "Introducing KrakenKey: Automated TLS Certificate Management"
 description: "KrakenKey automates TLS certificate issuance for developers. Privacy-first with client-side CSR generation, automated DNS-01 challenges, and certificates issued in ~4 minutes."
 pubDate: 2026-03-18
 author: "KrakenKey Team"
-tags: ["launch", "product", "certificates"]
+tags: ["product", "certificate-lifetimes"]
 draft: false
 ---
 

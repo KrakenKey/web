@@ -3,7 +3,7 @@ title: "Mozilla Root Store Policy v3.1: Mass Revocation Planning Becomes a Trust
 description: "CA/Browser Forum Ballot SC-089 required CAs to build and test a Mass Revocation Plan starting December 2025. Mozilla's Root Store Policy v3.1, effective July 1, folds that requirement into Firefox's trust criteria. Here's what changed and how to check whether your own certificates are revoked before your monitoring notices."
 pubDate: 2026-07-08
 author: "KrakenKey Team"
-tags: ["pki", "mozilla", "root-store", "cabforum", "revocation", "compliance"]
+tags: ["root-programs", "ca-incidents", "cabforum"]
 draft: false
 ---
 

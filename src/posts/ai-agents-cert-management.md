@@ -3,7 +3,7 @@ title: "Your AI Agent Can Manage Your TLS Certificates"
 description: "KrakenKey ships agent-ready API and CLI tool definitions so AI coding agents can issue, renew, and manage TLS certificates autonomously."
 pubDate: 2026-03-25
 author: "KrakenKey Team"
-tags: ["ai", "agents", "automation", "certificates", "cli"]
+tags: ["product", "certificate-lifetimes"]
 draft: false
 ---
 

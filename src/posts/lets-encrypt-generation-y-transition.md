@@ -3,7 +3,7 @@ title: "Let's Encrypt's Generation Y Intermediates Go Live Today"
 description: "On May 8, Let's Encrypt stopped issuing certificates for 2.5 hours due to a cross-signing problem with the new Generation Y root. Today the planned transition completes — here's what changes in your cert chain and what to check."
 pubDate: 2026-05-13
 author: "KrakenKey Team"
-tags: ["lets-encrypt", "pki", "acme", "certificates", "incident", "generation-y"]
+tags: ["lets-encrypt", "acme", "pki"]
 draft: false
 ---
 

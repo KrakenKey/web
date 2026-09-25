@@ -3,7 +3,7 @@ title: "The 200-Day TLS Era Is Here — And It's Just the Beginning"
 description: "CA/B Forum SC-081 is now in effect. TLS certificate lifetimes have dropped to 200 days, then 100, then 47. Here's what changed, why certbot isn't enough, and how KrakenKey keeps you ahead of it."
 pubDate: 2026-03-27
 author: "KrakenKey Team"
-tags: ["certificates", "compliance", "automation", "SC-081v3", "lets-encrypt"]
+tags: ["certificate-lifetimes", "product", "lets-encrypt"]
 draft: false
 ---
 

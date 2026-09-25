@@ -3,7 +3,7 @@ title: "Post-Quantum TLS Is Coming. Every Certificate You Own Will Be Reissued."
 description: "Two forces are converging on certificate management: shrinking lifetimes (47 days by 2029) and mandatory post-quantum migration (by 2035). Here's what that means and how to prepare."
 pubDate: 2026-04-19
 author: "KrakenKey Team"
-tags: ["post-quantum", "certificates", "PQC", "compliance", "NIST", "ML-DSA", "automation"]
+tags: ["post-quantum", "certificate-lifetimes"]
 draft: false
 ---
 

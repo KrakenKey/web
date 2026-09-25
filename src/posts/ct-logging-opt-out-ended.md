@@ -3,7 +3,7 @@ title: "Certificate Transparency Opt-Outs Are Gone"
 description: "DigiCert removed CT logging opt-out options from CertCentral on June 1, 2026. Chrome Root Program Policy v1.8 Section 1.3.4.1 requires all Root Program participants to log precertificates before issuance by June 15. Internal hostnames on public certificates are now permanently visible in CT logs."
 pubDate: 2026-06-03
 author: "KrakenKey Team"
-tags: ["pki", "certificate-transparency", "ct-logs", "chrome", "digicert", "privacy"]
+tags: ["certificate-transparency", "root-programs"]
 draft: false
 ---
 

@@ -3,7 +3,7 @@ title: "We Built a Free TLS Scanner (And Why We're Giving It Away)"
 description: "Scan any TLS endpoint for free — certificate details, chain validation, cipher suites, and trust status in seconds. Here's what it does, how it compares to alternatives, and why it's free."
 pubDate: 2026-05-02
 author: "KrakenKey Team"
-tags: ["product", "scanner", "tls", "open-source"]
+tags: ["product", "monitoring"]
 draft: false
 ---
 
