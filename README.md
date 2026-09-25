@@ -90,7 +90,8 @@ web/
 │   │   ├── sc100-dnssec-validation-clarification.md
 │   │   ├── apache-httpcomponents-async-hostname-verification-cve-2026-71290.md
 │   │   ├── netty-cve-2026-62243-hostname-verification-regression.md
-│   │   └── acme-proof-of-possession-kem-extension.md
+│   │   ├── acme-proof-of-possession-kem-extension.md
+│   │   └── sc104-aia-extension-optional-subscriber-certs.md
 │   ├── styles/
 │   │   └── global.css             # Design tokens, reset, typography
 │   └── content.config.ts          # Astro content collection config
