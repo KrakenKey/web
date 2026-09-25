@@ -3,7 +3,7 @@ title: "Let's Encrypt Picks Merkle Tree Certificates for Post-Quantum TLS"
 description: "On June 3, Let's Encrypt committed to adopting Merkle Tree Certificates as its path to post-quantum web authentication. Here is how MTCs work, why the handshake size math forces the choice, and what ACME operators need to track."
 pubDate: 2026-06-24
 author: "KrakenKey Team"
-tags: ["post-quantum", "pki", "lets-encrypt", "mtc", "acme", "ietf"]
+tags: ["post-quantum", "lets-encrypt", "certificate-transparency"]
 draft: false
 ---
 

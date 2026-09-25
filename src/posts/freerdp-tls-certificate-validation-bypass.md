@@ -3,7 +3,7 @@ title: "FreeRDP's TLS Certificate Validation Bug Is the Null-Prefix Attack, Agai
 description: "CVE-2026-66402 shows FreeRDP accepting mismatched server certificates due to strlen()-based SAN parsing, a CN fallback, and missing iPAddress SAN checks. Fixed in 3.29.0, and it's the same bug class from 2009."
 pubDate: 2026-08-05
 author: "KrakenKey Team"
-tags: ["cve", "tls", "certificate-validation", "freerdp", "cwe-295", "pki"]
+tags: ["cve", "tls"]
 draft: false
 ---
 

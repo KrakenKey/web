@@ -9,7 +9,7 @@ const posts = defineCollection({
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     author: z.string().default('KrakenKey Team'),
-    tags: z.array(z.string()).default([]),
+    tags: z.array(z.enum(['pki', 'tls', 'acme', 'cabforum', 'root-programs', 'ca-incidents', 'certificate-lifetimes', 'post-quantum', 'dns', 'certificate-transparency', 'cve', 'lets-encrypt', 'product', 'engineering', 'release-notes', 'monitoring'])).default([]),
     draft: z.boolean().default(false),
   }),
 });

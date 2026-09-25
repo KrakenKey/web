@@ -3,7 +3,7 @@ title: "Endpoint Monitoring: Know When Your TLS Is Broken Before Your Users Do"
 description: "KrakenKey now monitors your TLS endpoints from multiple regions, catching misconfigurations, expiring certificates, and broken chains before they cause outages."
 pubDate: 2026-04-01
 author: "KrakenKey Team"
-tags: ["product", "monitoring", "tls", "endpoints"]
+tags: ["product", "monitoring"]
 draft: false
 ---
 
@@ -51,10 +51,10 @@ Or via the API:
 
 ```bash
 curl -X POST https://api.krakenkey.io/endpoints/<id>/scan \
-  -H "Authorization: Bearer $API_KEY"
+  -H "Authorization: Bearer ***"
 
 curl https://api.krakenkey.io/endpoints/<id>/results/latest \
-  -H "Authorization: Bearer $API_KEY"
+  -H "Authorization: Bearer ***"
 ```
 
 ### Export Everything

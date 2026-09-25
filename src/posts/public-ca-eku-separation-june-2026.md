@@ -3,7 +3,7 @@ title: "The clientAuth EKU Is Gone from Public TLS Intermediates"
 description: "Sectigo and DigiCert revoked their multi-purpose intermediate CAs on May 15. Chrome's June 15 CCADB deadline arrives in 19 days. Here's what breaks on your next certificate renewal and what needs to move to private PKI."
 pubDate: 2026-05-27
 author: "KrakenKey Team"
-tags: ["pki", "tls", "eku", "digicert", "chrome", "mtls", "certificates"]
+tags: ["root-programs", "ca-incidents", "pki"]
 draft: false
 ---
 

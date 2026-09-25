@@ -3,7 +3,7 @@ title: "SC-098v2 Passes: RFC 8657 CAA Parameters Are Mandatory from March 2027"
 description: "CA/Browser Forum Ballot SC-098v2 passed on May 13, requiring all publicly-trusted CAs to process the accounturi and validationmethods CAA parameters from RFC 8657. Here's what changes operationally."
 pubDate: 2026-05-20
 author: "KrakenKey Team"
-tags: ["caa", "pki", "acme", "cabforum", "rfc8657", "dns"]
+tags: ["dns", "cabforum"]
 draft: false
 ---
 

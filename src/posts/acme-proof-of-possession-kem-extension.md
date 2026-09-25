@@ -3,7 +3,7 @@ title: "ACME's New Proof-of-Possession Extension Drops the CSR for KEM Keys"
 description: "draft-ietf-acme-pop-00 lets ACME clients prove key possession without a PKCS#10 CSR, fixing the fact that ML-KEM keys can't self-sign one. Here's the mechanism and what it means for anyone piloting post-quantum certificates."
 pubDate: 2026-09-02
 author: "KrakenKey Team"
-tags: ["acme", "pki", "post-quantum", "ietf", "ml-kem", "protocol"]
+tags: ["acme", "post-quantum", "pki"]
 draft: false
 ---
 

@@ -3,7 +3,7 @@ title: "Two Mass Revocations in Ten Days: HARICA's CP/CPS Drift Problem"
 description: "HARICA revoked 66,105 certificates for a stale clientAuth EKU on July 20, then forced replacement of every cert issued since March for a missing OCSP AIA pointer on July 25. Both incidents trace to the same root cause: policy documents and issuance systems that stopped agreeing with each other."
 pubDate: 2026-07-29
 author: "KrakenKey Team"
-tags: ["pki", "tls", "incident", "harica", "acme", "ari", "ocsp", "cabforum"]
+tags: ["ca-incidents", "cabforum", "root-programs"]
 draft: false
 ---
 
