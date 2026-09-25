@@ -3,7 +3,7 @@ title: "SSL.com Revoked 2,700 Certificates Over Missing MPIC Evidence"
 description: "An annual WebTrust audit sampled four certificates and found no Multi-Perspective Issuance Corroboration evidence behind their domain validation. The investigation reached 2,700 certificates, all revoked inside 24 hours. The MPIC quorum steps up again on December 15."
 pubDate: 2026-09-16
 author: "KrakenKey Team"
-tags: ["pki", "mpic", "acme", "incident", "ssl-com", "domain-validation", "cabforum"]
+tags: ["ca-incidents", "cabforum", "pki"]
 draft: false
 ---
 
