@@ -66,7 +66,7 @@ For direct integration, every endpoint is available over REST:
 ```bash
 # Issue a certificate
 curl -X POST https://api.krakenkey.io/certs/tls \
-  -H "Authorization: Bearer ***" \
+  -H "Authorization: Bearer $API_KEY" \
   -d '{"csr": "-----BEGIN CERTIFICATE REQUEST..."}'
 
 # Check status
