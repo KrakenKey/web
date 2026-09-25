@@ -51,10 +51,10 @@ Or via the API:
 
 ```bash
 curl -X POST https://api.krakenkey.io/endpoints/<id>/scan \
-  -H "Authorization: Bearer ***"
+  -H "Authorization: Bearer $API_KEY"
 
 curl https://api.krakenkey.io/endpoints/<id>/results/latest \
-  -H "Authorization: Bearer ***"
+  -H "Authorization: Bearer $API_KEY"
 ```
 
 ### Export Everything
