@@ -3,7 +3,7 @@ title: "SC104 Passes: The AIA Extension Is No Longer Mandatory in Subscriber Cer
 description: "CA/Browser Forum Ballot SC104 changes authorityInformationAccess from MUST to SHOULD in TLS subscriber certificates. Two lines of redline, and the practical effect is that AIA chain repair stops being something you can rely on."
 pubDate: 2026-09-09
 author: "KrakenKey Team"
-tags: ["cabforum", "sc104", "aia", "pki", "chain-building", "baseline-requirements"]
+tags: ["cabforum", "pki"]
 draft: false
 ---
 
