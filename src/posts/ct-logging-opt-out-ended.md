@@ -36,7 +36,7 @@ Affected configurations:
 - **VPN concentrators and jump hosts** that have publicly-trusted certificates for user convenience rather than strict PKI requirements
 - **Test and canary certificates** that CAs are also now required to log, meaning certificate hygiene failures (issuance without proper purpose) are permanently visible
 
-The issue is not that logging exposes certificate contents beyond the SANs and issuer metadata -- CT logs do not reveal private keys or private network addresses. But the SAN list, validity period, issuer chain, and issuance timestamp are all public. For organizations doing structured hostname labeling, that is enough.
+The issue is not that logging exposes certificate contents beyond the SANs and issuer metadata — CT logs do not reveal private keys or private network addresses. But the SAN list, validity period, issuer chain, and issuance timestamp are all public. For organizations doing structured hostname labeling, that is enough.
 
 ## Finding what is already logged
 
@@ -69,7 +69,7 @@ This is also useful defensively: if a hostname appears in CT logs that you did n
 
 ## Migrating out of public PKI for internal infrastructure
 
-The correct response to this enforcement is not to avoid CT-logged certificates for internal infrastructure -- that path is now closed for publicly-trusted CAs. The correct response is to stop using public trust anchors for infrastructure that does not require browser trust.
+The correct response to this enforcement is not to avoid CT-logged certificates for internal infrastructure — that path is now closed for publicly-trusted CAs. The correct response is to stop using public trust anchors for infrastructure that does not require browser trust.
 
 Two practical options:
 
@@ -94,4 +94,4 @@ The relevant distinction: a certificate is only required to be CT-logged if it c
 
 Let's Encrypt has never offered CT opt-out. Every certificate issued through Let's Encrypt and therefore every certificate issued through KrakenKey has always been logged to CT. This enforcement does not change anything in KrakenKey's issuance flow.
 
-What it does change is the availability of CT opt-out as a mechanism at other public CAs. Operators who have been managing certificates for internal infrastructure through a commercial CA with opt-out enabled need to act before June 15. The infrastructure migration -- distributing a private CA trust anchor, updating ACME configurations, potentially updating device trust stores -- takes time and should be underway now rather than after the enforcement date.
+What it does change is the availability of CT opt-out as a mechanism at other public CAs. Operators who have been managing certificates for internal infrastructure through a commercial CA with opt-out enabled need to act before June 15. The infrastructure migration — distributing a private CA trust anchor, updating ACME configurations, potentially updating device trust stores — takes time and should be underway now rather than after the enforcement date.
