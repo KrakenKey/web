@@ -7,6 +7,7 @@ scripts/
 *.md
 !README.md
 !src/posts/**/*.md
+!src/docs/**/*.md
 
 # Environment files
 .env
