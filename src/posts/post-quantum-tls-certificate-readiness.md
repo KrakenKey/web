@@ -1,21 +1,21 @@
 ---
 title: "Post-Quantum TLS Is Coming. Every Certificate You Own Will Be Reissued."
-description: "Two forces are converging on certificate management: shrinking lifetimes (47 days by 2029) and mandatory post-quantum migration (by 2035). Here's what that means and how to prepare."
+description: "Two changes are converging on certificate management: shrinking lifetimes (47 days by 2029) and mandatory post-quantum migration (by 2035). What that means for certificate operations and how to prepare."
 pubDate: 2026-04-19
 author: "KrakenKey Team"
 tags: ["post-quantum", "certificate-lifetimes"]
 draft: false
 ---
 
-Last week at Elevate IT in Tampa, a session on post-quantum cryptography put into words something we've been thinking about for a while. The speaker laid out the timeline: NIST has finalized the post-quantum standards, the deprecation clock is ticking, and every organization's TLS certificates will need to migrate to new algorithms. Not eventually. Within the next decade.
+Last week at Elevate IT in Tampa, a session on post-quantum cryptography covered something we've been thinking about for a while. The speaker laid out the timeline: NIST has finalized the post-quantum standards, deprecation dates for classical algorithms are set, and every organization's TLS certificates will need to migrate to new algorithms within the next decade.
 
-We walked out of that talk thinking about how this intersects with the shrinking certificate lifecycle. And the conclusion is uncomfortable: two massive forces are about to hit certificate management at the same time.
+We left that talk thinking about how this intersects with shrinking certificate lifetimes. Both changes will hit certificate management in the same window.
 
-## The Two Forces
+## Two Overlapping Changes
 
-### Force 1: Certificates are expiring faster
+### Certificates are expiring faster
 
-You already know this one if you've been following our work. CA/Browser Forum Ballot SC-081 is shortening TLS certificate lifetimes on a fixed schedule:
+CA/Browser Forum Ballot SC-081 is shortening TLS certificate lifetimes on a fixed schedule:
 
 | Date | Max Lifetime | Renewals/Year |
 |------|-------------|---------------|
@@ -25,7 +25,7 @@ You already know this one if you've been following our work. CA/Browser Forum Ba
 
 By 2029, your certificates expire roughly every six weeks. Domain validation can only be reused for 10 days. At that frequency, manual renewal processes break.
 
-### Force 2: Every certificate will need new algorithms
+### Every certificate will need new algorithms
 
 In August 2024, NIST finalized three post-quantum cryptography standards:
 
@@ -33,23 +33,21 @@ In August 2024, NIST finalized three post-quantum cryptography standards:
 - **ML-DSA** (FIPS 204): Digital signatures. Replaces RSA and ECDSA in certificates.
 - **SLH-DSA** (FIPS 205): Stateless hash-based signatures. A conservative alternative to ML-DSA.
 
-NIST IR 8547 mandates that all quantum-vulnerable cryptographic algorithms, including RSA and ECDSA (the algorithms in virtually every TLS certificate issued today), be deprecated by 2035.
+NIST IR 8547 mandates that all quantum-vulnerable cryptographic algorithms, including RSA and ECDSA (the algorithms in virtually every TLS certificate issued today), be deprecated by 2035. The standards are published and the deprecation timeline is official, so every certificate in your infrastructure will eventually be reissued with quantum-resistant algorithms.
 
-This is not hypothetical. The standards are published. The deprecation timeline is official. Every certificate in your infrastructure will eventually be reissued with quantum-resistant algorithms.
+### Where they overlap
 
-### Why They Compound
+Either change on its own would be manageable. The timelines overlap:
 
-If these were happening at different times, each would be manageable. But they're converging:
+- **2027:** You're renewing certificates 4x per year, and major CAs begin offering post-quantum hybrid certificates.
+- **2028-2029:** You're renewing certificates 8x per year, and you need to start migrating those renewals to PQC algorithms.
+- **2030-2035:** Monthly renewal cycles are the norm, and every remaining classical certificate must be transitioned.
 
-- **2027:** You're renewing certificates 4x per year AND major CAs begin offering post-quantum hybrid certificates.
-- **2028-2029:** You're renewing certificates 8x per year AND you need to start migrating those renewals to PQC algorithms.
-- **2030-2035:** Monthly renewal cycles are the norm AND every remaining classical certificate must be transitioned.
-
-An organization that's still manually managing certificate renewals in 2028 doesn't just have a renewal problem. It has a renewal problem and a cryptographic migration problem. Those compound into an operational crisis.
+An organization still renewing certificates by hand in 2028 will be doing that at 8x per year while also planning a cryptographic migration.
 
 ## What's Actually Changing in Certificates
 
-Post-quantum cryptography changes the mathematical foundations of the signatures and key types in your TLS certificates. Here's the practical translation:
+Post-quantum cryptography changes the mathematical foundations of the signatures and key types in your TLS certificates. In practical terms:
 
 | What You Use Today | What Replaces It | NIST Standard |
 |--------------------|-----------------|---------------|
@@ -57,7 +55,7 @@ Post-quantum cryptography changes the mathematical foundations of the signatures
 | ECDSA P-256/P-384 (certificate signatures) | ML-DSA or SLH-DSA | FIPS 204 / 205 |
 | ECDH / X25519 (key exchange during TLS handshake) | ML-KEM-512/768/1024 | FIPS 203 |
 
-The transition won't be a hard cutover. During the migration period, **hybrid certificates** will contain both a classical signature (RSA or ECDSA) and a post-quantum signature (ML-DSA). Clients that support PQC verify both. Legacy clients verify only the classical signature. This ensures backward compatibility while adding quantum resistance.
+The transition won't be a hard cutover. During the migration period, hybrid certificates will contain both a classical signature (RSA or ECDSA) and a post-quantum signature (ML-DSA). Clients that support PQC verify both. Legacy clients verify only the classical signature. That keeps backward compatibility while adding quantum resistance.
 
 Browsers are already moving. Chrome and Firefox ship X25519+ML-KEM hybrid key exchange today. The TLS handshake already uses PQC for key agreement. The next step is PQC in the certificates themselves, and that depends on CAs issuing hybrid or PQC-native certificates. DigiCert and others already offer test PQC certificates. Production availability is expected in 2027-2028.
 
@@ -65,11 +63,11 @@ Browsers are already moving. Chrome and Firefox ship X25519+ML-KEM hybrid key ex
 
 ### If you manage fewer than 10 certificates
 
-You probably handle renewals manually today, and that's fine for now. But when renewal frequency quadruples (March 2027) and you also need to migrate to new key types, manual processes will struggle. The good news: automating now means you'll barely notice either transition.
+You probably handle renewals manually today, and that's fine for now. But when renewal frequency quadruples (March 2027) and you also need to migrate to new key types, manual processes will struggle. If renewal is automated before then, both transitions become routine renewals.
 
 ### If you manage 10-100 certificates
 
-This is where the compound effect hits hardest. You have enough certificates that manual tracking is already painful, but probably not enough to justify a $50K/year enterprise CLM platform. You need automation at an accessible price point, and you need it to handle algorithm transitions, not just renewals.
+This is where the overlap hurts most. You have enough certificates that manual tracking is already painful, but probably not enough to justify a $50K/year enterprise CLM platform. You need automation at an accessible price point that handles algorithm transitions as well as renewals.
 
 ### If you manage 100+ certificates
 
@@ -77,47 +75,41 @@ You likely already use (or are evaluating) a CLM platform. The question is wheth
 
 ## What We're Building
 
-At KrakenKey, we've been building certificate lifecycle management with automation as the foundation, not a bolt-on feature. Our architecture was designed for a world where certificates are issued, renewed, and replaced frequently. That same architecture positions us well for the PQC transition.
-
-Here's what we're shipping, in phases:
+KrakenKey was designed around automated issuance and renewal, for a world where certificates are issued, renewed and replaced frequently. The PQC transition fits the same model. We're shipping support in phases.
 
 ### Phase 1: PQC Visibility (2026)
 
-You can't migrate what you can't see. We're adding post-quantum readiness detection to our endpoint monitoring:
+Migration starts with an inventory. We're adding post-quantum readiness detection to our endpoint monitoring:
 
 - **Algorithm detection:** When KrakenKey monitors your TLS endpoints, it identifies which key exchange and signature algorithms are in use: classical, hybrid, or PQC.
 - **Quantum vulnerability scoring:** Each monitored endpoint gets a readiness score: Quantum-Vulnerable, Partially Ready (PQC key exchange but classical cert), or Quantum-Ready.
-- **Dashboard view:** See your entire certificate estate's PQC posture at a glance. "42 of 50 endpoints are quantum-vulnerable." Filter, sort, prioritize.
+- **Dashboard view:** See the PQC status of your whole certificate estate in one view (for example, "42 of 50 endpoints are quantum-vulnerable"), then filter and sort to prioritize.
 
-This ships before any CA offers production PQC certificates. You don't need PQC certs to start understanding your exposure.
+This ships before any CA offers production PQC certificates, since measuring exposure doesn't require PQC certs.
 
 ### Phase 2: Stronger Defaults (Early 2027)
 
-We're shifting our default key algorithm recommendation from RSA-2048 to ECDSA P-384. This is not post-quantum, but it is the strongest classical option, produces smaller certificates, and prepares your infrastructure for the key size changes PQC will bring. Every new certificate you issue through KrakenKey will use a stronger algorithm by default.
+We're shifting our default key algorithm recommendation from RSA-2048 to ECDSA P-384. P-384 is not post-quantum, but it is the strongest classical option, produces smaller certificates, and prepares your infrastructure for the key size changes PQC will bring. New certificates issued through KrakenKey will use it by default.
 
-Behind the scenes, we're building PQC key generation into our CLI and agent tooling using production-grade cryptographic libraries.
+In parallel, we're building PQC key generation into our CLI and agent tooling using production-grade cryptographic libraries.
 
 ### Phase 3: Hybrid Certificate Support (Late 2027 - 2028)
 
 When CAs begin offering production hybrid certificates, KrakenKey will support them end-to-end:
 
-- **PQC key generation** in our CLI, deployment agents, and (when browser APIs support it) in-browser CSR generator. Always client-side, always zero-knowledge. Your private keys never touch our servers, whether they're RSA, ECDSA, or ML-DSA.
+- **PQC key generation** in our CLI, deployment agents, and (when browser APIs support it) in-browser CSR generator. Key generation stays client-side: your private keys never touch our servers, whether they're RSA, ECDSA, or ML-DSA.
 - **Hybrid certificate issuance** via ACME or CA partner APIs.
 - **Migration planning tools:** See all your certificates grouped by algorithm. Plan and execute bulk migrations. Renew your RSA-2048 certificates as hybrid or PQC on their next renewal cycle.
 
 ### Phase 4: Automated Migration (2028-2029)
 
-Migration policies that run on autopilot: "On next renewal, upgrade from RSA-2048 to hybrid ML-DSA-65." Gradual rollout with automatic rollback if issues are detected. NIST IR 8547 compliance reporting so you can demonstrate migration progress to auditors.
+Migration policies that apply automatically, such as "On next renewal, upgrade from RSA-2048 to hybrid ML-DSA-65." Gradual rollout with automatic rollback if issues are detected. NIST IR 8547 compliance reporting so you can demonstrate migration progress to auditors.
 
-## The Window Is Now
+## Timing
 
-The biggest mistake organizations make with cryptographic transitions is waiting until the deadline. The transition from SHA-1 to SHA-256 certificates took over a decade and still caused outages when browsers finally enforced it. The PQC transition will be larger. Every certificate. Every algorithm. Every organization.
+The transition from SHA-1 to SHA-256 certificates took over a decade and still caused outages when browsers finally enforced it. The PQC transition is larger, since it touches every certificate. Unlike SHA-1, it comes with a published timeline: the deadlines, algorithms and standards are all final.
 
-But unlike SHA-1, this transition comes with a clear, published timeline. You know the deadlines. You know the algorithms. The standards are final.
-
-The organizations that automate their certificate lifecycle management now, while certificate lifetimes are still 200 days and PQC is still optional, will absorb both transitions as routine renewal operations. Those that wait will face a 2029 where certificates expire monthly, algorithms must change, and there's no time left to automate.
-
-We built KrakenKey because we believe certificate management should be automated, accessible, and ready for what's next. The post-quantum transition is the clearest proof that "what's next" arrives faster than most teams expect.
+The organizations that automate their certificate lifecycle management now, while certificate lifetimes are still 200 days and PQC is still optional, can handle both transitions as routine renewals. Teams that wait will reach 2029 with certificates expiring every six weeks, algorithms to change, and little time left to automate.
 
 ## Resources
 

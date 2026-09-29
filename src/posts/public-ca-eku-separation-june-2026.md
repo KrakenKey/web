@@ -1,6 +1,6 @@
 ---
 title: "The clientAuth EKU Is Gone from Public TLS Intermediates"
-description: "Sectigo and DigiCert revoked their multi-purpose intermediate CAs on May 15. Chrome's June 15 CCADB deadline arrives in 19 days. Here's what breaks on your next certificate renewal and what needs to move to private PKI."
+description: "Sectigo and DigiCert revoked their multi-purpose intermediate CAs on May 15. Chrome's June 15 CCADB deadline arrives in 19 days. What breaks on your next certificate renewal, and what needs to move to private PKI."
 pubDate: 2026-05-27
 author: "KrakenKey Team"
 tags: ["root-programs", "ca-incidents", "pki"]
@@ -22,7 +22,7 @@ Let's Encrypt completed the same structural change with its Generation Y interme
 
 ## Why it matters operationally
 
-Any system using public CA certificates for TLS client authentication is now operating against an expiring window. Certificates with `clientAuth` issued before May 15 from multi-purpose intermediates remain valid until expiry. The break happens on the **next renewal**: the replacement certificate will not have `clientAuth`, and any component that requires it for authentication will fail on the subsequent handshake.
+Any system using public CA certificates for TLS client authentication is now operating against an expiring window. Certificates with `clientAuth` issued before May 15 from multi-purpose intermediates remain valid until expiry. The break happens on the next renewal: the replacement certificate will not have `clientAuth`, and any component that requires it for authentication will fail on the subsequent handshake.
 
 The affected use cases:
 
@@ -31,7 +31,7 @@ The affected use cases:
 - **802.1X network access control** (Cisco ISE, Aruba ClearPass, Microsoft NPS) that relies on public CA certs for device or user authentication
 - **Any code that inspects EKU** on peer certificates, including custom TLS verification in Go (`VerifyPeerCertificate`), Python (`ssl` module), or Java (`X509ExtendedTrustManager`) that checks for `id-kp-clientAuth`
 
-The failure mode is silent on renewal rather than at issuance, which is what makes it operationally dangerous. If your automation renews certificates without post-renewal validation of the resulting certificate's properties, you won't know until something stops authenticating.
+Nothing fails at issuance; the problem only shows up after renewal. If your automation renews certificates without post-renewal validation of the resulting certificate's properties, you won't know until something stops authenticating.
 
 ## Auditing your certificates
 
@@ -81,7 +81,7 @@ X509v3 Extended Key Usage:
 
 ## Migrating client authentication to private PKI
 
-Public CA certificates were never architecturally suited for client authentication at scale. The enforcement just makes the limitation explicit and removes the ability to continue using them even in degraded configurations.
+Public CA certificates were never a good fit for client authentication at scale. The enforcement removes the option of continuing to use them, even in degraded configurations.
 
 For operators who need to migrate:
 

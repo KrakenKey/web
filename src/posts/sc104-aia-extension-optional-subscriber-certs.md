@@ -22,7 +22,7 @@ The IPR Review Period runs September 3 to October 3, 2026. The change lands in t
 
 ## Why it matters operationally
 
-Nothing breaks on the effective date. SHOULD is not MUST NOT, and every major public CA populates `caIssuers` today. What SC104 removes is the guarantee that they always will, and a fair amount of TLS tooling has quietly depended on that guarantee.
+Nothing breaks on the effective date. The extension is still recommended, and every major public CA populates `caIssuers` today. What SC104 removes is the guarantee that they always will, and a fair amount of TLS tooling has quietly depended on that guarantee.
 
 The `caIssuers` URL in a leaf certificate points at the issuing intermediate. That is the repair path for a server that presents an incomplete chain. Clients split cleanly into two groups:
 
@@ -30,9 +30,9 @@ The `caIssuers` URL in a leaf certificate points at the issuing intermediate. Th
 
 **Never fetch AIA:** OpenSSL, Go's `crypto/x509`, and Firefox, which [declined the feature deliberately](https://bugzilla.mozilla.org/show_bug.cgi?id=399324) on the grounds that it rewards misconfigured servers, and instead preloads known intermediates through Remote Settings. Java's PKIX validator is in this group unless you explicitly set `com.sun.security.enableAIAcaIssuers=true`.
 
-That split is the mechanism behind the oldest bug in TLS operations: the site loads fine in a browser on a laptop and fails in curl, in a Go service, and in CI. If CAs begin exercising the new SHOULD, the first group collapses into the second and the failure mode becomes uniform. Uniform is better in the long run, because a broken chain fails everywhere instead of failing only in the places nobody tests. The transition is where the breakage lands, and monitoring that treats "Chrome is happy" as the pass condition will get less forgiving without any change on your side.
+That split explains a long-standing TLS operations bug: the site loads fine in a browser on a laptop and fails in curl, in a Go service, and in CI. If CAs begin exercising the new SHOULD, the first group collapses into the second and the failure mode becomes uniform. That is better in the long run, because a broken chain fails everywhere instead of only in the places nobody tests. The breakage will show up during the transition, and monitoring that treats "Chrome is happy" as the pass condition will start failing without any change on your side.
 
-There is a second-order effect worth checking. BR §7.1.2.11.2 requires `crlDistributionPoints` in subscriber certificates that are not Short-lived and that do not carry an AIA extension with an `id-ad-ocsp` accessMethod. Dropping AIA entirely means dropping `id-ad-ocsp`, so a non-short-lived certificate with no AIA must carry a CRLDP. Revocation checking that parses an OCSP URL out of the leaf needs a CRLDP fallback path.
+There is also a second-order effect to check. BR §7.1.2.11.2 requires `crlDistributionPoints` in subscriber certificates that are not Short-lived and that do not carry an AIA extension with an `id-ad-ocsp` accessMethod. Dropping AIA entirely means dropping `id-ad-ocsp`, so a non-short-lived certificate with no AIA must carry a CRLDP. Revocation checking that parses an OCSP URL out of the leaf needs a CRLDP fallback path.
 
 ## Checking your own certificates
 
@@ -70,10 +70,10 @@ $ openssl verify -CAfile root.pem -untrusted int.pem leaf.pem
 leaf.pem: OK
 ```
 
-Error 20 is what every client in the second group returns when the intermediate is missing and there is no AIA to rescue it. The fix has always been the same: serve the full chain from the server rather than relying on the client to reconstruct it. SC104 just moves that from best practice to the only practice that is guaranteed to work.
+Error 20 is what every client in the second group returns when the intermediate is missing and there is no AIA to rescue it. The fix has always been the same: serve the full chain from the server rather than relying on the client to reconstruct it. After SC104, that is the only approach guaranteed to work with every client.
 
 ## How KrakenKey's approach relates
 
-This doesn't change anything in KrakenKey's flow. We deliver the full chain on issuance and renewal, and whether a given public CA continues to populate `caIssuers` is its decision, not ours. Operators running their own ACME clients should know about it, particularly anyone assembling chain files by hand or pinning deployment scripts to a fixed `fullchain.pem` layout: verify with a client that does not do AIA fetching, because that is the behavior you are actually shipping to.
+This doesn't change anything in KrakenKey's flow. We deliver the full chain on issuance and renewal, and whether a given public CA continues to populate `caIssuers` is up to that CA. Operators running their own ACME clients should know about it, particularly anyone assembling chain files by hand or pinning deployment scripts to a fixed `fullchain.pem` layout: verify with a client that does not do AIA fetching, because that is the behavior you are actually shipping to.
 
 Sources: [Ballot SC104](https://cabforum.org/2026/09/03/ballot-sc104-set-presence-of-aia-extension-to-should-for-subscriber-certificates/), [Baseline Requirements §7.1.2.7](https://github.com/cabforum/servercert/blob/main/docs/BR.md), [RFC 5280 §4.2.2.1](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.2.1).

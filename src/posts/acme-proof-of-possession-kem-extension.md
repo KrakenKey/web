@@ -1,6 +1,6 @@
 ---
 title: "ACME's New Proof-of-Possession Extension Drops the CSR for KEM Keys"
-description: "draft-ietf-acme-pop-00 lets ACME clients prove key possession without a PKCS#10 CSR, fixing the fact that ML-KEM keys can't self-sign one. Here's the mechanism and what it means for anyone piloting post-quantum certificates."
+description: "draft-ietf-acme-pop-00 lets ACME clients prove key possession without a PKCS#10 CSR, which ML-KEM keys can't self-sign. This covers the mechanism and what it means for anyone piloting post-quantum certificates."
 pubDate: 2026-09-02
 author: "KrakenKey Team"
 tags: ["acme", "post-quantum", "pki"]
@@ -22,8 +22,8 @@ This isn't shipping anywhere yet: it's a -00 draft, first IETF revision, standar
 Concretely, three things change if this lands:
 
 - **ACME client libraries** (certbot, acme.sh, lego, cert-manager, step-ca's client tooling) need new challenge-handling code, because `pop-01` isn't a drop-in replacement for `http-01`/`dns-01`. It runs after order creation and gates finalize rather than gating identifier authorization.
-- **ACME server implementations** (Boulder, step-ca, smallstep) need to add `popSupported` to directory metadata, implement the encapsulation/HKDF proof logic server-side, and handle key-equivalence checks (the draft requires the CA verify `popKey` differs from the account key by canonical DER comparison).
-- **Revocation gets more fragile for KEM certs.** A signature key can revoke its own certificate by signing a revocation request with the certificate's private key. A KEM key can't sign anything, so revocation authority collapses entirely onto the ACME account key (Section 7.5). Lose the account key and you've lost your only in-protocol revocation path until the cert expires. Worth planning for before anyone runs ML-KEM certs on anything short-lived-renewal doesn't already cover.
+- **ACME server implementations** (Boulder, Smallstep step-ca) need to add `popSupported` to directory metadata, implement the encapsulation/HKDF proof logic server-side, and handle key-equivalence checks (the draft requires the CA verify `popKey` differs from the account key by canonical DER comparison).
+- **Revocation** is more fragile for KEM certs. A signature key can revoke its own certificate by signing a revocation request with the certificate's private key. A KEM key can't sign anything, so revocation authority collapses entirely onto the ACME account key (Section 7.5). Lose the account key and you've lost your only in-protocol revocation path until the cert expires. Plan for that before running ML-KEM certs anywhere short-lived renewal doesn't already cover.
 
 ## Before/after: what finalize actually sends
 
@@ -61,8 +61,8 @@ POST /acme/order/1234/finalize
 }
 ```
 
-No CSR construction, no ASN.1 encoding on the client for the certificate request itself. That's also why the draft calls out resource-constrained devices as a secondary motivation, independent of the KEM problem.
+The client never builds a CSR or ASN.1-encodes a certificate request. That's also why the draft calls out resource-constrained devices as a secondary motivation, independent of the KEM problem.
 
 ## How KrakenKey's approach relates
 
-This doesn't change anything in KrakenKey's flow today. Our ACME issuance is signature-key only (RSA and ECDSA), and we don't yet issue ML-KEM certificates, so there's no finalize step to modify. It's relevant if you're running your own ACME client and have PQC certificate pilots on your roadmap: the draft is one WG revision old, the pop-01 mechanics could still change before it stabilizes, and building client support against -00 today means you should expect to revise it. Worth tracking, not worth implementing against yet.
+This doesn't change anything in KrakenKey's flow today. Our ACME issuance is signature-key only (RSA and ECDSA), and we don't yet issue ML-KEM certificates, so there's no finalize step to modify. It's relevant if you're running your own ACME client and have PQC certificate pilots on your roadmap: the draft is one WG revision old, the pop-01 mechanics could still change before it stabilizes, and building client support against -00 today means you should expect to revise it. We'd track it for now and hold off on implementing against it.

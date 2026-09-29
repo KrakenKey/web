@@ -5,23 +5,23 @@ sidebar:
   label: Azure Key Vault
 ---
 
-KrakenKey can issue a public TLS certificate from a certificate signing request (CSR) created in Azure Key Vault. Key Vault keeps the private key; App Service or Container Apps imports the completed Key Vault certificate for custom-domain TLS. This guide covers **manual issuance and renewal**. No KrakenKey VM image or always-on container is required.
+KrakenKey can issue a public TLS certificate from a certificate signing request (CSR) created in Azure Key Vault. Key Vault keeps the private key, and App Service or Container Apps imports the finished certificate from Key Vault for custom-domain TLS. This guide covers manual issuance and renewal. You don't need to run a KrakenKey VM or container in Azure.
 
-> **Key boundary:** KrakenKey receives the CSR (public key), never the private key. The Azure service terminating TLS must be able to use the key through Key Vault, so choose an **exportable software key**, not a non-exportable/HSM-backed key, for this integration.
+KrakenKey only receives the CSR, which carries the public key. The Azure service that terminates TLS reads the private key through Key Vault, so it has to be an exportable software key. Non-exportable and HSM-backed keys won't work here.
 
-The `<details>` sections below provide Portal, CLI, and Terraform routes. Terraform can provision the vault policy, access, and workload bindings, but **the external-CA CSR signing and merge are imperative operations**. Do not run a Terraform apply against a pending Key Vault certificate and assume that issuance or renewal is complete.
+Each step has collapsible Portal, Azure CLI and Terraform instructions. Terraform can set up the vault policy, access and workload bindings, but signing the CSR and merging the result are one-off operations you run yourself. A `terraform apply` against a pending Key Vault certificate doesn't issue or renew it.
 
 ## Prerequisites and architecture
 
 - A verified domain in KrakenKey with its one-time DNS setup complete; the requested CSR names must match your verified domains.
 - A Key Vault and either an App Service app or Container Apps environment with a custom domain you control.
-- A KrakenKey API key for `krakenkey cert submit`, provided securely via `KK_API_KEY`, and the [KrakenKey CLI](https://github.com/KrakenKey/cli).
-- A Key Vault certificate policy with issuer **Unknown** (non-integrated CA), **exportable software key**, **PKCS#12** secret content type, and all hostnames in the SAN list. RSA 2048 is a conservative shared choice. Container Apps does not support ECDSA P-384/P-521 certificates.
+- A KrakenKey API key for `krakenkey cert submit`, provided securely via `KK_API_KEY`, and the [KrakenKey CLI](/docs/cli/).
+- A Key Vault certificate policy with issuer **Unknown** (non-integrated CA), exportable software key, **PKCS#12** secret content type, and all hostnames in the SAN list. RSA 2048 works with both App Service and Container Apps; Container Apps doesn't support ECDSA P-384 or P-521 certificates.
 - DNS records for the App Service or Container App custom domain, following that service's validation instructions. KrakenKey's DNS-01 setup and Azure's custom-domain validation are separate checks.
 
-Flow: **Key Vault key + CSR → KrakenKey DNS-01 issuance → merge signed chain into Key Vault → Azure service imports the certificate → live TLS endpoint**.
+Key Vault creates the key and CSR, KrakenKey issues the certificate through DNS-01, you merge the signed chain back into Key Vault, and the Azure service imports it from there.
 
-If Azure's managed certificate already fits your use case, compare it before choosing an external CA. KrakenKey is useful when you want its DNS-01 workflow, portability across targets, or issuance and endpoint monitoring.
+Azure's own managed certificates may be enough for a simple site. KrakenKey makes more sense when you want its DNS-01 workflow, the same certificate process across platforms, or issuance and endpoint monitoring.
 
 ## 1. Create a pending Key Vault certificate and obtain its CSR
 
@@ -44,7 +44,7 @@ Create a policy with issuer `Unknown`, the desired subject/SANs, exportable soft
 <details>
 <summary>Terraform</summary>
 
-Use Terraform to provision the vault, RBAC/access policies, and workload resources. The AzureRM [`azurerm_key_vault_certificate`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_certificate) policy accepts issuer `Unknown`, but it does **not** expose a complete CSR → external signing → pending merge lifecycle. For this guide, perform certificate creation/CSR extraction with the Portal or Azure CLI above; manage that certificate's lifecycle **outside Terraform** rather than configuring a competing `azurerm_key_vault_certificate` resource for the same name. [Microsoft: non-integrated issuer workflow](https://learn.microsoft.com/en-us/azure/key-vault/certificates/create-certificate-signing-request).
+Use Terraform to provision the vault, RBAC/access policies, and workload resources. The AzureRM [`azurerm_key_vault_certificate`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_certificate) policy accepts issuer `Unknown`, but it doesn't expose a complete CSR → external signing → pending merge lifecycle. For this guide, perform certificate creation/CSR extraction with the Portal or Azure CLI above; manage that certificate's lifecycle outside Terraform rather than configuring a competing `azurerm_key_vault_certificate` resource for the same name. [Microsoft: non-integrated issuer workflow](https://learn.microsoft.com/en-us/azure/key-vault/certificates/create-certificate-signing-request).
 
 </details>
 
@@ -52,7 +52,7 @@ Inspect the request with `openssl req -in request.csr.pem -noout -text -verify`.
 
 ## 2. Submit the CSR to KrakenKey
 
-Use `cert submit`, not `cert issue`: the latter generates a separate local key that will not match Key Vault's pending operation.
+Use `cert submit` here. `cert issue` generates its own local key, which won't match the key in Key Vault.
 
 ```bash
 krakenkey cert submit --csr request.csr.pem --wait \
@@ -61,30 +61,11 @@ krakenkey cert submit --csr request.csr.pem --wait \
   --fullchain-out fullchain.pem
 ```
 
-If issuance is still pending, use `krakenkey cert list`/`show`, then `krakenkey cert download <id> --format fullchain --out fullchain.pem`. Keep the certificate ID for tracking. Inspect `issued.crt` with `openssl x509 -in issued.crt -noout -subject -dates -ext subjectAltName`; confirm the names and key correspond to the pending CSR. [KrakenKey CLI](https://github.com/KrakenKey/cli).
+If issuance is still pending, use `krakenkey cert list`/`show`, then `krakenkey cert download <id> --format fullchain --out fullchain.pem`. Keep the certificate ID for tracking. Inspect `issued.crt` with `openssl x509 -in issued.crt -noout -subject -dates -ext subjectAltName`; confirm the names and key correspond to the pending CSR.
 
-<details>
-<summary>Azure portal</summary>
+This step is CLI-only, whichever route you used for step 1. Supply `KK_API_KEY` from your secret store, not a committed file or your shell history. Keep it out of Terraform too: a `local-exec` provisioner would hide an asynchronous CA call inside `terraform apply` and can't renew reliably. [Terraform provisioner guidance](https://developer.hashicorp.com/terraform/language/provisioners).
 
-There is no Azure Portal button that submits a CSR to KrakenKey. Download the CSR from the Portal as in step 1, then submit it through the KrakenKey CLI shown above. The Azure Portal is used again for the merge in step 3.
-
-</details>
-
-<details>
-<summary>CLI</summary>
-
-Run the `krakenkey cert submit` command above with `KK_API_KEY` supplied from your secret store. Do not commit the key or place it in shell history. [KrakenKey CLI](https://github.com/KrakenKey/cli).
-
-</details>
-
-<details>
-<summary>Terraform</summary>
-
-Terraform has no KrakenKey CSR-submission resource in this workflow. Keep issuance as an explicit external step; a `local-exec` provisioner would hide a security-sensitive, asynchronous CA operation inside `terraform apply` and would not provide reliable renewal semantics. [Terraform provisioner guidance](https://developer.hashicorp.com/terraform/language/provisioners).
-
-</details>
-
-## 3. Merge the signed chain into the **same pending operation**
+## 3. Merge the signed chain into the same pending operation
 
 The response must start with the issued leaf certificate and include the required intermediates. Do not upload a private key or PFX: Key Vault already has the matching key. If a merge fails, check that the chain matches this CSR and that the Key Vault policy is compatible; a certificate issued for another key cannot be merged into this operation.
 
@@ -105,13 +86,13 @@ Use `az keyvault certificate pending merge --vault-name <vault> --name <certific
 <details>
 <summary>Terraform</summary>
 
-The AzureRM Key Vault certificate resource has no pending-request merge operation. Merge in the Portal or CLI, then let Terraform consume the resulting **versionless Key Vault secret ID** for bindings. Avoid pinning a certificate version in the workload configuration, or renewal may not propagate. [AzureRM Key Vault certificate resource](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_certificate) · [Microsoft: Key Vault certificate structure](https://learn.microsoft.com/en-us/azure/key-vault/certificates/about-certificates).
+The AzureRM Key Vault certificate resource has no pending-request merge operation. Merge in the Portal or CLI, then let Terraform use the resulting versionless Key Vault secret ID for bindings. If the workload pins a certificate version, renewals won't reach it. [AzureRM Key Vault certificate resource](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_certificate) · [Microsoft: Key Vault certificate structure](https://learn.microsoft.com/en-us/azure/key-vault/certificates/about-certificates).
 
 </details>
 
 ## 4A. Import and bind in App Service
 
-App Service imports a private certificate from Key Vault, then binds it to an already validated custom hostname. Grant the **Microsoft Azure App Service resource provider** access as Microsoft's import guide specifies; this is not the app's managed identity. The App Service plan must support private certificates. Azure says Key Vault updates are synchronized within **24 hours**. [Microsoft: App Service import and sync](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate#import-a-certificate-from-key-vault).
+App Service imports a private certificate from Key Vault, then binds it to an already validated custom hostname. Grant the **Microsoft Azure App Service resource provider** access as Microsoft's import guide specifies. That's a different principal from the app's managed identity. The App Service plan must support private certificates. Microsoft documents that App Service picks up Key Vault changes within 24 hours. [Microsoft: App Service import and sync](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate#import-a-certificate-from-key-vault).
 
 <details>
 <summary>Azure portal</summary>
@@ -130,13 +111,13 @@ After granting the App Service resource provider access and validating the hostn
 <details>
 <summary>Terraform</summary>
 
-Use [`azurerm_app_service_certificate`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service_certificate) with the **versionless** Key Vault secret ID, plus [`azurerm_app_service_custom_hostname_binding`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service_custom_hostname_binding) and [`azurerm_app_service_certificate_binding`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service_certificate_binding). Grant the Microsoft Web App service principal the documented vault access first; use its tenant-specific **object ID**, not its fixed application ID, in an access policy. Follow the provider's certificate-binding example for the hostname binding's `ssl_state`/`thumbprint` drift handling. The Key Vault secret must already contain a completed certificate before Terraform imports it. [Microsoft: required vault access](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate#import-a-certificate-from-key-vault).
+Use [`azurerm_app_service_certificate`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service_certificate) with the versionless Key Vault secret ID, plus [`azurerm_app_service_custom_hostname_binding`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service_custom_hostname_binding) and [`azurerm_app_service_certificate_binding`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service_certificate_binding). Grant the Microsoft Web App service principal the documented vault access first; an access policy needs its tenant-specific object ID, which differs from its fixed application ID. Follow the provider's certificate-binding example for the hostname binding's `ssl_state`/`thumbprint` drift handling. The Key Vault secret must already contain a completed certificate before Terraform imports it. [Microsoft: required vault access](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate#import-a-certificate-from-key-vault).
 
 </details>
 
 ## 4B. Import and bind in Container Apps
 
-Enable a managed identity on the **Container Apps environment** and grant it **Key Vault Secrets User** on the vault (or equivalent secret-get access). Import the Key Vault **certificate secret** using a versionless secret URL, then bind it to a validated custom hostname. Azure says rotation is applied within **12 hours**. [Microsoft: Key Vault certificates in Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/key-vault-certificates-manage).
+Enable a managed identity on the Container Apps environment and grant it **Key Vault Secrets User** on the vault (or equivalent secret-get access). Import the Key Vault certificate secret using a versionless secret URL, then bind it to a validated custom hostname. Microsoft documents that Container Apps picks up a rotated certificate within 12 hours. [Microsoft: Key Vault certificates in Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/key-vault-certificates-manage).
 
 <details>
 <summary>Azure portal</summary>
@@ -155,42 +136,40 @@ After identity, role assignment, and hostname validation, use `az containerapp e
 <details>
 <summary>Terraform</summary>
 
-Use [`azurerm_container_app_environment_certificate`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_app_environment_certificate) with its `certificate_key_vault` block (`identity` and a **versionless** `key_vault_secret_id`), then [`azurerm_container_app_custom_domain`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_app_custom_domain) with `container_app_environment_certificate_id` and `certificate_binding_type = "SniEnabled"`. Assign the environment identity **Key Vault Secrets User** before the certificate resource is created. Do not put PFX data in Terraform state. The completed Key Vault certificate secret and Azure custom-domain DNS validation must exist before the binding can succeed.
+Use [`azurerm_container_app_environment_certificate`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_app_environment_certificate) with its `certificate_key_vault` block (`identity` and a versionless `key_vault_secret_id`), then [`azurerm_container_app_custom_domain`](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_app_custom_domain) with `container_app_environment_certificate_id` and `certificate_binding_type = "SniEnabled"`. Assign the environment identity **Key Vault Secrets User** before the certificate resource is created. Do not put PFX data in Terraform state. The completed Key Vault certificate secret and Azure custom-domain DNS validation must exist before the binding can succeed.
 
 </details>
 
 ## 5. Renew and verify the live certificate
 
-**This is not hands-off Key Vault renewal today.** Key Vault cannot automatically obtain a new certificate from KrakenKey as a non-integrated CA, and KrakenKey's normal auto-renew setting does not perform the Key Vault **new version → new CSR → sign → merge** sequence. Start well before expiry and leave margin for issuance, merge, Azure propagation, and retries. [Microsoft: renew a non-integrated CA certificate](https://learn.microsoft.com/en-us/azure/key-vault/certificates/overview-renew-certificate).
+Renewal is manual. Key Vault can't request a new certificate from a non-integrated CA like KrakenKey, and KrakenKey's auto-renew doesn't run the Key Vault sequence of new version, new CSR, signing and merge. Start well before expiry to leave time for issuance, the merge, Azure's sync and any retries. [Microsoft: renew a non-integrated CA certificate](https://learn.microsoft.com/en-us/azure/key-vault/certificates/overview-renew-certificate).
 
 <details>
 <summary>Azure portal</summary>
 
-Start a new certificate version under the **same Key Vault certificate name**, keeping the policy and required SANs. Download its new CSR from the pending operation, submit it to KrakenKey as in step 2, and merge that new signed response as in step 3. Confirm the new version and thumbprint. Allow the Azure service to sync, then verify the live endpoint. [Microsoft: manual renewal](https://learn.microsoft.com/en-us/azure/key-vault/certificates/overview-renew-certificate).
+Start a new certificate version under the same Key Vault certificate name, keeping the policy and required SANs. Download its new CSR from the pending operation, submit it to KrakenKey as in step 2, and merge that new signed response as in step 3. Confirm the new version and thumbprint. Allow the Azure service to sync, then verify the live endpoint. [Microsoft: manual renewal](https://learn.microsoft.com/en-us/azure/key-vault/certificates/overview-renew-certificate).
 
 </details>
 
 <details>
 <summary>Azure CLI</summary>
 
-Start a new pending version with the same certificate name and intended policy (`az keyvault certificate create`), retrieve the **new** CSR with `az keyvault certificate pending show`, submit it with `krakenkey cert submit`, and merge its matching chain with `az keyvault certificate pending merge`. Confirm the latest version with `az keyvault certificate show`. Do not reuse the previous CSR or certificate chain. [CLI: create](https://learn.microsoft.com/en-us/cli/azure/keyvault/certificate?view=azure-cli-latest#az-keyvault-certificate-create) · [CLI: pending](https://learn.microsoft.com/en-us/cli/azure/keyvault/certificate/pending?view=azure-cli-latest).
+Start a new pending version with the same certificate name and intended policy (`az keyvault certificate create`), retrieve the new CSR with `az keyvault certificate pending show`, submit it with `krakenkey cert submit`, and merge its matching chain with `az keyvault certificate pending merge`. Confirm the latest version with `az keyvault certificate show`. Do not reuse the previous CSR or certificate chain. [CLI: create](https://learn.microsoft.com/en-us/cli/azure/keyvault/certificate?view=azure-cli-latest#az-keyvault-certificate-create) · [CLI: pending](https://learn.microsoft.com/en-us/cli/azure/keyvault/certificate/pending?view=azure-cli-latest).
 
 </details>
 
 <details>
 <summary>Terraform</summary>
 
-Keep the Key Vault issuance/merge step outside Terraform. If the Azure bindings use a **versionless** secret ID, a new version under the same name can be picked up by the Azure service within its documented sync window. Terraform can continue managing the access grants and bindings, but `terraform apply` does not trigger a new CSR or prove that the service rotated. [App Service sync](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate#import-a-certificate-from-key-vault) · [Container Apps sync](https://learn.microsoft.com/en-us/azure/container-apps/key-vault-certificates-manage).
+Keep the Key Vault issuance/merge step outside Terraform. If the Azure bindings use a versionless secret ID, a new version under the same name can be picked up by the Azure service within its documented sync window. Terraform can continue managing the access grants and bindings, but `terraform apply` does not trigger a new CSR or prove that the service rotated. [App Service sync](https://learn.microsoft.com/en-us/azure/app-service/configure-ssl-certificate#import-a-certificate-from-key-vault) · [Container Apps sync](https://learn.microsoft.com/en-us/azure/container-apps/key-vault-certificates-manage).
 
 </details>
 
-Verify the certificate actually served to clients, not merely the Key Vault record:
+Then check the certificate the endpoint actually serves:
 
 ```bash
 openssl s_client -connect example.com:443 -servername example.com </dev/null 2>/dev/null \
   | openssl x509 -noout -subject -dates -fingerprint -sha256
 ```
 
-Replace `example.com` with the bound hostname. Compare the live certificate's fingerprint and expiry with the new Key Vault version. Monitor both the Key Vault certificate and the public endpoint; alert if the served certificate has not rotated.
-
-A future Azure-hosted renewal job could run this sequence with a managed identity for Key Vault and a KrakenKey API key stored in Key Vault. That bridge is **not part of this guide** and is not claimed as an existing product feature.
+Replace `example.com` with the bound hostname. Compare the live certificate's fingerprint and expiry with the new Key Vault version. Monitor both the Key Vault certificate and the public endpoint, and alert if the served certificate hasn't rotated.

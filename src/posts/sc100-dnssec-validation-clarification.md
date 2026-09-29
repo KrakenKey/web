@@ -1,6 +1,6 @@
 ---
 title: "SC100 Passes: DNSSEC Validation Requirements Move to Section 4.2.2.2"
-description: "CA/Browser Forum Ballot SC100 passed on August 6, consolidating scattered DNSSEC validation language into a single section and clarifying that DNSSEC validation is mandatory only on the Primary Network Perspective. Here's what that means for DNSSEC-signed zones."
+description: "CA/Browser Forum Ballot SC100 passed on August 6, consolidating scattered DNSSEC validation language into a single section and clarifying that DNSSEC validation is mandatory only on the Primary Network Perspective, which matters for anyone renewing certificates on DNSSEC-signed zones."
 pubDate: 2026-08-12
 author: "KrakenKey Team"
 tags: ["dns", "cabforum"]
@@ -58,4 +58,4 @@ That SERVFAIL is exactly the condition Section 4.2.2.2 addresses. Per the BR tex
 
 ## How KrakenKey's flow relates
 
-SC100 doesn't change anything in KrakenKey's issuance flow. It's a consolidation of language describing behavior our upstream CAs already implement, and KrakenKey doesn't apply any special handling to DNSSEC-signed zones today. What it does change is how easy it is to find the actual rule when you're debugging a renewal failure: if you run DNSSEC and a DNS-01 renewal fails for no obvious reason, checking `delv` against your zone before opening a support ticket is now a documented first step, since Section 4.2.2.2 is the single place that rule lives.
+SC100 doesn't change anything in KrakenKey's issuance flow. It's a consolidation of language describing behavior our upstream CAs already implement, and KrakenKey doesn't apply any special handling to DNSSEC-signed zones today. It does make the actual rule easier to find when you're debugging a renewal failure: if you run DNSSEC and a DNS-01 renewal fails for no obvious reason, checking `delv` against your zone before opening a support ticket is now a documented first step, since Section 4.2.2.2 is the single place that rule lives.

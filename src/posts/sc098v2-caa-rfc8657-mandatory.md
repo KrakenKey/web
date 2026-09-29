@@ -1,6 +1,6 @@
 ---
 title: "SC-098v2 Passes: RFC 8657 CAA Parameters Are Mandatory from March 2027"
-description: "CA/Browser Forum Ballot SC-098v2 passed on May 13, requiring all publicly-trusted CAs to process the accounturi and validationmethods CAA parameters from RFC 8657. Here's what changes operationally."
+description: "CA/Browser Forum Ballot SC-098v2 passed on May 13, requiring all publicly-trusted CAs to process the accounturi and validationmethods CAA parameters from RFC 8657. CAA records that carry those parameters stop being advisory on March 15, 2027."
 pubDate: 2026-05-20
 author: "KrakenKey Team"
 tags: ["dns", "cabforum"]
@@ -73,4 +73,4 @@ Let's Encrypt and Google Trust Services already enforce RFC 8657 parameters when
 
 ## How KrakenKey's flow relates
 
-KrakenKey issues certificates via a fixed ACME account per user, so operators who want to add `accounturi` restrictions to their CAA records can pin that account URI directly. SC-098v2 does not change anything in KrakenKey's issuance flow. What it does change is the risk profile for operators who already have RFC 8657 parameters in their CAA records without verifying they're accurate: those records will start causing failures rather than being silently ignored when the enforcement date arrives. A CAA audit before Q1 2027 is worth putting on the calendar.
+KrakenKey issues certificates via a fixed ACME account per user, so operators who want to add `accounturi` restrictions to their CAA records can pin that account URI directly. SC-098v2 does not change anything in KrakenKey's issuance flow. It does raise the risk for operators who already have RFC 8657 parameters in their CAA records without verifying they're accurate: once the enforcement date arrives, those records will cause failures instead of being silently ignored. Plan a CAA audit before Q1 2027.
