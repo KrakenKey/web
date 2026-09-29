@@ -1,3 +1,10 @@
+---
+title: Use KrakenKey certificates with Azure Key Vault, App Service, and Container Apps
+description: Issue a KrakenKey certificate from an Azure Key Vault CSR, merge it, and bind it in App Service or Container Apps. The private key stays in Key Vault.
+sidebar:
+  label: Azure Key Vault
+---
+
 KrakenKey can issue a public TLS certificate from a certificate signing request (CSR) created in Azure Key Vault. Key Vault keeps the private key; App Service or Container Apps imports the completed Key Vault certificate for custom-domain TLS. This guide covers **manual issuance and renewal**. No KrakenKey VM image or always-on container is required.
 
 > **Key boundary:** KrakenKey receives the CSR (public key), never the private key. The Azure service terminating TLS must be able to use the key through Key Vault, so choose an **exportable software key**, not a non-exportable/HSM-backed key, for this integration.

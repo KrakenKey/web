@@ -1,0 +1,36 @@
+/* Starlight docs (/docs/*): match the site palette in global.css. */
+:root {
+  --sl-font: 'Inter', system-ui, -apple-system, sans-serif;
+  --sl-font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  --sl-color-accent-low: #083344;
+  --sl-color-accent: #06b6d4;
+  --sl-color-accent-high: #a5f3fc;
+
+  --sl-color-white: #f1f5f9;
+  --sl-color-gray-1: #e2e8f0;
+  --sl-color-gray-2: #cbd5e1;
+  --sl-color-gray-3: #94a3b8;
+  --sl-color-gray-4: #64748b;
+  --sl-color-gray-5: #334155;
+  --sl-color-gray-6: #1e293b;
+  --sl-color-black: #0c1222;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #cffafe;
+  --sl-color-accent: #0e7490;
+  --sl-color-accent-high: #164e63;
+}
+
+/* Guides use <details> for Portal / CLI / Terraform routes. */
+.sl-markdown-content details {
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.sl-markdown-content summary {
+  cursor: pointer;
+  font-weight: 600;
+}
