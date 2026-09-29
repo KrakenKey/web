@@ -102,6 +102,16 @@ web/
 └── package.json
 ```
 
+### Generated files — do not edit by hand
+
+`public/openapi.json` is **generated**, not authored here. It is the OpenAPI spec exported from the [`app`](https://github.com/krakenkey/app) backend and copied into this repo by a workflow in that repo, which opens a `bot/sync-openapi` branch and squash-merges it. The `/docs/api` page renders whatever this file contains via Scalar.
+
+Consequences:
+
+- Edits to `public/openapi.json` in this repo are overwritten by the next sync. Fix the spec at its source — the NestJS decorators in `app`, exported at `/swagger-json`.
+- Sync commits are titled `chore: sync OpenAPI spec from app@<sha>`, which is the record of when the published spec last moved. Commits before 2026-08-31 read `core-int@<sha>` — the app repo's former name.
+- If `/docs/api` looks out of date, check that the sync workflow in `app` is succeeding rather than looking for a problem here. The spec went stale between 2026-05-14 and 2026-08-31 because this repo gained a ruleset requiring pull requests and the sync was still pushing directly to `main`, so every run failed with `GH013` without anything visibly breaking on this side.
+
 ## Getting Started
 
 ### Prerequisites
@@ -154,17 +164,38 @@ If you're working from the [main KrakenKey repo](https://github.com/krakenkey/kr
 
 ## Blog Posts
 
-Blog posts live in `src/posts/` as Markdown files with frontmatter:
+Blog posts live in `src/posts/` as Markdown files. The frontmatter schema is defined in [`src/content.config.ts`](src/content.config.ts) and **validated at build time** — a post that does not match it fails `astro build`, it does not render with the bad field ignored.
 
 ```markdown
 ---
 title: "Post Title"
 description: "Brief description for SEO and cards."
-date: "2025-06-15"
+pubDate: 2026-09-23
+author: "KrakenKey Team"
+tags: ["acme", "dns", "pki"]
+draft: false
 ---
 
 Post content here...
 ```
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| `title` | yes | — |
+| `description` | yes | Used for SEO and blog cards |
+| `pubDate` | yes | Coerced to a date. **The field is `pubDate`, not `date`** |
+| `updatedDate` | no | Coerced to a date |
+| `author` | no | Defaults to `KrakenKey Team` |
+| `tags` | no | Defaults to `[]`. Must come from the fixed list below |
+| `draft` | no | Defaults to `false` |
+
+### Tags
+
+`tags` is a closed enum. A tag outside this list fails the build with a Zod validation error naming the post — it is not silently accepted:
+
+`pki` · `tls` · `acme` · `cabforum` · `root-programs` · `ca-incidents` · `certificate-lifetimes` · `post-quantum` · `dns` · `certificate-transparency` · `cve` · `lets-encrypt` · `product` · `engineering` · `release-notes` · `monitoring`
+
+Prefer an existing tag over a new one — the list was consolidated deliberately so the blog does not accumulate near-duplicate tags with one post each. Adding a tag means editing the enum in `src/content.config.ts` and this list together.
 
 Astro's content collections handle parsing and validation. Posts are rendered via the `BlogPostLayout` and listed on `/blog` using the `BlogCard` component.
 
@@ -180,6 +211,12 @@ The site is deployed to **Cloudflare Pages** as a fully static site.
 ### CSP — Cloudflare Pages `_headers` behaviour
 
 Cloudflare Pages enforces **all** matching `_headers` rules simultaneously, not just the most-specific match. A page-level CSP for `/scanner` is combined with the global CSP — any domain needed by the scanner (e.g., `api.krakenkey.io` for `connect-src`) must also be present in the **global** CSP entry, not only the page-level rule. Keep this in mind when adding new pages that call external APIs: add the required `connect-src` origins to the global `/*` block in `_headers`.
+
+The rule cuts both ways: because every matching CSP is enforced, a page with its own CSP entry is restricted to the **intersection** of that entry and the global one. An origin added only to `/*` is therefore *not* available on a page that has its own block. `/docs/api` is the only such page today, and its `script-src` omits `https://static.cloudflareinsights.com`, which the global block allows — so the Cloudflare Web Analytics beacon is blocked on `/docs/api` while working everywhere else. Adding an origin globally means checking the page-level blocks too.
+
+### Analytics
+
+The marketing site uses **Cloudflare Web Analytics**, which is cookieless and enabled from the Cloudflare dashboard rather than from anything in this repo — there is no beacon `<script>` in the source, because Cloudflare injects it at the edge. The only trace of it here is `https://static.cloudflareinsights.com` in the global CSP `script-src`; removing that entry silently disables analytics. It is disclosed in [`src/pages/privacy.astro`](src/pages/privacy.astro) under *Third-Party Services* and *Cookies*, which must be kept in step if the analytics setup changes.
 
 ## Design System
 
