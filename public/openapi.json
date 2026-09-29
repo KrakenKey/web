@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "KrakenKey API",
-    "description": "Public API for KrakenKey — TLS certificate management and domain verification",
+    "description": "Public API for KrakenKey: TLS certificate management and domain verification",
     "version": "0.1.0",
     "contact": {}
   },
