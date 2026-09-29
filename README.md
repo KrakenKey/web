@@ -1,7 +1,7 @@
 <p align="center">
   <h1 align="center">KrakenKey Website</h1>
   <p align="center">
-    Marketing site and documentation for <a href="https://krakenkey.io">krakenkey.io</a> — built with Astro.
+    Marketing site and documentation for <a href="https://krakenkey.io">krakenkey.io</a>, built with Astro.
     <br />
     <a href="https://krakenkey.io">Live Site</a> &middot;
     <a href="https://krakenkey.io/docs/api">API Docs</a> &middot;
@@ -26,8 +26,8 @@ This repo contains the public-facing website for [KrakenKey](https://krakenkey.i
 |-------|-----------|
 | Framework | [Astro 5](https://astro.build) (static output) |
 | Styling | Custom CSS with design tokens (CSS variables) |
-| Fonts | Inter (sans), JetBrains Mono (mono) — loaded via Google Fonts |
-| API Docs | [Scalar](https://scalar.com) API reference viewer + OpenAPI spec |
+| Fonts | Inter (sans), JetBrains Mono (mono), loaded via Google Fonts |
+| Docs | [Starlight](https://starlight.astro.build) at `/docs`, API reference generated from the OpenAPI spec by starlight-openapi |
 | Sitemap | `@astrojs/sitemap` (auto-generated at `/sitemap.xml`) |
 | Hosting | [Cloudflare Pages](https://pages.cloudflare.com) |
 
@@ -36,7 +36,7 @@ This repo contains the public-facing website for [KrakenKey](https://krakenkey.i
 ```
 web/
 ├── public/
-│   ├── openapi.json          # OpenAPI 3.0 spec served to Scalar viewer
+│   ├── openapi.json          # OpenAPI 3.0 spec, rendered at /docs/api by starlight-openapi
 │   ├── _headers              # Cloudflare Pages security + cache headers (CSP, caching)
 │   ├── robots.txt
 │   ├── scalar-init.js        # Scalar API reference initialization
@@ -127,7 +127,7 @@ npm run preview
 
 ### Using the Devcontainer
 
-If you're working from the [main KrakenKey repo](https://github.com/krakenkey/krakenkey), the devcontainer handles dependency installation automatically. The web dev server is available inside the container — just run `npm run dev` from the `web/` directory.
+If you're working from the [main KrakenKey repo](https://github.com/krakenkey/krakenkey), the devcontainer handles dependency installation automatically. The web dev server is available inside the container: run `npm run dev` from the `web/` directory.
 
 ## Available Scripts
 
@@ -142,13 +142,13 @@ If you're working from the [main KrakenKey repo](https://github.com/krakenkey/kr
 
 | Route | Description |
 |-------|-------------|
-| `/` | Home — hero, features, how it works, regulation timeline, CTA |
+| `/` | Home: hero, features, how it works, regulation timeline, CTA |
 | `/pricing` | Plans (Free, Starter, Team) with feature comparison and FAQ |
 | `/getting-started` | Step-by-step guide with DNS setup and API examples |
-| `/scanner` | Free TLS scanner — submit a host and get full certificate details |
+| `/scanner` | Free TLS scanner: submit a host and get full certificate details |
 | `/blog` | Blog listing page |
 | `/blog/:slug` | Individual blog posts (rendered from Markdown) |
-| `/docs/api` | Interactive API reference powered by Scalar + OpenAPI spec |
+| `/docs/api` | API reference generated from the OpenAPI spec (Starlight) |
 | `/terms` | Terms of service |
 | `/privacy` | Privacy policy |
 
@@ -177,9 +177,9 @@ The site is deployed to **Cloudflare Pages** as a fully static site.
 - Security headers (CSP, X-Frame-Options, etc.) are configured in [`public/_headers`](public/_headers)
 - The `/docs/api` page has a relaxed CSP to allow the Scalar API reference viewer
 
-### CSP — Cloudflare Pages `_headers` behaviour
+### CSP: Cloudflare Pages `_headers` behaviour
 
-Cloudflare Pages enforces **all** matching `_headers` rules simultaneously, not just the most-specific match. A page-level CSP for `/scanner` is combined with the global CSP — any domain needed by the scanner (e.g., `api.krakenkey.io` for `connect-src`) must also be present in the **global** CSP entry, not only the page-level rule. Keep this in mind when adding new pages that call external APIs: add the required `connect-src` origins to the global `/*` block in `_headers`.
+Cloudflare Pages enforces **all** matching `_headers` rules simultaneously, not just the most-specific match. A page-level CSP for `/scanner` is combined with the global CSP, so any domain needed by the scanner (e.g., `api.krakenkey.io` for `connect-src`) must also be present in the **global** CSP entry, not only the page-level rule. Keep this in mind when adding new pages that call external APIs: add the required `connect-src` origins to the global `/*` block in `_headers`.
 
 ## Design System
 

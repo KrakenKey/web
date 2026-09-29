@@ -6,7 +6,7 @@ sidebar:
   order: 1
 ---
 
-The `krakenkey` CLI manages the TLS certificate lifecycle from your terminal. It generates CSRs locally with Go's crypto standard library, so private keys never leave your machine. It submits them to the KrakenKey API, polls for issuance, and downloads the issued certificates. It covers the same API surface as the dashboard and is built for terminal workflows and CI/CD pipelines.
+The `krakenkey` CLI manages the TLS certificate lifecycle from your terminal. It generates CSRs locally with Go's crypto standard library, so private keys never leave your machine. It submits them to the KrakenKey API, polls for issuance, and downloads the issued certificates. Anything you can do in the dashboard, you can do with it from a terminal or a CI job.
 
 Source and releases: [github.com/KrakenKey/cli](https://github.com/KrakenKey/cli) (AGPL-3.0).
 

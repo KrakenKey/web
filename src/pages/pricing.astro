@@ -6,7 +6,7 @@ import CTA from '../components/CTA.astro';
 const faqItems = [
   {
     question: 'What does KrakenKey do?',
-    answer: 'KrakenKey automates TLS certificate lifecycle management — issuance, renewal, monitoring, and revocation. Issue certificates via Let\'s Encrypt in ~4 minutes through the dashboard, REST API, or CLI. Monitor your TLS endpoints from distributed probes to catch expiring certs, broken chains, and misconfigurations before they cause outages.',
+    answer: 'KrakenKey automates TLS certificate issuance, renewal, monitoring, and revocation. Issue certificates via Let\'s Encrypt in ~4 minutes through the dashboard, REST API, or CLI. Monitor your TLS endpoints from distributed probes to catch expiring certs, broken chains, and misconfigurations before they cause outages.',
   },
   {
     question: 'Why are certificate lifetimes getting shorter?',
@@ -22,24 +22,24 @@ const faqItems = [
   },
   {
     question: 'Is there a REST API and CLI?',
-    answer: 'Yes. Every action available in the dashboard is also available via REST API and the krakenkey CLI. Issue certificates, manage domains, configure endpoint monitoring, and export scan results — all programmatically. AI agent tool definitions are included for automated workflows.',
+    answer: 'Yes. Every action available in the dashboard is also available via REST API and the krakenkey CLI. Issue certificates, manage domains, configure endpoint monitoring, and export scan results programmatically. AI agent tool definitions are included for automated workflows.',
   },
   {
     question: 'Do I need a paid plan?',
-    answer: 'No. The free tier includes ACME automation, certificate issuance, and 3 monitored endpoints with connected probes. Starter ($29/mo) adds 10 endpoints, 2 hosted probe regions, auto-renewal, and expiry alerts. Team ($79/mo) adds 50 endpoints, 5 hosted regions, organizations with RBAC, and 5-minute scan intervals.',
+    answer: 'No. The free tier includes ACME automation, certificate issuance, and 3 monitored endpoints with connected probes. Starter ($29/mo) adds 10 endpoints, 2 hosted probe regions, a 30-day auto-renewal window, and expiry alerts. Team ($79/mo) adds 50 endpoints, 5 hosted regions, organizations with RBAC, and 5-minute scan intervals.',
   },
 ];
 ---
 
 <PageLayout
   title="Pricing"
-  description="Free automated TLS certificate issuance via Let's Encrypt. Starter and Team plans for higher limits, auto-renewal, and team access."
+  description="Free automated TLS certificate issuance and renewal via Let's Encrypt. Starter and Team plans for higher limits, earlier renewal, and team access."
 >
   <div class="section-container">
     <div class="section-header section-header--lg">
       <h1 class="section-title section-title--xl">Pricing</h1>
       <p class="section-subtitle">
-        Free tier includes full ACME automation. Paid plans add higher limits, auto-renewal, and team access.
+        Free tier includes full ACME automation and auto-renewal. Paid plans add higher limits, a 30-day renewal window, and team access.
       </p>
     </div>
 
@@ -63,11 +63,15 @@ const faqItems = [
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
+            Auto-renewal, 5 days before expiry
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
             In-browser CSR generator
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
-            DNS-01 challenge via Cloudflare
+            DNS-01 via one-time CNAME delegation
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
@@ -86,7 +90,7 @@ const faqItems = [
       <div class="card card-highlighted center-text">
         <span class="card-badge">Popular</span>
         <h3 class="pricing-label">Starter</h3>
-        <p class="pricing-sublabel">More domains, auto-renewal, alerts</p>
+        <p class="pricing-sublabel">More domains, earlier renewal, alerts</p>
         <div class="pricing-price">
           <span>$29</span><span class="pricing-sublabel">/mo</span>
         </div>

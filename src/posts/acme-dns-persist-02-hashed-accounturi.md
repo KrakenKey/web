@@ -7,7 +7,7 @@ tags: ["acme", "dns", "pki"]
 draft: false
 ---
 
-The ACME working group published [draft-ietf-acme-dns-persist-02](https://datatracker.ietf.org/doc/draft-ietf-acme-dns-persist/02/) on September 20. The `accounturi` parameter in a `_validation-persist` TXT record is no longer an ACME account URL in cleartext: it is now a hashed URI computed over the account key, the account URL, and the domain the record is published at. The old form is not deprecated for a transition window, it is rejected.
+The ACME working group published [draft-ietf-acme-dns-persist-02](https://datatracker.ietf.org/doc/draft-ietf-acme-dns-persist/02/) on September 20. The `accounturi` parameter in a `_validation-persist` TXT record is no longer an ACME account URL in cleartext: it is now a hashed URI computed over the account key, the account URL, and the domain the record is published at. There is no transition window: the old form is rejected.
 
 ## What changed
 
@@ -68,4 +68,4 @@ Swap `domain` for `*` and the length prefix becomes `0x01`, yielding `NpDnSwUthQ
 
 ## How KrakenKey's approach relates
 
-This doesn't change anything in KrakenKey's flow today. We validate with `dns-01` through a one-time CNAME delegation of `_acme-challenge`, which already gives customers a set-once DNS record that works with any ACME CA, and `dns-persist-01` is not in production at any CA we issue against. We'll evaluate it once the draft stabilizes and CAs support it in production. It matters now if you run your own ACME client and have been prototyping against Let's Encrypt staging or Pebble: the records you have already published are the wrong shape, the fix requires code rather than a search and replace, and a draft that has broken its own record format once between revisions is not one to bake into zone templates yet.
+This doesn't change anything in KrakenKey's flow today. We validate with `dns-01` through a one-time CNAME delegation of `_acme-challenge`, which already gives customers a set-once DNS record that works with any ACME CA, and `dns-persist-01` is not in production at any CA we issue against. We'll evaluate it once the draft stabilizes and CAs support it in production. It matters now if you run your own ACME client and have been prototyping against Let's Encrypt staging or Pebble. The records you have already published are the wrong shape, and fixing them takes code rather than a search and replace. The draft has changed its record format once between revisions, so we would hold off on baking it into zone templates.

@@ -8,11 +8,11 @@ sidebar:
 
 import { Steps } from '@astrojs/starlight/components';
 
-From sign-up to a signed TLS certificate in under 10 minutes. This guide walks through every step.
+This guide goes from a new account to an issued TLS certificate. It usually takes under 10 minutes, most of it waiting on DNS and issuance.
 
 ## Before you begin
 
-You'll need two things:
+You need:
 
 - A domain name you own (e.g. `example.com`)
 - Access to your domain's DNS settings (Cloudflare, Route 53, Namecheap, etc.)
@@ -23,7 +23,7 @@ You'll need two things:
 
 1. ### Create an account
 
-   Head to [app.krakenkey.io](https://app.krakenkey.io) and click **Sign Up**. You'll create an account through our identity provider. Once registered, you're redirected to the dashboard.
+   Go to [app.krakenkey.io](https://app.krakenkey.io) and click **Sign Up**. After you register, you land on the dashboard.
 
 2. ### Add your domain
 
@@ -41,7 +41,7 @@ You'll need two things:
 
 3. ### Add DNS records
 
-   You need two DNS records. The dashboard shows exact values for your domain; here's what they look like.
+   Add two DNS records. The dashboard shows the exact values for your domain; the examples below show their shape.
 
    **Record 1: TXT, ownership verification.** Proves you control the domain. This record must stay in your DNS permanently.
 
@@ -49,7 +49,7 @@ You'll need two things:
    | --- | --- | --- | --- |
    | `TXT` | `@` | `krakenkey-site-verification=abc123...` | Auto |
 
-   **Record 2: CNAME, ACME challenge delegation.** Lets KrakenKey respond to Let's Encrypt DNS-01 challenges on your behalf. This is what makes certificate issuance automatic.
+   **Record 2: CNAME, ACME challenge delegation.** Lets KrakenKey respond to Let's Encrypt DNS-01 challenges on your behalf, so issuing and renewing certificates needs no further DNS changes.
 
    | Type | Name | Target | TTL |
    | --- | --- | --- | --- |
@@ -78,7 +78,7 @@ You'll need two things:
 
    A CSR tells the certificate authority what domain(s) to include in the certificate. You have two options.
 
-   **In-browser generator.** The dashboard includes a CSR generator that uses the WebCrypto API. Your private key is generated in your browser and **never leaves your device**. Fill in the form, click generate, and the CSR is ready to submit.
+   **In-browser generator.** The dashboard includes a CSR generator that uses the WebCrypto API. Your private key is generated in your browser and never leaves your device. Fill in the form, click generate, and the CSR is ready to submit.
 
    **OpenSSL.** Generate a CSR on your own machine:
 
@@ -103,7 +103,7 @@ You'll need two things:
      -d '{"csrPem": "-----BEGIN CERTIFICATE REQUEST-----\n...\n-----END CERTIFICATE REQUEST-----"}'
    ```
 
-   KrakenKey creates a DNS-01 challenge record, Let's Encrypt validates it, and your certificate is issued, typically in about **4 minutes**.
+   KrakenKey creates a DNS-01 challenge record, Let's Encrypt validates it, and your certificate is issued, typically in about 4 minutes.
 
    ```bash
    # Check status and download
@@ -129,7 +129,7 @@ See the [API reference](/docs/api/) for the full endpoint documentation.
 
 ## What's next
 
-- **Add more domains:** repeat steps 2–4 for each domain you want to issue certificates for.
-- **Automate with the API or CLI:** integrate certificate issuance into your deployment pipeline using the [REST API](/docs/api/) or the [KrakenKey CLI](/docs/cli/).
-- **Wildcard certificates:** submit a CSR with `*.example.com` as the common name (DNS-01 supports wildcards).
-- **Deploy to a platform:** see [Integrations](/docs/integrations/azure-key-vault/) for Azure Key Vault, App Service, and Container Apps.
+- To add more domains, repeat steps 2–4 for each one.
+- To issue certificates from a deployment pipeline, use the [REST API](/docs/api/) or the [KrakenKey CLI](/docs/cli/).
+- For a wildcard certificate, submit a CSR with `*.example.com` as the common name. DNS-01 supports wildcards.
+- To deploy on Azure App Service or Container Apps, see [Azure Key Vault](/docs/integrations/azure-key-vault/).
