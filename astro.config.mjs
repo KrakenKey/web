@@ -48,11 +48,11 @@ export default defineConfig({
         {
           label: 'Integrations',
           // New guides in src/content/docs/docs/integrations/ appear here on their own.
-          autogenerate: { directory: 'docs/integrations' },
+          items: [{ autogenerate: { directory: 'docs/integrations' } }],
         },
         {
           label: 'CLI',
-          autogenerate: { directory: 'docs/cli' },
+          items: [{ autogenerate: { directory: 'docs/cli' } }],
         },
         ...openAPISidebarGroups,
       ],

@@ -41,7 +41,7 @@ krakenkey domain verify <id>
 krakenkey cert issue --domain example.com --wait
 ```
 
-The CLI generates your private key and CSR locally, so your private key never leaves your machine. You can also submit an existing CSR, download certs, toggle auto-renewal, and manage API keys -- all from the command line:
+The CLI generates your private key and CSR locally, so your private key never leaves your machine. You can also submit an existing CSR, download certs, toggle auto-renewal, and manage API keys — all from the command line:
 
 ```bash
 # Submit your own CSR and wait for the cert
