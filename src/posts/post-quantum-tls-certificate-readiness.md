@@ -67,7 +67,7 @@ You probably handle renewals manually today, and that's fine for now. But when r
 
 ### If you manage 10-100 certificates
 
-This is where the overlap hurts most. You have enough certificates that manual tracking is already painful, but probably not enough to justify a $50K/year enterprise CLM platform. You need automation at an accessible price point that handles algorithm transitions as well as renewals.
+This is where the overlap hurts most. You have enough certificates that manual tracking is already painful, but probably not enough to justify an enterprise CLM platform, which is sold on annual contracts sized for much larger estates. You need automation at an accessible price point that handles algorithm transitions as well as renewals.
 
 ### If you manage 100+ certificates
 
@@ -89,7 +89,7 @@ This ships before any CA offers production PQC certificates, since measuring exp
 
 ### Phase 2: Stronger Defaults (Early 2027)
 
-We're shifting our default key algorithm recommendation from RSA-2048 to ECDSA P-384. P-384 is not post-quantum, but it is the strongest classical option, produces smaller certificates, and prepares your infrastructure for the key size changes PQC will bring. New certificates issued through KrakenKey will use it by default.
+We're changing our default key recommendation from RSA-2048 to ECDSA P-384. P-384 is not post-quantum, but it offers about 192-bit classical security, compared with about 112 bits for RSA-2048, with much smaller keys and signatures. The CSR generator in the dashboard now uses it by default; the CLI still defaults to P-256, and you can choose P-384 with `--key-type ecdsa-p384`.
 
 In parallel, we're building PQC key generation into our CLI and agent tooling using production-grade cryptographic libraries.
 

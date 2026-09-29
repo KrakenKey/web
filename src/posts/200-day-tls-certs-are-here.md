@@ -82,9 +82,9 @@ That covers most personal projects, homelabs and small open-source services.
 
 ---
 
-## Paid Plans (Live This Month)
+## Paid Plans
 
-Stripe billing launches this month. Paid tiers lift the limits and add team features:
+Paid tiers lift the limits and add team features:
 
 | | Starter | Team | Business |
 |-|---------|------|----------|
@@ -101,7 +101,7 @@ Stripe billing launches this month. Paid tiers lift the limits and add team feat
 
 ## Why Now
 
-Enterprise CLM platforms exist and work well. Keyfactor Command starts at $25K/year for SaaS, scaling to $50K–100K+ for on-premise deployments. Venafi/CyberArk starts at $50K/year and can exceed $500K for large estates. These price points make sense for organizations managing tens of thousands of certificates. They are hard to justify for a 10-person engineering team.
+Enterprise CLM platforms exist and work well. Keyfactor Command and CyberArk's certificate management (which absorbed Venafi in 2024) are sold on quote-based annual contracts built for organizations managing tens of thousands of certificates. That kind of contract is hard to justify for a 10-person engineering team.
 
 At the other end, Certbot and cert-manager are free and work well, but they are issuance clients without a management layer. Little exists between the two, and that gap matters more with each lifetime reduction. The 200-day deadline that took effect March 15 doubles renewal frequency. The 100-day deadline in 2027 doubles it again. By the time certs are 47 days in 2029, organizations that haven't automated their certificate lifecycle will be firefighting renewals full-time. Putting automation in place before the 100-day step in March 2027 is the easier path.
 

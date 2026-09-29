@@ -1,9 +1,9 @@
 # Cloudflare Pages _headers
-# Applied at the CDN edge — no server required.
+# Applied at the CDN edge; no server required.
 # https://developers.cloudflare.com/pages/configuration/headers/
 
 # ------------------------------------------------------------------
-# Security headers — applied to every response
+# Security headers, applied to every response
 # ------------------------------------------------------------------
 /*
   X-Frame-Options: DENY
@@ -19,14 +19,14 @@
 # ------------------------------------------------------------------
 
 # ------------------------------------------------------------------
-# Cache: Astro's hashed static assets — immutable, cache forever
+# Cache: Astro's hashed static assets: immutable, cache forever
 # /_astro/file.[hash].js, /_astro/file.[hash].css, etc.
 # ------------------------------------------------------------------
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 
 # ------------------------------------------------------------------
-# Cache: HTML pages — always revalidate so deploys are picked up
+# Cache: HTML pages: always revalidate so deploys are picked up
 # immediately without a purge step
 # ------------------------------------------------------------------
 /
