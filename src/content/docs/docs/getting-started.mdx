@@ -1,0 +1,135 @@
+---
+title: Get started with KrakenKey
+description: Step-by-step guide to issuing your first TLS certificate with KrakenKey. One-time domain setup, then certificates in 4 minutes.
+sidebar:
+  label: Getting started
+  order: 1
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+From sign-up to a signed TLS certificate in under 10 minutes. This guide walks through every step.
+
+## Before you begin
+
+You'll need two things:
+
+- A domain name you own (e.g. `example.com`)
+- Access to your domain's DNS settings (Cloudflare, Route 53, Namecheap, etc.)
+
+## Issue your first certificate
+
+<Steps>
+
+1. ### Create an account
+
+   Head to [app.krakenkey.io](https://app.krakenkey.io) and click **Sign Up**. You'll create an account through our identity provider. Once registered, you're redirected to the dashboard.
+
+2. ### Add your domain
+
+   In the dashboard, scroll to **Domain Management**, enter your domain, and click **Add Domain**. Or via the API:
+
+   ```bash
+   # Add a domain
+   curl -X POST https://api.krakenkey.io/domains \
+     -H "Authorization: Bearer YOUR_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"hostname": "example.com"}'
+   ```
+
+   The response includes a `verificationCode` you'll need in the next step.
+
+3. ### Add DNS records
+
+   You need two DNS records. The dashboard shows exact values for your domain; here's what they look like.
+
+   **Record 1: TXT, ownership verification.** Proves you control the domain. This record must stay in your DNS permanently.
+
+   | Type | Name | Value | TTL |
+   | --- | --- | --- | --- |
+   | `TXT` | `@` | `krakenkey-site-verification=abc123...` | Auto |
+
+   **Record 2: CNAME, ACME challenge delegation.** Lets KrakenKey respond to Let's Encrypt DNS-01 challenges on your behalf. This is what makes certificate issuance automatic.
+
+   | Type | Name | Target | TTL |
+   | --- | --- | --- | --- |
+   | `CNAME` | `_acme-challenge` | `example-com.acme.krakenkey.io` | Auto |
+
+   The CNAME target replaces dots with dashes in your hostname: `example.com` becomes `example-com.acme.krakenkey.io`.
+
+4. ### Verify domain ownership
+
+   Wait 1–5 minutes for DNS propagation, then click **Verify Now** in the dashboard. You can check propagation with:
+
+   ```bash
+   dig TXT example.com +short
+   ```
+
+   Or verify via the API:
+
+   ```bash
+   curl -X POST https://api.krakenkey.io/domains/DOMAIN_ID/verify \
+     -H "Authorization: Bearer YOUR_TOKEN"
+   ```
+
+   Once verified, the domain status changes to **Verified** and you can start issuing certificates.
+
+5. ### Generate a Certificate Signing Request
+
+   A CSR tells the certificate authority what domain(s) to include in the certificate. You have two options.
+
+   **In-browser generator.** The dashboard includes a CSR generator that uses the WebCrypto API. Your private key is generated in your browser and **never leaves your device**. Fill in the form, click generate, and the CSR is ready to submit.
+
+   **OpenSSL.** Generate a CSR on your own machine:
+
+   ```bash
+   openssl req -new -newkey rsa:2048 \
+     -nodes -keyout key.pem \
+     -out csr.pem \
+     -subj "/CN=example.com"
+   ```
+
+   The [KrakenKey CLI](/docs/cli/) can also generate the key and CSR locally and submit them in one command.
+
+6. ### Submit CSR and download your certificate
+
+   Paste your CSR PEM in the dashboard and click **Submit**, or use the API:
+
+   ```bash
+   # Submit CSR
+   curl -X POST https://api.krakenkey.io/certs/tls \
+     -H "Authorization: Bearer YOUR_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"csrPem": "-----BEGIN CERTIFICATE REQUEST-----\n...\n-----END CERTIFICATE REQUEST-----"}'
+   ```
+
+   KrakenKey creates a DNS-01 challenge record, Let's Encrypt validates it, and your certificate is issued, typically in about **4 minutes**.
+
+   ```bash
+   # Check status and download
+   curl https://api.krakenkey.io/certs/tls/CERT_ID \
+     -H "Authorization: Bearer YOUR_TOKEN"
+   ```
+
+   When `status` is `"issued"`, the response includes your signed certificate PEM. Download it from the dashboard or copy it from the API response.
+
+</Steps>
+
+## Using an API key
+
+For programmatic access, generate an API key from the dashboard under your profile. API keys use the same `Authorization: Bearer` header as session tokens:
+
+```bash
+# Generate an API key from the dashboard, then:
+curl https://api.krakenkey.io/certs/tls \
+  -H "Authorization: Bearer kk_your_api_key_here"
+```
+
+See the [API reference](/docs/api/) for the full endpoint documentation.
+
+## What's next
+
+- **Add more domains:** repeat steps 2–4 for each domain you want to issue certificates for.
+- **Automate with the API or CLI:** integrate certificate issuance into your deployment pipeline using the [REST API](/docs/api/) or the [KrakenKey CLI](/docs/cli/).
+- **Wildcard certificates:** submit a CSR with `*.example.com` as the common name (DNS-01 supports wildcards).
+- **Deploy to a platform:** see [Integrations](/docs/integrations/azure-key-vault/) for Azure Key Vault, App Service, and Container Apps.

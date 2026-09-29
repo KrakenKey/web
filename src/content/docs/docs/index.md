@@ -9,9 +9,9 @@ KrakenKey issues TLS certificates through ACME DNS-01. You do a one-time DNS set
 
 ## Start here
 
-- **[Getting started](/getting-started/)**: add a domain, set up its DNS records, and issue your first certificate.
-- **[API reference](/docs/api)**: every endpoint in the KrakenKey REST API.
-- **[KrakenKey CLI](https://github.com/KrakenKey/cli)**: issue, submit, download and renew certificates from a terminal or CI job.
+- **[Getting started](/docs/getting-started/)**: add a domain, set up its DNS records, and issue your first certificate.
+- **[KrakenKey CLI](/docs/cli/)**: issue, submit, download and renew certificates from a terminal or CI job.
+- **[API reference](/docs/api/)**: every endpoint in the KrakenKey REST API.
 
 ## Integrations
 

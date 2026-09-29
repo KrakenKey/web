@@ -1,6 +1,8 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import starlight from '@astrojs/starlight';
+import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
+import docsCsp from './src/integrations/docs-csp.mjs';
 
 export default defineConfig({
   site: 'https://krakenkey.io',
@@ -26,12 +28,21 @@ export default defineConfig({
         },
         { tag: 'meta', attrs: { property: 'og:image', content: 'https://krakenkey.io/og-image.png' } },
       ],
+      plugins: [
+        starlightOpenAPI([
+          {
+            base: 'docs/api',
+            schema: './public/openapi.json',
+            sidebar: { label: 'API reference', collapsed: true, operations: { badges: true } },
+          },
+        ]),
+      ],
       sidebar: [
         {
           label: 'Start here',
           items: [
             { label: 'Overview', slug: 'docs' },
-            { label: 'Getting started', link: '/getting-started/' },
+            { slug: 'docs/getting-started' },
           ],
         },
         {
@@ -39,15 +50,14 @@ export default defineConfig({
           items: [{ slug: 'docs/integrations/azure-key-vault' }],
         },
         {
-          label: 'Reference',
-          items: [
-            { label: 'API reference', link: '/docs/api' },
-            { label: 'KrakenKey CLI', link: 'https://github.com/KrakenKey/cli' },
-          ],
+          label: 'CLI',
+          autogenerate: { directory: 'docs/cli' },
         },
+        ...openAPISidebarGroups,
       ],
     }),
     sitemap(),
+    docsCsp(),
   ],
   markdown: {
     shikiConfig: {

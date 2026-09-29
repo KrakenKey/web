@@ -1,0 +1,6 @@
+# Cloudflare Pages redirects
+# https://developers.cloudflare.com/pages/configuration/redirects/
+
+# The getting-started guide moved into the docs.
+/getting-started   /docs/getting-started/   301
+/getting-started/  /docs/getting-started/   301
