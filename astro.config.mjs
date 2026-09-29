@@ -47,7 +47,8 @@ export default defineConfig({
         },
         {
           label: 'Integrations',
-          items: [{ slug: 'docs/integrations/azure-key-vault' }],
+          // New guides in src/content/docs/docs/integrations/ appear here on their own.
+          autogenerate: { directory: 'docs/integrations' },
         },
         {
           label: 'CLI',
