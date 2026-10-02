@@ -1028,16 +1028,6 @@
             "type": "string",
             "description": "User email address",
             "example": "jdoe@example.com"
-          },
-          "groups": {
-            "description": "User groups",
-            "example": [
-              "users"
-            ],
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           }
         }
       }
