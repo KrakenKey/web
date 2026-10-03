@@ -51,7 +51,7 @@ Every command and flag is listed in the [command reference](/docs/cli/commands/)
 
 ## Signing in
 
-`krakenkey auth login --web` prints a link to `app.krakenkey.io/device` with a short code and opens it in your browser (`--no-browser` only prints it). Sign in, check the code matches, and click **Approve**. The dashboard creates an API key named `CLI login: <hostname>`, and the CLI saves it to the config file. The request expires after 10 minutes. Revoke the key like any other, under API Keys or with `krakenkey auth keys delete`.
+`krakenkey auth login --web` prints a link to `app.krakenkey.io/device` with a short code and opens it in your browser (`--no-browser` only prints it). Sign in, check the code matches, and click **Approve**. The dashboard creates an API key named `CLI login: <hostname>`, and the CLI saves it to the config file. The request expires after 10 minutes. Revoke it under **API Keys** in the dashboard. The CLI can't delete keys itself: the API only accepts key changes from a dashboard session.
 
 To use a key you already have, run `krakenkey auth login` and paste it, or set `KK_API_KEY`. That suits CI, where nobody is around to approve.
 
