@@ -65,7 +65,7 @@ Using the product the way a customer would turned up rough edges. None of them s
 - **`renew` always issues.** It's a forced renewal, not "renew if due", so the client decides when. Let's Encrypt allows five duplicate certificates a week, so a script that renews on every run can lock itself out. A renewal window check on the API side would make a daily schedule safe.
 - **Comma-separated SANs.** Our GitHub Action documents its `san` input as comma-separated, then passes the whole list to the CLI as one name. With the CLI directly, repeat `--san` per name.
 - **`cert issue --wait` can skip the full chain** if fetching it fails, without an error. Downloading with `--format fullchain` afterwards avoids it.
-- **`domain add` text output** doesn't show the CNAME you need to create, only the TXT record.
+- **`domain add` text output** only showed the TXT record, not the CNAME you need to create. Fixed in CLI v0.5.0, which also adds `krakenkey domain check` to verify both records.
 - **Free-tier renewal window.** One of our docs said 30 days; the free tier auto-renews 5 days before expiry. The gateway renews itself with a third of the lifetime left, about 30 days for a 90-day certificate, so it doesn't depend on either.
 
 ## Results

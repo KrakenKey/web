@@ -220,5 +220,5 @@ Each name should show the KrakenKey certificate's subject and expiry. To be told
 | Old certificate still served after renewal | Caddy was reloaded without `--force`, or a Docker single-file bind mount is pinned to the old inode. |
 | `caddy validate` fails with a file error | The Caddyfile references the certificate before step 1 wrote it. |
 | One site switched and all the others did too | Expected: a loaded wildcard covers every matching site. |
-| Issuance fails on the challenge | Check the delegation with `dig CNAME _acme-challenge.example.com +short`. It should return `example-com.acme.krakenkey.io.` |
+| Issuance fails on the challenge | Run `krakenkey domain check example.com '*.example.com'` (CLI v0.5.0 or later), or `dig CNAME _acme-challenge.example.com +short`, which should return `example-com.acme.krakenkey.io.` `krakenkey cert show <id>` gives the failure reason. |
 | Caddy can't read the key | The key needs to be readable by the user Caddy runs as (`caddy` for the distribution packages). |
