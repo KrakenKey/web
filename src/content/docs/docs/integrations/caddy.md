@@ -58,7 +58,7 @@ openssl verify -untrusted example.com.fullchain.pem example.com.fullchain.pem
 
 Add a snippet and import it in every site the certificate covers:
 
-```caddyfile
+```text
 (tls_krakenkey) {
 	tls /etc/caddy/certs/example.com.fullchain.pem /etc/caddy/certs/example.com.key
 }
