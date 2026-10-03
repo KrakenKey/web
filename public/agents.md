@@ -20,7 +20,7 @@ Also note where the certificate will be used (nginx, Caddy, a load balancer, CI)
 
 ## 2. Install the CLI
 
-Skip this if `krakenkey version` works.
+Skip this if `krakenkey version` prints 0.5.0 or later. Older versions lack `domain check`, which this runbook uses.
 
 ```bash
 VERSION=$(curl -fsSLI -o /dev/null -w '%{url_effective}' https://github.com/KrakenKey/cli/releases/latest | sed 's#.*/tag/v##')
@@ -53,7 +53,7 @@ krakenkey --output json domain list          # [{id, hostname, isVerified, verif
 If you have an API key, find a registered domain that covers each hostname. A verified domain covers itself and every subdomain under it, so a verified `example.com` covers `www.example.com` and `*.example.com`. If nothing covers the hostnames, register the zone the user controls, usually the apex:
 
 ```bash
-krakenkey --output json domain add example.com    # returns {id, hostname, verificationCode, isVerified}
+krakenkey --output json domain add example.com    # returns {id, hostname, verificationCode, isVerified, dnsRecords}
 ```
 
 ## 4. Work out the DNS records
@@ -79,20 +79,22 @@ Examples:
 
 KrakenKey checks these CNAMEs before every order. If one is missing or wrong, issuance fails.
 
-Check what is already in place:
+Check what is already in place. Pass every name that will be on the certificate:
 
 ```bash
-dig +short TXT example.com @1.1.1.1
-dig +short CNAME _acme-challenge.example.com @1.1.1.1
+krakenkey --output json domain check example.com www.example.com --resolver 1.1.1.1
 ```
 
-For each challenge CNAME:
+It works without an API key (the ownership TXT is then reported as `skipped`). It prints `{ready, records: [{type, name, expected, found, status, detail}]}` and exits 1 until every record is in place. For each record:
 
-| `dig +short CNAME` returns | Action |
+| `status` | Action |
 | --- | --- |
-| the expected target (dig adds a trailing dot) | nothing to do |
-| a different target | ask the user to change the existing record to the expected target (tell them the current value) |
-| nothing | run `dig +short TXT _acme-challenge.<name> @1.1.1.1`; if that prints anything, the user must delete those TXT records, then add the CNAME. Otherwise just add the CNAME |
+| `ok` | nothing to do |
+| `missing` | ask the user to add it |
+| `wrong` | ask the user to change the existing record to `expected` (tell them the current value from `found`) |
+| `conflict` | TXT records sit where the CNAME must go; the user must delete them, then add the CNAME |
+| `unregistered` | no registered domain covers this name; run `domain add` (step 3) |
+| `skipped` | no API key yet; the dashboard shows the TXT value (step 5) |
 
 Only ask for what is missing or wrong.
 
@@ -129,14 +131,15 @@ Add anything else you couldn't work out yourself, such as where the certificate 
 
 ## 6. Verify and issue
 
-After "go", confirm the key works (`krakenkey auth status`). Then wait for DNS: poll the `dig` commands from step 4 every 30 seconds, for up to 15 minutes. Once the TXT is visible:
+After "go", confirm the key works (`krakenkey auth status`). Then wait for DNS. This re-checks every 30 seconds for up to 15 minutes and exits 0 once everything is in place:
 
 ```bash
+krakenkey --output json domain check example.com www.example.com --resolver 1.1.1.1 --wait
 krakenkey --output json domain list                 # get the domain id
 krakenkey --output json domain verify <domain-id>   # checks the TXT record only
 ```
 
-Once every challenge CNAME resolves to its target, issue one certificate covering all the names:
+Then issue one certificate covering all the names:
 
 ```bash
 mkdir -p certs
@@ -174,7 +177,7 @@ Finish by telling the user:
 ## Troubleshooting
 
 - **`domain verify` fails.** The TXT isn't visible yet, or it is on the wrong name. It must sit on the registered hostname itself. Wait and retry.
-- **Certificate status `failed`.** Almost always a missing or wrong `_acme-challenge` CNAME, or a CAA record that blocks Let's Encrypt. The API doesn't return the reason yet; the account owner gets it by email. Check with `dig`, fix, then run `krakenkey --output json cert retry <cert-id> --wait`.
+- **Certificate status `failed`.** The `--wait` error and `krakenkey cert show <cert-id>` include the reason (`failureReason` in JSON). It is almost always a missing or wrong `_acme-challenge` CNAME, or a CAA record that blocks Let's Encrypt. Fix it, confirm with `domain check`, then run `krakenkey --output json cert retry <cert-id> --wait`.
 - **`No verified domains` or names not authorized.** Every name on the certificate must be a verified domain or a subdomain of one.
 - **402 or `plan_limit_exceeded`.** The plan limit is reached. The free plan allows 3 domains, 5 certificates per month and 2 concurrent pending orders. Tell the user; don't retry.
 - **429 (exit 4).** Rate limited. Issuance, renewal, retry and verification are limited per hour, so back off before retrying.
@@ -184,7 +187,7 @@ Finish by telling the user:
 Use the REST API at `https://api.krakenkey.io` with `Authorization: Bearer <kk_ API key>`.
 
 - Spec: https://api.krakenkey.io/swagger-json
-- Flow: `POST /domains` → DNS records → `POST /domains/{id}/verify` → `POST /certs/tls` with `{"csrPem": "..."}` → poll `GET /certs/tls/{id}` until `status` is `issued` → `GET /certs/tls/{id}/chain` for `fullChainPem`.
+- Flow: `POST /domains` → DNS records → `POST /domains/{id}/verify` → `POST /certs/tls` with `{"csrPem": "..."}` → poll `GET /certs/tls/{id}` until `status` is `issued` (on `failed`, `failureReason` says why) → `GET /certs/tls/{id}/chain` for `fullChainPem`.
 - The CSR and private key must be generated where the certificate will be used, never by KrakenKey.
 
 ## More
