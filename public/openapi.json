@@ -259,6 +259,169 @@
         }
       }
     },
+    "/billing/checkout": {
+      "post": {
+        "operationId": "BillingController_checkout",
+        "summary": "Create a Stripe Checkout session",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCheckoutDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Checkout session created"
+          },
+          "400": {
+            "description": "Plan not available"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/billing/subscription": {
+      "get": {
+        "operationId": "BillingController_getSubscription",
+        "summary": "Get current user's subscription",
+        "parameters": [],
+        "tags": [
+          "Billing"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription details"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/billing/portal": {
+      "post": {
+        "operationId": "BillingController_createPortal",
+        "summary": "Create a Stripe Customer Portal session",
+        "parameters": [],
+        "tags": [
+          "Billing"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Portal session created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "No subscription found"
+          }
+        }
+      }
+    },
+    "/billing/upgrade/preview": {
+      "post": {
+        "operationId": "BillingController_previewUpgrade",
+        "summary": "Preview prorated cost for a plan upgrade",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpgradePlanDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upgrade preview details"
+          },
+          "400": {
+            "description": "Invalid upgrade path"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "No active subscription"
+          }
+        }
+      }
+    },
+    "/billing/upgrade": {
+      "post": {
+        "operationId": "BillingController_upgrade",
+        "summary": "Upgrade subscription with proration",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpgradePlanDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Subscription upgraded"
+          },
+          "400": {
+            "description": "Invalid upgrade path"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "No active subscription"
+          }
+        }
+      }
+    },
     "/certs/tls": {
       "get": {
         "operationId": "TlsController_findAll",
@@ -789,6 +952,1163 @@
         }
       }
     },
+    "/endpoints": {
+      "post": {
+        "operationId": "EndpointsController_create",
+        "summary": "Register a new monitored endpoint",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEndpointDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Endpoint created"
+          },
+          "403": {
+            "description": "Plan limit exceeded"
+          }
+        }
+      },
+      "get": {
+        "operationId": "EndpointsController_findAll",
+        "summary": "List all monitored endpoints",
+        "parameters": [],
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of endpoints"
+          }
+        }
+      }
+    },
+    "/endpoints/{id}": {
+      "get": {
+        "operationId": "EndpointsController_findOne",
+        "summary": "Get endpoint details",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Endpoint UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint details"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "EndpointsController_update",
+        "summary": "Update endpoint",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Endpoint UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEndpointDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint updated"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "EndpointsController_remove",
+        "summary": "Delete an endpoint",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Endpoint UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint deleted"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          }
+        }
+      }
+    },
+    "/endpoints/probes/mine": {
+      "get": {
+        "operationId": "EndpointsController_listUserProbes",
+        "summary": "List the user's connected probes available for assignment",
+        "parameters": [],
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of connected probes"
+          }
+        }
+      }
+    },
+    "/endpoints/{id}/probes": {
+      "post": {
+        "operationId": "EndpointsController_assignProbes",
+        "summary": "Assign connected probes to an endpoint",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Endpoint UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignProbesDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Probes assigned"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          }
+        }
+      }
+    },
+    "/endpoints/{id}/probes/{probeId}": {
+      "delete": {
+        "operationId": "EndpointsController_unassignProbe",
+        "summary": "Unassign a connected probe from an endpoint",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Endpoint UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "probeId",
+            "required": true,
+            "in": "path",
+            "description": "Probe ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Probe unassigned"
+          },
+          "404": {
+            "description": "Assignment not found"
+          }
+        }
+      }
+    },
+    "/endpoints/{id}/regions": {
+      "post": {
+        "operationId": "EndpointsController_addRegion",
+        "summary": "Add a hosted probe region to an endpoint",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Endpoint UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddHostedRegionDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Region added"
+          },
+          "403": {
+            "description": "Plan limit exceeded"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          }
+        }
+      }
+    },
+    "/endpoints/{id}/regions/{region}": {
+      "delete": {
+        "operationId": "EndpointsController_removeRegion",
+        "summary": "Remove a hosted probe region from an endpoint",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Endpoint UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "region",
+            "required": true,
+            "in": "path",
+            "description": "Region identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Region removed"
+          },
+          "404": {
+            "description": "Region not found"
+          }
+        }
+      }
+    },
+    "/endpoints/{id}/scan": {
+      "post": {
+        "operationId": "EndpointsController_requestScan",
+        "summary": "Request an on-demand scan of this endpoint",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Endpoint UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scan requested"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          }
+        }
+      }
+    },
+    "/endpoints/{id}/results": {
+      "get": {
+        "operationId": "EndpointsController_getResults",
+        "summary": "Get paginated scan results for an endpoint",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Endpoint UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scan results"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          }
+        }
+      }
+    },
+    "/endpoints/{id}/results/export": {
+      "get": {
+        "operationId": "EndpointsController_exportResults",
+        "summary": "Export raw scan results as CSV or JSON",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Endpoint UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "description": "Export format (default: json)",
+            "schema": {
+              "enum": [
+                "json",
+                "csv"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exported scan results"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          }
+        }
+      }
+    },
+    "/endpoints/{id}/results/latest": {
+      "get": {
+        "operationId": "EndpointsController_getLatestResults",
+        "summary": "Get the latest scan result per probe for an endpoint",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Endpoint UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Endpoints"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Latest scan results by probe"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          }
+        }
+      }
+    },
+    "/feedback": {
+      "post": {
+        "operationId": "FeedbackController_create",
+        "summary": "Submit feedback",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFeedbackDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Feedback"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Feedback submitted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "HealthController_health",
+        "summary": "Liveness check",
+        "parameters": [],
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "API is live"
+          }
+        }
+      }
+    },
+    "/health/readiness": {
+      "get": {
+        "operationId": "HealthController_readiness",
+        "summary": "Readiness check — verifies DB, Redis, and Authentik",
+        "parameters": [],
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations": {
+      "post": {
+        "operationId": "OrganizationsController_create",
+        "summary": "Create a new organization",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrgDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Organizations"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Organization created"
+          },
+          "409": {
+            "description": "User already belongs to an org"
+          }
+        }
+      }
+    },
+    "/organizations/{id}": {
+      "get": {
+        "operationId": "OrganizationsController_findOne",
+        "summary": "Get organization details",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Organization UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Organizations"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization details"
+          },
+          "404": {
+            "description": "Organization not found"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "OrganizationsController_update",
+        "summary": "Update organization",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Organization UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrgDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Organizations"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization updated"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "OrganizationsController_deleteOrg",
+        "summary": "Delete organization",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Organization UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Organizations"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Organization deleted"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/members": {
+      "post": {
+        "operationId": "OrganizationsController_inviteMember",
+        "summary": "Invite a user to the organization",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Organization UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteMemberDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Organizations"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Member invited"
+          },
+          "404": {
+            "description": "Organization or user not found"
+          },
+          "409": {
+            "description": "User already in another org"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/members/{userId}": {
+      "delete": {
+        "operationId": "OrganizationsController_removeMember",
+        "summary": "Remove a member from the organization",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Organization UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID to remove",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Organizations"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Member removed"
+          },
+          "400": {
+            "description": "Cannot remove the owner"
+          },
+          "404": {
+            "description": "Member not found in org"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "OrganizationsController_updateMemberRole",
+        "summary": "Update a member's role",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Organization UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMemberRoleDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Organizations"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role updated"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/transfer-ownership": {
+      "post": {
+        "operationId": "OrganizationsController_transferOwnership",
+        "summary": "Transfer organization ownership",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Organization UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferOwnershipDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Organizations"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Ownership transferred"
+          }
+        }
+      }
+    },
+    "/probes/register": {
+      "post": {
+        "operationId": "ProbesController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterProbeDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Probes"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/probes/report": {
+      "post": {
+        "operationId": "ProbesController_report",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitReportDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Probes"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/probes/{probeId}/config": {
+      "get": {
+        "operationId": "ProbesController_getConfig",
+        "parameters": [
+          {
+            "name": "probeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Probes"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/public-scan": {
+      "post": {
+        "operationId": "PublicScanController_scan",
+        "summary": "Scan a TLS endpoint (no auth required)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicScanRequestDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Public Scan"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scan result"
+          },
+          "400": {
+            "description": "Invalid hostname or private address"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Scanner unavailable"
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "operationId": "UsersController_findAll",
@@ -964,6 +2284,44 @@
           }
         }
       },
+      "CreateCheckoutDto": {
+        "type": "object",
+        "properties": {
+          "plan": {
+            "type": "string",
+            "description": "Plan to subscribe to",
+            "example": "starter",
+            "enum": [
+              "starter",
+              "team",
+              "business",
+              "enterprise"
+            ]
+          }
+        },
+        "required": [
+          "plan"
+        ]
+      },
+      "UpgradePlanDto": {
+        "type": "object",
+        "properties": {
+          "plan": {
+            "type": "string",
+            "description": "Plan to upgrade to",
+            "example": "team",
+            "enum": [
+              "starter",
+              "team",
+              "business",
+              "enterprise"
+            ]
+          }
+        },
+        "required": [
+          "plan"
+        ]
+      },
       "CreateTlsCrtDto": {
         "type": "object",
         "properties": {
@@ -1015,6 +2373,436 @@
         "required": [
           "hostname"
         ]
+      },
+      "CreateEndpointDto": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "Hostname to monitor",
+            "example": "example.com"
+          },
+          "port": {
+            "type": "number",
+            "description": "Port to connect to (default: 443)",
+            "example": 443
+          },
+          "sni": {
+            "type": "string",
+            "description": "SNI override (defaults to host)",
+            "example": "example.com"
+          },
+          "label": {
+            "type": "string",
+            "description": "User-friendly label",
+            "example": "Production API"
+          },
+          "probeIds": {
+            "description": "IDs of connected probes to assign for scanning",
+            "example": [
+              "probe-uuid-1"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hostedRegions": {
+            "description": "Hosted probe regions to enable for scanning (Team tier+)",
+            "example": [
+              "us-east-1"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "host"
+        ]
+      },
+      "UpdateEndpointDto": {
+        "type": "object",
+        "properties": {
+          "sni": {
+            "type": "string",
+            "description": "SNI override",
+            "example": "example.com"
+          },
+          "label": {
+            "type": "string",
+            "description": "User-friendly label",
+            "example": "Production API"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether endpoint monitoring is active",
+            "example": true
+          },
+          "probeIds": {
+            "description": "Connected probe IDs to assign (replaces existing assignments)",
+            "example": [
+              "probe-uuid-1"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hostedRegions": {
+            "description": "Hosted probe regions to enable (replaces existing regions)",
+            "example": [
+              "us-east-1"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AssignProbesDto": {
+        "type": "object",
+        "properties": {
+          "probeIds": {
+            "description": "IDs of connected probes to assign",
+            "example": [
+              "probe-uuid-1"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "probeIds"
+        ]
+      },
+      "AddHostedRegionDto": {
+        "type": "object",
+        "properties": {
+          "region": {
+            "type": "string",
+            "description": "Hosted probe region identifier",
+            "example": "us-east-1"
+          }
+        },
+        "required": [
+          "region"
+        ]
+      },
+      "CreateFeedbackDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Feedback message from the user",
+            "example": "Great service, very easy to use!"
+          },
+          "rating": {
+            "type": "number",
+            "description": "Rating from 1 to 5",
+            "example": 5,
+            "minimum": 1,
+            "maximum": 5
+          }
+        },
+        "required": [
+          "message",
+          "rating"
+        ]
+      },
+      "CreateOrgDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Acme Corp",
+            "description": "Organization name"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "InviteMemberDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the user to invite (must already exist in the system)",
+            "example": "alice@example.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "member",
+              "viewer"
+            ],
+            "default": "member",
+            "description": "Role to assign to the invited user"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "UpdateOrgDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Acme Corp",
+            "description": "New organization name"
+          }
+        }
+      },
+      "TransferOwnershipDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the member to transfer ownership to",
+            "example": "alice@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "UpdateMemberRoleDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "member",
+              "viewer"
+            ],
+            "description": "New role for the member"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "RegisterProbeDto": {
+        "type": "object",
+        "properties": {
+          "probeId": {
+            "type": "string",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "name": {
+            "type": "string",
+            "example": "krakenkey-prd"
+          },
+          "version": {
+            "type": "string",
+            "example": "0.1.0"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "standalone",
+              "connected",
+              "hosted"
+            ],
+            "example": "connected"
+          },
+          "region": {
+            "type": "string",
+            "example": "us-east-1"
+          },
+          "os": {
+            "type": "string",
+            "example": "linux"
+          },
+          "arch": {
+            "type": "string",
+            "example": "amd64"
+          }
+        },
+        "required": [
+          "probeId",
+          "name",
+          "version",
+          "mode",
+          "os",
+          "arch"
+        ]
+      },
+      "EndpointDto": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "type": "string",
+            "example": "example.com"
+          },
+          "port": {
+            "type": "number",
+            "example": 443
+          },
+          "sni": {
+            "type": "string",
+            "example": "example.com"
+          }
+        },
+        "required": [
+          "host",
+          "port"
+        ]
+      },
+      "ConnectionResultDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string"
+          },
+          "latencyMs": {
+            "type": "number",
+            "example": 42
+          },
+          "tlsVersion": {
+            "type": "string",
+            "example": "TLS 1.3"
+          },
+          "cipherSuite": {
+            "type": "string",
+            "example": "TLS_AES_256_GCM_SHA384"
+          },
+          "ocspStapled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "CertificateResultDto": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "example": "CN=example.com"
+          },
+          "sans": {
+            "example": [
+              "example.com",
+              "www.example.com"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "issuer": {
+            "type": "string",
+            "example": "CN=Let's Encrypt Authority X3"
+          },
+          "serialNumber": {
+            "type": "string"
+          },
+          "notBefore": {
+            "type": "string"
+          },
+          "notAfter": {
+            "type": "string"
+          },
+          "daysUntilExpiry": {
+            "type": "number",
+            "example": 243
+          },
+          "keyType": {
+            "type": "string",
+            "example": "RSA"
+          },
+          "keySize": {
+            "type": "number",
+            "example": 2048
+          },
+          "signatureAlgorithm": {
+            "type": "string",
+            "example": "sha256WithRSAEncryption"
+          },
+          "fingerprint": {
+            "type": "string"
+          },
+          "chainDepth": {
+            "type": "number",
+            "example": 3
+          },
+          "chainComplete": {
+            "type": "boolean"
+          },
+          "trusted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ScanResultDto": {
+        "type": "object",
+        "properties": {
+          "endpoint": {
+            "$ref": "#/components/schemas/EndpointDto"
+          },
+          "connection": {
+            "$ref": "#/components/schemas/ConnectionResultDto"
+          },
+          "certificate": {
+            "$ref": "#/components/schemas/CertificateResultDto"
+          }
+        },
+        "required": [
+          "endpoint",
+          "connection"
+        ]
+      },
+      "SubmitReportDto": {
+        "type": "object",
+        "properties": {
+          "probeId": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "standalone",
+              "connected",
+              "hosted"
+            ]
+          },
+          "region": {
+            "type": "string",
+            "example": "us-east-1"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScanResultDto"
+            }
+          }
+        },
+        "required": [
+          "probeId",
+          "mode",
+          "timestamp",
+          "results"
+        ]
+      },
+      "PublicScanRequestDto": {
+        "type": "object",
+        "properties": {}
       },
       "UpdateUserDto": {
         "type": "object",
