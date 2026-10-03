@@ -11,6 +11,7 @@ Install and configuration are covered in [KrakenKey CLI](/docs/cli/).
 ## `krakenkey auth`
 
 ```text
+krakenkey auth login --web [--no-browser]     Approve a login in the browser; creates and saves a new API key
 krakenkey auth login [--api-key <key>]        Save API key (prompts interactively if omitted)
 krakenkey auth logout                         Remove stored API key
 krakenkey auth status                         Show auth status and resource counts
@@ -31,11 +32,27 @@ Creating and deleting keys needs a dashboard session, so the API refuses `auth k
 ## `krakenkey domain`
 
 ```text
-krakenkey domain add <hostname>    Register a domain and get the DNS TXT verification record
+krakenkey domain add <hostname>    Register a domain and print the TXT and challenge CNAME records
 krakenkey domain list              List all domains
 krakenkey domain show <id>         Show domain details and verification record
+krakenkey domain check <name>...   Check DNS records for the names on a certificate
 krakenkey domain verify <id>       Trigger DNS TXT verification
 krakenkey domain delete <id>       Delete a domain
+```
+
+Each name on a certificate needs a CNAME from `_acme-challenge.<name>` to `<name with dots as dashes>.acme.krakenkey.io`. A `*.` prefix shares its parent's record. KrakenKey checks these before every order. `domain check` takes the certificate names and resolves each challenge CNAME. With a working API key it also checks the ownership TXT of the registered domain that covers them. Each record is reported as `ok`, `missing`, `wrong` (points elsewhere) or `conflict` (TXT records sit where the CNAME should go), and the command exits 1 until everything is in place.
+
+`domain check` flags:
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--resolver` | system resolver | DNS server to query, e.g. `1.1.1.1` |
+| `--wait` | `false` | Re-check until every record is in place |
+| `--poll-interval` | `30s` | How often to re-check |
+| `--poll-timeout` | `15m` | Maximum time to wait |
+
+```bash
+krakenkey domain check example.com www.example.com --resolver 1.1.1.1 --wait
 ```
 
 ## `krakenkey cert`
@@ -44,7 +61,7 @@ krakenkey domain delete <id>       Delete a domain
 krakenkey cert issue --domain <domain>              Generate key + CSR locally, submit, and optionally wait
 krakenkey cert submit --csr <file>                  Submit an existing CSR PEM file
 krakenkey cert list [--status <status>]             List certificates (filter: pending|issuing|issued|failed|renewing|revoking|revoked)
-krakenkey cert show <id>                            Show certificate details
+krakenkey cert show <id>                            Show certificate details (and the failure reason if it failed)
 krakenkey cert download <id> [--out path]           Download certificate PEM
                               [--format cert|chain|fullchain]
 krakenkey cert renew <id> [--wait]                  Trigger manual renewal

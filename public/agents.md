@@ -7,7 +7,7 @@ How KrakenKey works, in one paragraph: the user registers a domain and proves ow
 ## Rules
 
 - Do everything you can yourself. Stop for the user only at the single **Hand-off** step below, and ask for everything in one message so they can do it all and reply "go".
-- Never print, log, paste or upload a private key. Don't ask the user to paste an API key into the chat; have them run `krakenkey auth login` in their own terminal instead.
+- Never print, log, paste or upload a private key. Never ask the user to paste an API key into the chat. Sign in with `krakenkey auth login --web` (step 3): the user approves in their browser and the key never passes through the conversation.
 - Put global flags before the command: `krakenkey --output json cert list` works, `krakenkey cert list --output json` does not.
 - Use `--output json` and parse with `jq` when you need values. Errors in JSON mode go to stderr as `{"error":"..."}`.
 - Exit codes: 0 ok, 1 error, 2 auth (no key or key rejected), 3 not found, 4 rate limited, 5 config error. `auth status` alone exits 5 when no key is configured.
@@ -20,7 +20,7 @@ Also note where the certificate will be used (nginx, Caddy, a load balancer, CI)
 
 ## 2. Install the CLI
 
-Skip this if `krakenkey version` works.
+Skip this if `krakenkey version` prints 0.6.0 or later. Older versions lack `auth login --web` and `domain check`, which this runbook uses.
 
 ```bash
 VERSION=$(curl -fsSLI -o /dev/null -w '%{url_effective}' https://github.com/KrakenKey/cli/releases/latest | sed 's#.*/tag/v##')
@@ -36,7 +36,7 @@ mkdir -p "$HOME/.local/bin" && mv krakenkey "$HOME/.local/bin/"
 cd - >/dev/null && rm -rf "$TMP"
 ```
 
-Make sure `~/.local/bin` is on `PATH`. The CLI reads its key from `~/.config/krakenkey/config.yaml`, which is where the user's `krakenkey auth login` writes it. If you run in a separate sandbox or container, pass the key in as `KK_API_KEY` instead. Windows (amd64) uses a `.zip` asset of the same name. Other options:
+Make sure `~/.local/bin` is on `PATH`. The CLI reads its key from `~/.config/krakenkey/config.yaml`, which is where `krakenkey auth login --web` saves it on the machine you run it on. `KK_API_KEY` in the environment also works. Windows (amd64) uses a `.zip` asset of the same name. Other options:
 
 - `go install github.com/krakenkey/cli/cmd/krakenkey@latest`
 - `docker run --rm -e KK_API_KEY -v "$PWD:/out" -w /out ghcr.io/krakenkey/cli:latest <command>`
@@ -48,12 +48,19 @@ krakenkey --output json auth status          # exit 5: no key configured, exit 2
 krakenkey --output json domain list          # [{id, hostname, isVerified, verificationCode}]
 ```
 
-`KK_API_KEY` in the environment also works as the API key.
+If `auth status` fails, start the browser login now, in the background, so its link can go into the hand-off. It waits up to 10 minutes for the user to approve, then saves a new API key to the config file:
+
+```bash
+krakenkey auth login --web --no-browser > /tmp/krakenkey-login.log 2>&1 &
+sleep 3; cat /tmp/krakenkey-login.log    # the approval link and its code
+```
+
+If the user is at this machine, drop `--no-browser` and it opens their browser too. Don't run `domain add` while this login is pending; the user adds the domain in the dashboard during the hand-off (step 5).
 
 If you have an API key, find a registered domain that covers each hostname. A verified domain covers itself and every subdomain under it, so a verified `example.com` covers `www.example.com` and `*.example.com`. If nothing covers the hostnames, register the zone the user controls, usually the apex:
 
 ```bash
-krakenkey --output json domain add example.com    # returns {id, hostname, verificationCode, isVerified}
+krakenkey --output json domain add example.com    # returns {id, hostname, verificationCode, isVerified, dnsRecords}
 ```
 
 ## 4. Work out the DNS records
@@ -79,20 +86,22 @@ Examples:
 
 KrakenKey checks these CNAMEs before every order. If one is missing or wrong, issuance fails.
 
-Check what is already in place:
+Check what is already in place. Pass every name that will be on the certificate:
 
 ```bash
-dig +short TXT example.com @1.1.1.1
-dig +short CNAME _acme-challenge.example.com @1.1.1.1
+krakenkey --output json domain check example.com www.example.com --resolver 1.1.1.1
 ```
 
-For each challenge CNAME:
+It works without an API key (the ownership TXT is then reported as `skipped`). It prints `{ready, records: [{type, name, expected, found, status, detail}]}` and exits 1 until every record is in place. For each record:
 
-| `dig +short CNAME` returns | Action |
+| `status` | Action |
 | --- | --- |
-| the expected target (dig adds a trailing dot) | nothing to do |
-| a different target | ask the user to change the existing record to the expected target (tell them the current value) |
-| nothing | run `dig +short TXT _acme-challenge.<name> @1.1.1.1`; if that prints anything, the user must delete those TXT records, then add the CNAME. Otherwise just add the CNAME |
+| `ok` | nothing to do |
+| `missing` | ask the user to add it |
+| `wrong` | ask the user to change the existing record to `expected` (tell them the current value from `found`) |
+| `conflict` | TXT records sit where the CNAME must go; the user must delete them, then add the CNAME |
+| `unregistered` | no registered domain covers this name; run `domain add` (step 3) |
+| `skipped` | no API key yet; the dashboard shows the TXT value (step 5) |
 
 Only ask for what is missing or wrong.
 
@@ -108,35 +117,35 @@ If you already have working access to the user's DNS provider (a Cloudflare API 
 
 Send one message with only the steps that are still open. Typical cases:
 
-**No account or API key yet.** The TXT value doesn't exist until the domain is registered, so have the user register it in the dashboard while they're there:
+**Not signed in yet.** Put the approval link from step 3 first; it also works for a new account. The TXT value doesn't exist until the domain is registered, so have the user register it in the dashboard while they're there:
 
 > To finish, please do these, then reply "go":
 >
-> 1. Sign in at https://app.krakenkey.io, or sign up if you don't have an account (free plan, no card needed).
+> 1. Open https://app.krakenkey.io/device?code=BCDF-GHJK, sign in (or sign up: free plan, no card), check the page shows code **BCDF-GHJK**, and click **Approve**. This lets me use KrakenKey for you; the link expires in 10 minutes.
 > 2. In the dashboard, open **Domains** and add `example.com` if it isn't there yet. Add the TXT record it shows you at your DNS provider, unless that exact value is already in DNS.
 > 3. Also add these CNAME records (DNS only, not proxied):
 >    | Type | Name | Target |
 >    | --- | --- | --- |
 >    | CNAME | `_acme-challenge.example.com` | `example-com.acme.krakenkey.io` |
 >    | CNAME | `_acme-challenge.www.example.com` | `www-example-com.acme.krakenkey.io` |
-> 4. Create an API key under **API Keys** (https://app.krakenkey.io/dashboard/api-keys), then run `krakenkey auth login` in your terminal and paste the key when asked.
 
 Add anything else you couldn't work out yourself, such as where the certificate will be deployed.
 
-**Has an API key, DNS not done.** Run `domain add` yourself first, then send only the DNS table, with the TXT value filled in.
+**Signed in, DNS not done.** Run `domain add` yourself first, then send only the DNS table, with the TXT value filled in.
 
 **Everything already in place.** Skip the hand-off.
 
 ## 6. Verify and issue
 
-After "go", confirm the key works (`krakenkey auth status`). Then wait for DNS: poll the `dig` commands from step 4 every 30 seconds, for up to 15 minutes. Once the TXT is visible:
+After "go", confirm the login finished (`krakenkey auth status`). If `/tmp/krakenkey-login.log` says the request expired or was denied, start `auth login --web` again and send the user just the new link. Then wait for DNS. This re-checks every 30 seconds for up to 15 minutes and exits 0 once everything is in place:
 
 ```bash
+krakenkey --output json domain check example.com www.example.com --resolver 1.1.1.1 --wait
 krakenkey --output json domain list                 # get the domain id
 krakenkey --output json domain verify <domain-id>   # checks the TXT record only
 ```
 
-Once every challenge CNAME resolves to its target, issue one certificate covering all the names:
+Then issue one certificate covering all the names:
 
 ```bash
 mkdir -p certs
@@ -174,7 +183,7 @@ Finish by telling the user:
 ## Troubleshooting
 
 - **`domain verify` fails.** The TXT isn't visible yet, or it is on the wrong name. It must sit on the registered hostname itself. Wait and retry.
-- **Certificate status `failed`.** Almost always a missing or wrong `_acme-challenge` CNAME, or a CAA record that blocks Let's Encrypt. The API doesn't return the reason yet; the account owner gets it by email. Check with `dig`, fix, then run `krakenkey --output json cert retry <cert-id> --wait`.
+- **Certificate status `failed`.** The `--wait` error and `krakenkey cert show <cert-id>` include the reason (`failureReason` in JSON). It is almost always a missing or wrong `_acme-challenge` CNAME, or a CAA record that blocks Let's Encrypt. Fix it, confirm with `domain check`, then run `krakenkey --output json cert retry <cert-id> --wait`.
 - **`No verified domains` or names not authorized.** Every name on the certificate must be a verified domain or a subdomain of one.
 - **402 or `plan_limit_exceeded`.** The plan limit is reached. The free plan allows 3 domains, 5 certificates per month and 2 concurrent pending orders. Tell the user; don't retry.
 - **429 (exit 4).** Rate limited. Issuance, renewal, retry and verification are limited per hour, so back off before retrying.
@@ -184,7 +193,7 @@ Finish by telling the user:
 Use the REST API at `https://api.krakenkey.io` with `Authorization: Bearer <kk_ API key>`.
 
 - Spec: https://api.krakenkey.io/swagger-json
-- Flow: `POST /domains` → DNS records → `POST /domains/{id}/verify` → `POST /certs/tls` with `{"csrPem": "..."}` → poll `GET /certs/tls/{id}` until `status` is `issued` → `GET /certs/tls/{id}/chain` for `fullChainPem`.
+- Flow: `POST /domains` → DNS records → `POST /domains/{id}/verify` → `POST /certs/tls` with `{"csrPem": "..."}` → poll `GET /certs/tls/{id}` until `status` is `issued` (on `failed`, `failureReason` says why) → `GET /certs/tls/{id}/chain` for `fullChainPem`.
 - The CSR and private key must be generated where the certificate will be used, never by KrakenKey.
 
 ## More

@@ -259,6 +259,161 @@
         }
       }
     },
+    "/auth/device/code": {
+      "post": {
+        "operationId": "AuthController_createDeviceCode",
+        "summary": "Start a CLI browser login",
+        "description": "Returns a device code for the CLI to poll with and a user code for the user to approve in the dashboard.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDeviceCodeDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "Device and user codes issued"
+          }
+        }
+      }
+    },
+    "/auth/device/token": {
+      "post": {
+        "operationId": "AuthController_pollDeviceToken",
+        "summary": "Poll a CLI browser login",
+        "description": "Returns status pending, slow_down, denied or expired, or approved with a new API key. The key is returned once.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceTokenDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "Current login status"
+          }
+        }
+      }
+    },
+    "/auth/device/{userCode}": {
+      "get": {
+        "operationId": "AuthController_getDeviceRequest",
+        "summary": "Show a pending CLI login before approving it",
+        "parameters": [
+          {
+            "name": "userCode",
+            "required": true,
+            "in": "path",
+            "description": "User code shown by the CLI",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Called with an API key"
+          },
+          "404": {
+            "description": "Not found or expired"
+          }
+        }
+      }
+    },
+    "/auth/device/approve": {
+      "post": {
+        "operationId": "AuthController_approveDevice",
+        "summary": "Approve a CLI login",
+        "description": "Creates an API key for the signed-in user and hands it to the waiting CLI. Requires a dashboard session; API keys cannot approve logins.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceUserCodeDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "402": {
+            "description": "API key limit reached"
+          },
+          "403": {
+            "description": "Called with an API key"
+          },
+          "404": {
+            "description": "Not found or expired"
+          }
+        }
+      }
+    },
+    "/auth/device/deny": {
+      "post": {
+        "operationId": "AuthController_denyDevice",
+        "summary": "Deny a CLI login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceUserCodeDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Called with an API key"
+          },
+          "404": {
+            "description": "Not found or expired"
+          }
+        }
+      }
+    },
     "/billing/checkout": {
       "post": {
         "operationId": "BillingController_checkout",
@@ -2283,6 +2438,41 @@
             "example": "2027-01-01T00:00:00.000Z"
           }
         }
+      },
+      "CreateDeviceCodeDto": {
+        "type": "object",
+        "properties": {
+          "clientName": {
+            "type": "string",
+            "description": "Shown on the approval page and used in the API key name, e.g. the machine hostname",
+            "example": "build-01"
+          }
+        }
+      },
+      "DeviceTokenDto": {
+        "type": "object",
+        "properties": {
+          "deviceCode": {
+            "type": "string",
+            "description": "Device code from POST /auth/device/code"
+          }
+        },
+        "required": [
+          "deviceCode"
+        ]
+      },
+      "DeviceUserCodeDto": {
+        "type": "object",
+        "properties": {
+          "userCode": {
+            "type": "string",
+            "description": "User code shown by the CLI",
+            "example": "BCDF-GHJK"
+          }
+        },
+        "required": [
+          "userCode"
+        ]
       },
       "CreateCheckoutDto": {
         "type": "object",
