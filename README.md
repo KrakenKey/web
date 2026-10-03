@@ -39,6 +39,8 @@ web/
 │   ├── openapi.json          # OpenAPI 3.0 spec, rendered at /docs/api by starlight-openapi
 │   ├── _headers              # Cloudflare Pages security + cache headers (CSP, caching)
 │   ├── robots.txt
+│   ├── agents.md             # Setup runbook for AI agents, served at /agents.md
+│   ├── llms.txt              # LLM-oriented index of the docs
 │   ├── scalar-init.js        # Scalar API reference initialization
 │   ├── scanner.js            # External scanner script (loaded by scanner.astro)
 │   ├── favicon.svg

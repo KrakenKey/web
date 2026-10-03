@@ -43,6 +43,7 @@ export default defineConfig({
           items: [
             { label: 'Overview', slug: 'docs' },
             { slug: 'docs/getting-started' },
+            { slug: 'docs/ai-agents' },
           ],
         },
         {

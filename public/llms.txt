@@ -1,0 +1,28 @@
+# KrakenKey
+
+> KrakenKey issues and renews Let's Encrypt TLS certificates through ACME DNS-01 and monitors TLS endpoints. Users verify a domain once with a TXT record and delegate challenges with a CNAME; after that, certificates are issued from a CSR in a few minutes. Private keys are generated locally and never sent to KrakenKey.
+
+If you are an AI agent setting up certificates for a user, follow the runbook: it covers install, auth, DNS records, issuance and deployment, and tells you which steps need the user.
+
+## Agents
+
+- [Agent setup runbook](https://krakenkey.io/agents.md): step-by-step instructions for AI agents, with a single hand-off to the user
+- [Tool definitions](https://github.com/KrakenKey/KrakenKey/tree/main/tools): function-calling schemas and workflows for the REST API and CLI
+
+## Docs
+
+- [Getting started](https://krakenkey.io/docs/getting-started/): account, domain, DNS records and a first certificate
+- [CLI install and configuration](https://krakenkey.io/docs/cli/): install, config, output formats, CI usage, exit codes
+- [CLI command reference](https://krakenkey.io/docs/cli/commands/): every command and flag
+- [Azure Key Vault](https://krakenkey.io/docs/integrations/azure-key-vault/): issue from a Key Vault CSR and bind in App Service or Container Apps
+
+## API
+
+- [OpenAPI spec](https://api.krakenkey.io/swagger-json): the live spec for https://api.krakenkey.io; authenticate with `Authorization: Bearer <kk_ API key>`
+- [API reference](https://krakenkey.io/docs/api/)
+
+## Optional
+
+- [Pricing](https://krakenkey.io/pricing): plan limits for domains, certificates and monitoring
+- [Blog](https://krakenkey.io/blog)
+- [GitHub](https://github.com/KrakenKey)
