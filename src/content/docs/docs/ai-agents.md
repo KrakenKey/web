@@ -21,11 +21,12 @@ Swap in your own hostnames. If the agent is already working in your project, it 
 
 The agent collects everything it needs from you into one message. Do those steps, then reply "go". Depending on what you already have, that message covers some of these:
 
-1. **Create an account** at [app.krakenkey.io](https://app.krakenkey.io). The free plan doesn't need a card.
+1. **Approve the CLI login.** The agent sends a link to `app.krakenkey.io/device` with a short code. Open it, sign in (or sign up; the free plan doesn't need a card), check the code matches the one the agent gave you, and click **Approve**. That creates an API key for the agent's CLI. You never copy or paste the key, and you can revoke it under [API Keys](https://app.krakenkey.io/dashboard/api-keys).
 2. **Add your domain** in the dashboard and **add the DNS records** the agent lists: a TXT record that proves you own the domain and one `_acme-challenge` CNAME per certificate name. You only do this once per domain. If your agent already has access to your DNS provider, it can create the records itself.
-3. **Create an API key** under [API Keys](https://app.krakenkey.io/dashboard/api-keys) and run `krakenkey auth login` in your own terminal to store it. Typing the key there keeps it out of your chat history.
 
 The agent does the rest. It waits for DNS, verifies the domain and issues the certificate with `--auto-renew`. Then it installs the key and full chain where your server expects them and checks the live certificate.
+
+Only approve a login you or your agent just started. The approval page shows the requesting machine's name and IP address to help you check.
 
 ## What stays on your machine
 
