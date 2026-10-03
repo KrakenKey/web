@@ -92,7 +92,7 @@ Set up a TLS certificate from KrakenKey for example.com and www.example.com.
 Follow https://krakenkey.io/agents.md
 ```
 
-The runbook at [krakenkey.io/agents.md](https://krakenkey.io/agents.md) tells the agent how to install the CLI, check what you already have, and work out the exact DNS records. It then asks you, in one message, for the steps that need a person: create a free account (3 domains, no credit card), add the DNS records, and run `krakenkey auth login` with a new API key. Reply "go" and the agent verifies the domain, issues the certificate, and deploys it. The [AI agent setup guide](/docs/ai-agents/) walks through what to expect.
+The runbook at [krakenkey.io/agents.md](https://krakenkey.io/agents.md) tells the agent how to install the CLI, check what you already have, and work out the exact DNS records. It then asks you, in one message, for the steps that need a person: approve the agent's login in your browser (which also creates a free account: 3 domains, no credit card) and add the DNS records. Reply "go" and the agent verifies the domain, issues the certificate, and deploys it. The [AI agent setup guide](/docs/ai-agents/) walks through what to expect.
 
 Building your own integration? Load the skill set that fits from [`tools/`](https://github.com/KrakenKey/KrakenKey/tree/main/tools):
 

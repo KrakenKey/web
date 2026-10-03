@@ -11,6 +11,7 @@ Install and configuration are covered in [KrakenKey CLI](/docs/cli/).
 ## `krakenkey auth`
 
 ```text
+krakenkey auth login --web [--no-browser]     Approve a login in the browser; creates and saves a new API key
 krakenkey auth login [--api-key <key>]        Save API key (prompts interactively if omitted)
 krakenkey auth logout                         Remove stored API key
 krakenkey auth status                         Show auth status and resource counts

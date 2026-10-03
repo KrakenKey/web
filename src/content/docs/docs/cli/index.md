@@ -36,8 +36,8 @@ docker pull ghcr.io/krakenkey/cli:latest
 ## Quick start
 
 ```bash
-# 1. Set your API key (create one at app.krakenkey.io/dashboard → API Keys)
-krakenkey auth login
+# 1. Sign in: approve the login in your browser
+krakenkey auth login --web
 
 # 2. Register and verify your domain
 krakenkey domain add example.com
@@ -48,6 +48,12 @@ krakenkey cert issue --domain example.com
 ```
 
 Every command and flag is listed in the [command reference](/docs/cli/commands/).
+
+## Signing in
+
+`krakenkey auth login --web` prints a link to `app.krakenkey.io/device` with a short code and opens it in your browser (`--no-browser` only prints it). Sign in, check the code matches, and click **Approve**. The dashboard creates an API key named `CLI login: <hostname>`, and the CLI saves it to the config file. The request expires after 10 minutes. Revoke the key like any other, under API Keys or with `krakenkey auth keys delete`.
+
+To use a key you already have, run `krakenkey auth login` and paste it, or set `KK_API_KEY`. That suits CI, where nobody is around to approve.
 
 ## Configuration
 
