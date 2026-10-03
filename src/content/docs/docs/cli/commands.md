@@ -19,6 +19,8 @@ krakenkey auth keys create --name <name>      Create a new API key
 krakenkey auth keys delete <id>               Delete an API key
 ```
 
+Creating and deleting keys needs a dashboard session, so the API refuses `auth keys create` and `auth keys delete` when the CLI is signed in with an API key, which is its only sign-in method. Manage keys under **API Keys** in the dashboard instead. This stops a leaked key from minting a replacement for itself.
+
 `auth keys create` flags:
 
 | Flag | Description |

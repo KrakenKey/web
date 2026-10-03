@@ -33,7 +33,7 @@ The key is generated on the gateway by `krakenkey cert issue`, and only the CSR 
 
 Our old gateway docs preferred per-name certificates over a wildcard, on the grounds that a compromised gateway only exposes the names it serves. That reasoning didn't hold. With a DNS token that can edit the zone on the box, an attacker could already mint a certificate for any name. Moving to KrakenKey takes the DNS-edit power off the gateway, so a wildcard with no DNS credentials is a smaller exposure than per-name certificates with them.
 
-What remains is the KrakenKey API key, which is account-wide: it can issue for every domain verified on its account. We gave the lab its own KrakenKey account holding only its domain. Scoped keys, limited to specific domains, certificates or source addresses, are the top item from this project for the product.
+What remains is the KrakenKey API key, and looking at it closely turned up our most important finding. A key had the same access as a dashboard login, including creating new keys, so a leaked key could mint a replacement and outlive its own deletion. We fixed that before publishing this: keys can no longer manage keys, the account, organizations or billing, so deleting a key in the dashboard ends its access. A key still covers every domain on its account, so we gave the lab its own KrakenKey account holding only its domain. Keys limited to specific domains, certificates or source addresses are next.
 
 ## The rollout
 
@@ -60,7 +60,7 @@ From a LAN client, `openssl s_client -verify_return_error` against all 13 names 
 
 Using the product the way a customer would turned up rough edges. None of them stopped the rollout, but each cost time, and each is on our list:
 
-- **API key scope.** Covered above: keys are account-wide today.
+- **API key scope.** Fixed: keys can't create keys or change the account. Still to come: keys limited to specific domains, certificates or source addresses.
 - **Renewal hands-off.** `cert renew --wait` waits for the new certificate but doesn't download it, and the certificate isn't downloadable while a renewal is in progress. A client has to keep its last good copy and download after the renewal finishes. Our renewal script does that, and so does the one in the guide.
 - **`renew` always issues.** It's a forced renewal, not "renew if due", so the client decides when. Let's Encrypt allows five duplicate certificates a week, so a script that renews on every run can lock itself out. A renewal window check on the API side would make a daily schedule safe.
 - **Comma-separated SANs.** Our GitHub Action documents its `san` input as comma-separated, then passes the whole list to the CLI as one name. With the CLI directly, repeat `--san` per name.

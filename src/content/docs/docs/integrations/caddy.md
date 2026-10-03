@@ -22,11 +22,7 @@ If Caddy can already reach Let's Encrypt over HTTP-01, its built-in ACME is simp
 - A verified domain in KrakenKey with both DNS records from [Getting started](/docs/getting-started/): the ownership TXT record and the `_acme-challenge` CNAME. One CNAME covers both the apex and the wildcard.
 - The [KrakenKey CLI](/docs/cli/) on the Caddy host, or Docker to run `ghcr.io/krakenkey/cli`.
 - `openssl` and `jq`.
-- A KrakenKey API key in a root-only file, for example `/etc/krakenkey/env` (mode `0600`) containing `KK_API_KEY=...`.
-
-:::caution
-API keys act on everything in their account. Treat the key file like any other credential, and consider a separate KrakenKey account that holds only the domains this host serves.
-:::
+- A KrakenKey API key from the dashboard in a root-only file, for example `/etc/krakenkey/env` (mode `0600`) containing `KK_API_KEY=...`. A key can manage domains and certificates but can't create other keys or change the account, so if the host is ever compromised, deleting the key in the dashboard cuts it off. It does cover every domain on its account; a separate KrakenKey account for the host keeps it to the domains it serves.
 
 ## 1. Issue the certificate on the host
 
