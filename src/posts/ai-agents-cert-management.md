@@ -2,6 +2,7 @@
 title: "Your AI Agent Can Manage Your TLS Certificates"
 description: "KrakenKey ships agent-ready API and CLI tool definitions so AI coding agents can issue, renew, and manage TLS certificates autonomously."
 pubDate: 2026-03-25
+updatedDate: 2026-10-03
 author: "KrakenKey Team"
 tags: ["product", "certificate-lifetimes"]
 draft: false
@@ -84,11 +85,19 @@ If your agent is provisioning infrastructure, deploying an app, or setting up a 
 
 ## Get Started
 
-1. **Create a free account** at [krakenkey.io](https://krakenkey.io) (3 domains, 10 certificates, no credit card)
-2. **Create an API key** in the dashboard and set it as `KK_API_KEY` in your environment
-3. **Point your agent** at [AGENTS.md](https://github.com/krakenkey/krakenkey/blob/main/AGENTS.md) for full context, and load whichever skill set fits:
-   - `tools/krakenkey-cli/` if your agent runs in a terminal or CI pipeline
-   - `tools/krakenkey-api/` if your agent makes HTTP requests directly
+Paste this into your agent, with your own hostnames:
+
+```text
+Set up a TLS certificate from KrakenKey for example.com and www.example.com.
+Follow https://krakenkey.io/agents.md
+```
+
+The runbook at [krakenkey.io/agents.md](https://krakenkey.io/agents.md) tells the agent how to install the CLI, check what you already have, and work out the exact DNS records. It then asks you, in one message, for the steps that need a person: create a free account (3 domains, no credit card), add the DNS records, and run `krakenkey auth login` with a new API key. Reply "go" and the agent verifies the domain, issues the certificate, and deploys it. The [AI agent setup guide](/docs/ai-agents/) walks through what to expect.
+
+Building your own integration? Load the skill set that fits from [`tools/`](https://github.com/KrakenKey/KrakenKey/tree/main/tools):
+
+- `tools/krakenkey-cli/` if your agent runs in a terminal or CI pipeline
+- `tools/krakenkey-api/` if your agent makes HTTP requests directly
 
 The free tier covers most individual and side-project use cases. If your agent is managing certificates across multiple domains or teams, paid plans start at $29/mo.
 

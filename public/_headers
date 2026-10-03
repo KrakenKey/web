@@ -34,3 +34,17 @@
 
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
+
+# ------------------------------------------------------------------
+# Agent-facing text: plain content types, readable cross-origin,
+# revalidated so agents pick up runbook changes right away
+# ------------------------------------------------------------------
+/agents.md
+  Content-Type: text/markdown; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=0, must-revalidate
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=0, must-revalidate

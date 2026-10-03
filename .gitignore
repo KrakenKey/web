@@ -8,6 +8,7 @@ scripts/
 !README.md
 !src/posts/**/*.md
 !src/content/docs/**/*.md
+!public/agents.md
 
 # Environment files
 .env
