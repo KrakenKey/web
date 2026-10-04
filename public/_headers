@@ -1,39 +1,50 @@
 # Cloudflare Pages _headers
-# Applied at the CDN edge — no server required.
+# Applied at the CDN edge; no server required.
 # https://developers.cloudflare.com/pages/configuration/headers/
 
 # ------------------------------------------------------------------
-# Security headers — applied to every response
+# Security headers, applied to every response
 # ------------------------------------------------------------------
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net https://proxy.scalar.com https://api.krakenkey.io; worker-src 'self' blob:; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.krakenkey.io; worker-src 'self' blob:; frame-ancestors 'none'
 
 # ------------------------------------------------------------------
-# Docs page — relaxed CSP for Scalar API reference (fonts + direct API calls)
+# Docs pages (/docs/*): the build appends a rule that replaces the CSP
+# above with the same policy plus hashes of Starlight's inline scripts.
+# See src/integrations/docs-csp.mjs.
 # ------------------------------------------------------------------
-/docs/api
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net https://proxy.scalar.com https://api.krakenkey.io; worker-src 'self' blob:; frame-ancestors 'none'
-
-/docs/api/
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net https://proxy.scalar.com https://api.krakenkey.io; worker-src 'self' blob:; frame-ancestors 'none'
 
 # ------------------------------------------------------------------
-# Cache: Astro's hashed static assets — immutable, cache forever
+# Cache: Astro's hashed static assets: immutable, cache forever
 # /_astro/file.[hash].js, /_astro/file.[hash].css, etc.
 # ------------------------------------------------------------------
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 
 # ------------------------------------------------------------------
-# Cache: HTML pages — always revalidate so deploys are picked up
+# Cache: HTML pages: always revalidate so deploys are picked up
 # immediately without a purge step
 # ------------------------------------------------------------------
 /
   Cache-Control: public, max-age=0, must-revalidate
 
 /*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# ------------------------------------------------------------------
+# Agent-facing text: plain content types, readable cross-origin,
+# revalidated so agents pick up runbook changes right away
+# ------------------------------------------------------------------
+/agents.md
+  Content-Type: text/markdown; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=0, must-revalidate
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Access-Control-Allow-Origin: *
   Cache-Control: public, max-age=0, must-revalidate

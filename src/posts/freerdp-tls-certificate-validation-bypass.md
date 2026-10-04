@@ -21,13 +21,13 @@ The root cause across all three is the same architectural choice: FreeRDP rolled
 
 ## Why it matters operationally
 
-This is a client-side bug, not a CA or server misconfiguration, and it's exploitable by anyone who can present a certificate to the connection: a MITM position, or simply a misissued or adjacent certificate from a CA the client trusts. It matters most in exactly the deployments where FreeRDP shows up as infrastructure rather than a desktop app.
+This is a client-side bug rather than a CA or server misconfiguration, and it's exploitable by anyone who can present a certificate to the connection: a MITM position, or simply a misissued or adjacent certificate from a CA the client trusts. It matters most in the deployments where FreeRDP shows up as infrastructure rather than a desktop app.
 
 - **Apache Guacamole** uses FreeRDP as its RDP backend. Guacamole gateways terminate browser-based remote access to internal Windows hosts, frequently over private-CA-issued TLS, and are commonly placed at the edge of segmented networks specifically so admins don't need a VPN client. A validation bypass here defeats the one control (server identity) standing between an attacker on the path and a credential-carrying RDP session.
 - **Remmina** and other Linux RDP clients link against `libfreerdp`, so the flaw isn't limited to `xfreerdp` invoked directly.
 - Any environment using a private or internal CA for RDP endpoint certificates is more exposed than public-CA users, since private CAs more often issue certs with looser SAN hygiene and are more likely to be reachable by an internal attacker who can get a certificate signed.
 
-If you run any of the above, the fix is to upgrade to FreeRDP 3.29.0 or later. There's no configuration workaround, because the bug is in the matching logic itself, not a flag you can toggle.
+If you run any of the above, the fix is to upgrade to FreeRDP 3.29.0 or later. There's no configuration workaround, because the bug is in the matching logic itself.
 
 ## Reproducing the embedded-NUL case
 

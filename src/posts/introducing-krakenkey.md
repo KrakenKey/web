@@ -7,19 +7,19 @@ tags: ["product", "certificate-lifetimes"]
 draft: false
 ---
 
-Today we're launching KrakenKey — an automated TLS certificate issuance platform built for developers, by developers.
+Today we're launching KrakenKey, an automated TLS certificate issuance platform for developers.
 
-## Why KrakenKey?
+## Why We Built It
 
-Managing TLS certificates shouldn't be a manual chore. Yet for most developers, it still is. You generate a CSR, copy DNS records, wait for validation, download the cert, install it, set a calendar reminder to renew... and hope nobody forgets.
+For most developers, managing TLS certificates is still manual. You generate a CSR, copy DNS records, wait for validation, download the cert, install it, set a calendar reminder to renew... and hope nobody forgets.
 
-With certificate lifetimes shrinking from 398 days to 200 days starting March 2026 — and eventually down to 47 days by 2029 — manual processes simply won't scale.
+With certificate lifetimes shrinking from 398 days to 200 days starting March 2026, and eventually down to 47 days by 2029, manual processes won't scale.
 
-KrakenKey automates the hardest part: **issuance and renewal**. Submit a CSR via our dashboard or REST API, and KrakenKey handles DNS-01 domain validation automatically. Your certificate is issued and ready in approximately 4 minutes.
+KrakenKey automates issuance and renewal. Submit a CSR via our dashboard or REST API, and KrakenKey handles DNS-01 domain validation automatically. Your certificate is issued and ready in approximately 4 minutes.
 
-## Privacy-First by Design
+## Client-Side Key Generation
 
-Unlike many certificate management tools, KrakenKey generates Certificate Signing Requests entirely client-side using the WebCrypto API. Your private key is created in your browser and never touches our servers. We only receive the CSR containing your public key — the minimum needed to issue your certificate.
+KrakenKey generates Certificate Signing Requests entirely client-side using the WebCrypto API. Your private key is created in your browser and never touches our servers. We only receive the CSR containing your public key, which is all that's needed to issue your certificate.
 
 ## Built for Automation
 
@@ -27,7 +27,7 @@ KrakenKey is API-native. Every action available in the dashboard is also availab
 
 ### The KrakenKey CLI
 
-The fastest way to manage certificates from the terminal. Install it, authenticate, and issue a cert in three commands:
+The CLI covers the same workflow from the terminal. Install it, authenticate, and issue a cert:
 
 ```bash
 # Authenticate with your API key
@@ -37,11 +37,11 @@ krakenkey auth login
 krakenkey domain add example.com
 krakenkey domain verify <id>
 
-# Issue a certificate — generates the CSR locally, submits it, and waits for issuance
+# Issue a certificate: generates the CSR locally, submits it, and waits for issuance
 krakenkey cert issue --domain example.com --wait
 ```
 
-The CLI generates your private key and CSR locally, so your private key never leaves your machine. You can also submit an existing CSR, download certs, toggle auto-renewal, and manage API keys -- all from the command line:
+The CLI generates your private key and CSR locally, so your private key never leaves your machine. You can also submit an existing CSR, download certs, toggle auto-renewal, and manage API keys from the command line:
 
 ```bash
 # Submit your own CSR and wait for the cert
@@ -76,19 +76,19 @@ curl https://api.krakenkey.io/certs/tls/abc123
 curl https://api.krakenkey.io/certs/tls/abc123/download -o cert.pem
 ```
 
-Whether you use the CLI or the API directly, KrakenKey fits naturally into CI/CD pipelines, infrastructure-as-code workflows, and any environment where certificates need to be managed programmatically.
+Either interface works from CI/CD pipelines and infrastructure-as-code workflows.
 
 ## Getting Started
 
-1. **Sign up** at [app.krakenkey.io](https://app.krakenkey.io) — free, no credit card required
-2. **Add your domain** and verify ownership via DNS TXT record
-3. **Generate a CSR** using our in-browser generator or your own tooling
-4. **Submit and wait** — KrakenKey handles DNS-01 challenges automatically
-5. **Download your certificate** — ready in ~4 minutes
+1. Sign up at [app.krakenkey.io](https://app.krakenkey.io) (free, no credit card required).
+2. Add your domain and verify ownership via DNS TXT record.
+3. Generate a CSR using our in-browser generator or your own tooling.
+4. Submit it. KrakenKey handles DNS-01 challenges automatically.
+5. Download your certificate, ready in ~4 minutes.
 
 ## What's Included
 
-KrakenKey already handles the full certificate lifecycle:
+At launch, KrakenKey includes:
 
 - Certificate expiry monitoring and email notifications
 - Automated renewal workflows
@@ -96,10 +96,10 @@ KrakenKey already handles the full certificate lifecycle:
 - Web dashboard with full certificate management
 - Free tier with 3 domains, 10 active certs, and auto-renewal
 
-Starter ($29/mo) and Teams ($79/mo) plans are available now with expanded limits, 30-day auto-renewal windows, and team access with RBAC. Check our [pricing page](/pricing) for details.
+Starter ($29/mo) and Team ($79/mo) plans are available now with expanded limits, 30-day auto-renewal windows, and team access with RBAC. Check our [pricing page](/pricing) for details.
 
 We'd love your feedback. Sign up at [app.krakenkey.io](https://app.krakenkey.io) and let us know what you think.
 
 ---
 
-*KrakenKey is open source — [view on GitHub](https://github.com/krakenkey/krakenkey).*
+*KrakenKey is open source: [view on GitHub](https://github.com/krakenkey/krakenkey).*

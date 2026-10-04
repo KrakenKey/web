@@ -7,7 +7,7 @@ tags: ["ca-incidents", "cabforum", "root-programs"]
 draft: false
 ---
 
-HARICA ran two mass-revocation events ten days apart in July 2026. On July 20 it revoked 66,105 server certificates that carried the `id-kp-clientAuth` EKU past its own compliance deadline. On July 25 it forced replacement of every certificate issued since late March for missing an OCSP AIA pointer its CP/CPS required. Neither was a compromise. Both were the same failure mode: the CA's policy document and its issuance pipeline stopped agreeing with each other, and nobody had automation watching for the gap.
+HARICA ran two mass-revocation events ten days apart in July 2026. On July 20 it revoked 66,105 server certificates that carried the `id-kp-clientAuth` EKU past its own compliance deadline. On July 25 it forced replacement of every certificate issued since late March for missing an OCSP AIA pointer its CP/CPS required. Neither involved a compromise. Both came from the same failure: the CA's policy document and its issuance pipeline stopped agreeing with each other, and nobody had automation watching for the gap.
 
 ## What changed
 
@@ -17,14 +17,14 @@ The second incident, [bug 2056668](https://bugzilla.mozilla.org/show_bug.cgi?id=
 
 ## Why it matters operationally
 
-If you have any certificate from HARICA issued in either window, check it now, don't wait for a renewal reminder. The two incidents affect different fields and different symptom sets:
+If you have any certificate from HARICA issued in either window, check it now rather than waiting for a renewal reminder. The two incidents affect different fields and different symptom sets:
 
 - **clientAuth EKU (June 15 to July 15 issuance window):** only matters if you were relying on a server cert's client-auth EKU for mTLS, which is unusual but not rare in service-mesh and internal API setups that predate dedicated client certs.
 - **Missing OCSP AIA (March 27 to July 20 issuance window):** matters far more broadly. Any load balancer or terminator doing OCSP stapling (nginx, HAProxy, Envoy) against an affected cert has been stapling nothing, silently, for months. If you also run OCSP-must-staple or strict revocation checking anywhere in that chain, clients started hard-failing the moment HARICA's July 25 revocation cutoff passed for any cert that wasn't replaced in time.
 
 ## Check your own inventory
 
-Don't trust the incident writeups to tell you whether your certs were caught. Check directly:
+The incident writeups won't tell you whether your specific certs were caught, so check them directly:
 
 ```bash
 # EKU check: flag anything with clientAuth alongside serverAuth
@@ -48,4 +48,4 @@ If your ACME client supports RFC 9773 (ARI), you also had a second, earlier sign
 
 ## Where KrakenKey fits
 
-This doesn't change anything in KrakenKey's flow, we issue through Let's Encrypt, which isn't implicated in either incident. But if you're running your own ACME client against HARICA or any other CA, this is a good week to check that client's ARI support specifically, not just whether it renews before expiry, but whether it reacts to a CA-initiated forced renewal signal without a human reading a Bugzilla bug first. The `authorityInfoAccess` and `extendedKeyUsage` checks above are also exactly the class of chain anomaly our endpoint monitoring flags on a schedule, so if you're already scanning your fleet with KrakenKey, this incident wouldn't have needed a manual audit to surface.
+This doesn't change anything in KrakenKey's flow: we issue through Let's Encrypt, which isn't implicated in either incident. If you're running your own ACME client against HARICA or any other CA, check that client's ARI support specifically. Renewing before expiry isn't enough; the question is whether it reacts to a CA-initiated forced renewal signal without a human reading a Bugzilla bug first. The `authorityInfoAccess` and `extendedKeyUsage` checks above are also the kind of chain anomaly our endpoint monitoring flags on a schedule, so if you're already scanning your fleet with KrakenKey, these would have surfaced without a manual audit.

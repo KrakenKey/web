@@ -19,7 +19,7 @@ After June 15, it becomes a MUST, and the timing changes from post-issuance to p
 
 > CA Owners MUST ensure that all TLS server authentication precertificates issued by such CAs are logged to at least one (1) CT log recognized by Chrome as Usable or Qualified before issuing the corresponding certificate.
 
-This is not a new concept. Chrome has enforced CT for publicly-trusted TLS certificates at the browser level since 2018 by requiring at least two SCTs embedded in the certificate or delivered via OCSP/TLS extension. What changes is that the policy now explicitly bans the issuance of the final certificate before the precertificate is logged, closing a window where a CA could issue a certificate and log it afterward (or not at all, in the case of an opt-out).
+Chrome has enforced CT for publicly-trusted TLS certificates at the browser level since 2018 by requiring at least two SCTs embedded in the certificate or delivered via OCSP/TLS extension. The policy change is that it now explicitly bans the issuance of the final certificate before the precertificate is logged, closing a window where a CA could issue a certificate and log it afterward (or not at all, in the case of an opt-out).
 
 DigiCert's CertCentral previously offered opt-out controls at the account and product level. Those settings are gone. Sectigo and other major publicly-trusted CAs are following the same trajectory ahead of the June 15 policy date.
 
@@ -36,7 +36,7 @@ Affected configurations:
 - **VPN concentrators and jump hosts** that have publicly-trusted certificates for user convenience rather than strict PKI requirements
 - **Test and canary certificates** that CAs are also now required to log, meaning certificate hygiene failures (issuance without proper purpose) are permanently visible
 
-The issue is not that logging exposes certificate contents beyond the SANs and issuer metadata -- CT logs do not reveal private keys or private network addresses. But the SAN list, validity period, issuer chain, and issuance timestamp are all public. For organizations doing structured hostname labeling, that is enough.
+CT logs do not reveal private keys or private network addresses, and they expose nothing beyond the SANs and issuer metadata. But the SAN list, validity period, issuer chain, and issuance timestamp are all public, and for organizations with structured hostname labeling that is enough to map infrastructure.
 
 ## Finding what is already logged
 
@@ -69,7 +69,7 @@ This is also useful defensively: if a hostname appears in CT logs that you did n
 
 ## Migrating out of public PKI for internal infrastructure
 
-The correct response to this enforcement is not to avoid CT-logged certificates for internal infrastructure -- that path is now closed for publicly-trusted CAs. The correct response is to stop using public trust anchors for infrastructure that does not require browser trust.
+Publicly-trusted CAs no longer offer a way to keep internal hostnames out of CT. For infrastructure that does not need browser trust, the fix is to stop using public trust anchors for it.
 
 Two practical options:
 
@@ -88,10 +88,10 @@ certbot certonly --server https://ca.internal.example.com/acme/acme/directory \
 
 **Cloud managed private CAs.** AWS Private CA and GCP Certificate Authority Service provide managed private PKI that integrates with ACM and cert-manager respectively. Certificates issued from private hierarchies are not subject to Chrome's CT requirements and do not appear in public logs.
 
-The relevant distinction: a certificate is only required to be CT-logged if it chains to a root in a public browser trust store. Private hierarchies, by definition, do not.
+A certificate is only required to be CT-logged if it chains to a root in a public browser trust store. Private hierarchies, by definition, do not.
 
 ## How this relates to KrakenKey
 
 Let's Encrypt has never offered CT opt-out. Every certificate issued through Let's Encrypt and therefore every certificate issued through KrakenKey has always been logged to CT. This enforcement does not change anything in KrakenKey's issuance flow.
 
-What it does change is the availability of CT opt-out as a mechanism at other public CAs. Operators who have been managing certificates for internal infrastructure through a commercial CA with opt-out enabled need to act before June 15. The infrastructure migration -- distributing a private CA trust anchor, updating ACME configurations, potentially updating device trust stores -- takes time and should be underway now rather than after the enforcement date.
+It does remove CT opt-out at other public CAs. Operators who have been managing certificates for internal infrastructure through a commercial CA with opt-out enabled need to act before June 15. The migration (distributing a private CA trust anchor, updating ACME configurations, possibly updating device trust stores) takes time, so start it before the enforcement date.

@@ -11,13 +11,13 @@ On June 3, Let's Encrypt [published its plan](https://letsencrypt.org/2026/06/03
 
 ## What changed
 
-The announcement is a commitment, not a deployment. Nothing in the current certificate issuance pipeline changes yet. What it does is align Let's Encrypt behind a specific architectural proposal originally developed jointly by Google and Cloudflare, rather than pursuing a naive port of today's X.509 chains to post-quantum algorithms.
+The announcement is a commitment to a direction; nothing in the current certificate issuance pipeline changes yet. It aligns Let's Encrypt behind a specific architectural proposal originally developed jointly by Google and Cloudflare, rather than pursuing a naive port of today's X.509 chains to post-quantum algorithms.
 
 The IETF PLANTS (PKI, Logs, And Tree Signatures) working group is the standards home for this work. Draft version 04 of the MTC specification was published on May 24, nine days before the Let's Encrypt announcement. Let's Encrypt also tracks ML-DSA-in-X.509 via [RFC 9881](https://datatracker.ietf.org/doc/rfc9881/) as a parallel path while the MTC spec matures through the IETF process.
 
 ## Why it matters operationally
 
-The core problem MTCs solve is handshake size. Today's TLS handshakes use ECDSA-P256 (64 bytes per signature) or RSA-2048 (256 bytes per signature). The NIST post-quantum signature standard, ML-DSA-44 (FIPS 204), produces signatures of approximately 2,420 bytes and public keys of 1,312 bytes -- roughly 38 times and 20 times larger than their ECDSA equivalents, respectively.
+The core problem MTCs solve is handshake size. Today's TLS handshakes use ECDSA-P256 (64 bytes per signature) or RSA-2048 (256 bytes per signature). The NIST post-quantum signature standard, ML-DSA-44 (FIPS 204), produces signatures of approximately 2,420 bytes and public keys of 1,312 bytes, roughly 38 times and 20 times larger than their ECDSA equivalents, respectively.
 
 A standard TLS certificate exchange carries five signatures and two public keys: the leaf certificate signature and public key, the intermediate CA signature and public key, two Certificate Transparency SCTs, and the server CertificateVerify signature. With ML-DSA-44 those five signatures alone add up to 12 kilobytes. Let's Encrypt's analysis found this exceeds 10 kilobytes in ways that cause handshake failures on real-world mobile and constrained networks.
 
@@ -29,7 +29,7 @@ MTCs restructure the model. Instead of signing each certificate individually, th
 | ML-DSA-44, traditional chain | 5 x 2,420 B = 12,100 B | 2 x 1,312 B = 2,624 B | 2 PQ SCTs ~5 KB | ~20 KB |
 | ML-DSA-44, MTC | 1 x 2,420 B | 1 x 1,312 B | built-in | ~4.5 KB |
 
-MTC handshakes with post-quantum algorithms end up smaller than today's ECDSA baseline is irrelevant -- what matters is that they avoid the ~20 KB figure that causes connection failures.
+MTC handshakes with post-quantum algorithms are still larger than today's ECDSA baseline. What matters is that they avoid the ~20 KB figure that causes connection failures.
 
 The MTC design also eliminates the external CT submission step. Certificate Transparency is structural in MTCs: a certificate cannot exist outside the log tree, so there is nothing separate to submit to an external log. Let's Encrypt has operated append-only Merkle tree CT logs since 2019; the infrastructure already exists.
 
@@ -58,4 +58,4 @@ When the MTC staging environment ships, Let's Encrypt has indicated it will publ
 
 ## How KrakenKey's approach relates
 
-MTCs do not change anything in KrakenKey's current issuance flow. KrakenKey issues certificates via ACME, and the ACME protocol is unchanged until Let's Encrypt ships MTC support. Operators running their own ACME clients -- certbot, acme.sh, or custom implementations -- should treat the PLANTS working group as active standards work that will require client updates before production MTCs are usable. Nothing is urgent today, but the staging environment arriving in late 2026 will be the first practical checkpoint.
+MTCs do not change anything in KrakenKey's current issuance flow. KrakenKey issues certificates via ACME, and the ACME protocol is unchanged until Let's Encrypt ships MTC support. Operators running their own ACME clients (certbot, acme.sh, or custom implementations) should treat the PLANTS working group as active standards work that will require client updates before production MTCs are usable. Nothing needs to change today; the staging environment arriving in late 2026 will be the first practical checkpoint.

@@ -1,5 +1,8 @@
 ---
+import { links } from '../data/links';
+
 const currentYear = new Date().getFullYear();
+const external = { target: '_blank', rel: 'noopener noreferrer' };
 ---
 
 <footer class="site-footer">
@@ -12,27 +15,39 @@ const currentYear = new Date().getFullYear();
       <p>Automated TLS certificate management for developers and teams.</p>
     </div>
 
-    <div class="footer-links">
-      <h4>Product</h4>
-      <a href="/pricing">Pricing</a>
-      <a href="/blog">Blog</a>
-      <a href="/getting-started">Getting Started</a>
-      <a href="/scanner">TLS Scanner</a>
-      <a href="/docs/api">API Reference</a>
-      <a href="https://app.krakenkey.io">Dashboard</a>
-    </div>
+    <nav class="footer-columns" aria-label="Site">
+      <div class="footer-links">
+        <h4>Product</h4>
+        <a href="/pricing">Pricing</a>
+        <a href="/scanner">TLS Scanner</a>
+        <a href="/roadmap">Roadmap</a>
+        <a href="/blog">Blog</a>
+      </div>
 
-    <div class="footer-links">
-      <h4>Legal</h4>
-      <a href="/privacy">Privacy Policy</a>
-      <a href="/terms">Terms of Use</a>
-    </div>
+      <div class="footer-links">
+        <h4>Get started</h4>
+        <a href={links.signup}>Create an account</a>
+        <a href={links.login}>Log in</a>
+        <a href={links.quickStart}>Quick start</a>
+        <a href={links.agentQuickStart}>Quick start for AI agents</a>
+      </div>
 
-    <div class="footer-links">
-      <h4>Community</h4>
-      <a href="https://github.com/krakenkey/krakenkey" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <span class="footer-coming-soon">Status <span class="footer-coming-soon-label">(coming soon)</span></span>
-    </div>
+      <div class="footer-links">
+        <h4>Developers</h4>
+        <a href="/docs/">Docs</a>
+        <a href={links.apiReference}>API reference</a>
+        <a href={links.cli}>CLI</a>
+        <a href={links.githubAction} {...external}>GitHub Action</a>
+        <a href={links.github} {...external}>GitHub</a>
+        <a href={links.discussions} {...external}>Discussions</a>
+      </div>
+
+      <div class="footer-links">
+        <h4>Legal</h4>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Use</a>
+      </div>
+    </nav>
   </div>
 
   <div class="footer-bottom">

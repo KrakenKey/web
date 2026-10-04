@@ -1,0 +1,197 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import CTA from '../components/CTA.astro';
+import { columns, shipped, updated } from '../data/roadmap';
+
+const updatedLabel = new Date(`${updated}T00:00:00Z`).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+const ideasUrl = 'https://github.com/KrakenKey/KrakenKey/discussions/categories/ideas';
+---
+
+<PageLayout
+  title="Roadmap"
+  description="What KrakenKey is building now, what comes next, and what shipped recently."
+>
+  <div class="section-container">
+    <div class="section-header section-header--lg">
+      <h1 class="section-title section-title--xl">Roadmap</h1>
+      <p class="section-subtitle">
+        What we're working on and what comes next. Certificate lifetimes drop to 100 days in March 2027,
+        so most of this is about renewals you can schedule and forget, and hearing about problems early.
+      </p>
+      <p class="roadmap-updated">Updated {updatedLabel}. Priorities change; there are no dates here on purpose.</p>
+    </div>
+
+    <div class="roadmap-grid">
+      {columns.map((column) => (
+        <section class="roadmap-column" aria-labelledby={`roadmap-${column.id}`}>
+          <header class="roadmap-column-header">
+            <h2 id={`roadmap-${column.id}`} class={`roadmap-pill roadmap-pill--${column.id}`}>{column.title}</h2>
+            <p class="roadmap-column-summary">{column.summary}</p>
+          </header>
+          <ul class="roadmap-list">
+            {column.items.map((item) => (
+              <li class="card card--compact roadmap-item">
+                <h3 class="card-title">{item.title}</h3>
+                <p class="card-description">{item.description}</p>
+                {item.link && (
+                  <a class="roadmap-link" href={item.link.href}>{item.link.label}</a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+
+    <section class="roadmap-shipped" aria-labelledby="roadmap-shipped">
+      <h2 id="roadmap-shipped" class="roadmap-shipped-title">Recently shipped</h2>
+      <ul class="roadmap-shipped-list">
+        {shipped.map((item) => (
+          <li>
+            <span class="roadmap-check" aria-hidden="true">&#10003;</span>
+            <div>
+              <strong>{item.title}.</strong> {item.description}
+              {item.link && <> <a class="link" href={item.link.href}>{item.link.label}</a></>}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p class="text-muted">
+        Full details are in the monthly <a class="link" href="/blog/">release notes</a> and each project's changelog on GitHub.
+      </p>
+    </section>
+
+    <section class="card roadmap-feedback">
+      <h2 class="card-title">Missing something you need?</h2>
+      <p class="card-description">
+        Add a 👍 to the linked issues to tell us what matters to you, or suggest something new
+        in <a class="link" href={ideasUrl}>GitHub Discussions</a>. Requests from people running
+        real workloads move items up this page.
+      </p>
+    </section>
+  </div>
+
+  <CTA />
+</PageLayout>
+
+<style>
+  .roadmap-updated {
+    margin-top: var(--space-md);
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+
+  .roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  .roadmap-column-header {
+    margin-bottom: var(--space-md);
+  }
+
+  .roadmap-pill {
+    display: inline-block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.875rem;
+    border-radius: 99px;
+    border: 1px solid currentColor;
+  }
+
+  .roadmap-pill--now {
+    color: var(--color-success);
+    background-color: var(--color-success-surface);
+  }
+
+  .roadmap-pill--next {
+    color: var(--color-accent);
+    background-color: var(--color-info-surface);
+  }
+
+  .roadmap-pill--later {
+    color: var(--color-muted);
+  }
+
+  .roadmap-column-summary {
+    margin-top: var(--space-sm);
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+
+  .roadmap-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .roadmap-item:hover {
+    transform: none;
+  }
+
+  .roadmap-link {
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-accent);
+  }
+
+  .roadmap-shipped {
+    margin-top: var(--space-2xl);
+  }
+
+  .roadmap-shipped-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+  }
+
+  .roadmap-shipped-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .roadmap-shipped-list li {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: baseline;
+    color: var(--color-muted);
+    line-height: 1.6;
+  }
+
+  .roadmap-shipped-list strong {
+    color: var(--color-text);
+  }
+
+  .roadmap-check {
+    color: var(--color-success);
+    flex-shrink: 0;
+  }
+
+  .roadmap-feedback {
+    margin-top: var(--space-2xl);
+  }
+
+  .roadmap-feedback:hover {
+    transform: none;
+  }
+
+  @media (max-width: 900px) {
+    .roadmap-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

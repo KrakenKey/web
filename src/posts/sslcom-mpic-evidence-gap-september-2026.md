@@ -33,7 +33,7 @@ The Quorum Requirements table sets the failure budget separately, and it does no
 
 Two separate exposures come out of this, and they land on different teams.
 
-The first is that nothing observable from outside the CA records whether MPIC ran. It is not an extension in the certificate, it is not logged to CT, and it leaves no trace in the ACME order object. The evidence lives in the CA's internal validation records, which is exactly why an auditor sampling four certificates was the detection mechanism here rather than the CA's own monitoring or a third-party report. For a subscriber, the first and only signal is the revocation itself, arriving on a clock measured in hours. SSL.com's response was fast and correct, and it is also a working demonstration of the capability that Section 5.7.1.2 requires CAs to test annually.
+The first is that nothing observable from outside the CA records whether MPIC ran. There is no certificate extension for it, no CT entry, and no trace in the ACME order object. The evidence lives in the CA's internal validation records, which is exactly why an auditor sampling four certificates was the detection mechanism here rather than the CA's own monitoring or a third-party report. For a subscriber, the first and only signal is the revocation itself, arriving on a clock measured in hours. SSL.com's response was fast and correct, and it is also a working demonstration of the capability that Section 5.7.1.2 requires CAs to test annually.
 
 The second is that MPIC's cost lands on your edge, and it has been growing. An `http-01` validation is no longer one request for the challenge token. Let's Encrypt, which has run multi-perspective validation since 2020, currently issues one request from the primary datacenter and four from remote perspectives, arriving at close to the same moment from unrelated networks in at least two RIR regions. Anything at your edge that treats those requests differently from each other is a validation failure waiting for a renewal. In practice that means geo-blocking rules, per-path or per-IP rate limits that trip on five near-simultaneous requests for the same URI, WAF reputation scoring, and origin caches that serve a stale 404 to the perspectives arriving behind the first one. Let's Encrypt does not publish its validation source addresses and [states plainly](https://letsencrypt.org/docs/faq/) that they change without notice, so an allowlist is not available as a workaround.
 
@@ -54,7 +54,7 @@ awk '$7 ~ /^\/\.well-known\/acme-challenge\// {print $7, $1}' /var/log/nginx/acc
 1 /.well-known/acme-challenge/Zb2nHs6Kc8R_example
 ```
 
-A token with a count of 1 means only the primary perspective reached you and the order succeeded on a cached authorization, or the remote perspectives were dropped somewhere ahead of your logging. Either way you have no margin left the next time validation runs cold.
+A token with a count of 1 means only the primary perspective reached you and the order succeeded on a cached authorization, or the remote perspectives were dropped somewhere ahead of your logging. In both cases the next cold validation has no room for another failure.
 
 When the remotes are blocked and the primary is not, Boulder tags the failure distinctly. Its `va.go` wraps the underlying problem detail with a fixed prefix before returning it, so the ACME error reads:
 
@@ -64,7 +64,7 @@ During secondary validation: 198.51.100.24: Invalid response from
 http://example.com/.well-known/acme-challenge/8kQ3rYw2p1N_example: 403
 ```
 
-`During secondary validation:` is the part that matters. A 403 that only some vantage points see is not an ACME client bug and not a CA outage; it is your edge behaving differently by source network. Serving the challenge path ahead of every filtering rule removes the whole class:
+The `During secondary validation:` prefix tells you a remote perspective failed. A 403 that only some vantage points see usually means your edge is treating requests differently by source network, so look there before suspecting the ACME client or the CA. Serving the challenge path ahead of every filtering rule removes this class of failure:
 
 ```nginx
 # Must precede geo, rate-limit, and WAF locations. ^~ stops regex matching.
@@ -81,4 +81,4 @@ If your edge cannot be opened worldwide on port 80, `dns-01` is the alternative,
 
 ## Where KrakenKey fits
 
-This doesn't change anything in KrakenKey's flow. We issue through Let's Encrypt, which is not implicated here and has operated remote validation perspectives for six years. But operators running their own ACME clients should know about it, and the December 15 step to five remote perspectives is worth treating as a dated change rather than background compliance news. The five-line nginx block above and one pass over the geo and rate-limit rules in front of your challenge path is most of the work, and it is cheaper to do now than during a renewal that fails at 4 of 5.
+This doesn't change anything in KrakenKey's flow. We issue through Let's Encrypt, which is not implicated here and has operated remote validation perspectives for six years. But operators running their own ACME clients should know about it, and should put the December 15 step to five remote perspectives on the calendar. The nginx block above and one pass over the geo and rate-limit rules in front of your challenge path cover most of the work, and that is easier to do now than during a renewal that fails at 4 of 5.
