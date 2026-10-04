@@ -896,6 +896,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "ifDue",
+            "required": false,
+            "in": "query",
+            "description": "Only renew if the certificate is inside its plan renewal window (free: 5 days, paid: 30 days before expiry). Otherwise nothing is queued and the response has skipped: true. Default: false (always renew).",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "tags": [
@@ -908,7 +917,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Certificate renewal initiated"
+            "description": "ifDue=true and the certificate is not due yet; nothing was queued (skipped: true, reason: 'not_due')"
+          },
+          "201": {
+            "description": "Certificate renewal initiated (skipped: false)"
+          },
+          "400": {
+            "description": "Certificate not issued or missing CSR data"
           },
           "403": {
             "description": "Viewers cannot renew certificates"
