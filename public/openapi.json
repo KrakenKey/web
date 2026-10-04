@@ -149,8 +149,18 @@
     "/auth/api-keys": {
       "get": {
         "operationId": "AuthController_listApiKeys",
-        "summary": "List all API keys for the current user",
-        "parameters": [],
+        "summary": "List API keys for the current user",
+        "parameters": [
+          {
+            "name": "includeRevoked",
+            "required": false,
+            "in": "query",
+            "description": "true to also list keys revoked in the last 30 days (with revokedAt set)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Authentication"
         ],
@@ -161,7 +171,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of API keys (metadata only, no secrets)"
+            "description": "List of API keys (metadata only, no secrets), with lastUsedAt and lastUsedIp"
           },
           "401": {
             "description": "Unauthorized"
@@ -226,7 +236,8 @@
     "/auth/api-keys/{id}": {
       "delete": {
         "operationId": "AuthController_deleteApiKey",
-        "summary": "Delete an API key",
+        "summary": "Revoke an API key",
+        "description": "The key stops working immediately. It stays listed with includeRevoked for 30 days.",
         "parameters": [
           {
             "name": "id",
@@ -248,13 +259,13 @@
         ],
         "responses": {
           "200": {
-            "description": "API key deleted"
+            "description": "API key revoked"
           },
           "401": {
             "description": "Unauthorized"
           },
           "404": {
-            "description": "API key not found"
+            "description": "API key not found or already revoked"
           }
         }
       }
