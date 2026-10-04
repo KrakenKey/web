@@ -79,6 +79,12 @@ export const columns: RoadmapColumn[] = [
         description: 'brew install for the CLI on macOS and Linux, with updates through brew upgrade.',
         link: { href: 'https://github.com/KrakenKey/cli/issues/42', label: 'cli#42' },
       },
+      {
+        title: 'apt and dnf packages',
+        description:
+          'Signed package repositories we host ourselves for the CLI and the probe, with the probe installed as a systemd service.',
+        link: { href: 'https://github.com/KrakenKey/cli/issues/46', label: 'cli#46' },
+      },
     ],
   },
   {
