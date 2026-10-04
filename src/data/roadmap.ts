@@ -23,12 +23,6 @@ export const columns: RoadmapColumn[] = [
     summary: 'In progress or in review.',
     items: [
       {
-        title: 'GitHub Action renewals',
-        description:
-          'An if-due input so scheduled workflows renew only when due, plus correct handling of comma-separated SANs.',
-        link: { href: 'https://github.com/KrakenKey/cert-action/pull/34', label: 'cert-action#34' },
-      },
-      {
         title: 'Scoped API keys',
         description:
           'Read-only, renewal-only and full scopes chosen at creation, with optional domain and source-IP restrictions.',
@@ -99,6 +93,12 @@ export const columns: RoadmapColumn[] = [
 ];
 
 export const shipped: RoadmapItem[] = [
+  {
+    title: 'GitHub Action renewals',
+    description:
+      'An if-due input so scheduled workflows renew only when due, and comma-separated SANs split into separate names.',
+    link: { href: 'https://github.com/KrakenKey/cert-action/releases/tag/v1.3.0', label: 'cert-action v1.3.0' },
+  },
   {
     title: 'Renewals that are safe to schedule',
     description:

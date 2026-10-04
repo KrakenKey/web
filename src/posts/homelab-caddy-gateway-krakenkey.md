@@ -78,11 +78,11 @@ Shipped:
 - **Renewal that is safe to schedule.** `cert renew --if-due` (CLI v0.7.0) renews only inside the plan's renewal window, so a daily timer no longer issues a new certificate on every run.
 - **Downloading a renewed certificate.** `cert renew --wait` now saves the renewed certificate, chain and full chain once the renewal finishes (CLI v0.7.0).
 - **Full chain output.** When you ask for a full chain file and it can't be fetched, the CLI now exits with an error that says how to fetch it later, instead of skipping it (CLI v0.7.0).
+- **GitHub Action SAN input.** A comma-separated `san` input is now split into separate names, and a new `if-due` input makes scheduled renewal workflows safe (cert-action v1.3.0).
 
 In progress, with the current workaround for each:
 
 - **Scoped API keys.** Restriction to specific domains, certificates and source addresses. Until then, use a dedicated account for each environment.
-- **GitHub Action SAN input.** The `san` input is documented as comma-separated but is passed to the CLI as a single name. The fix is merged and ships in the action's next release. Until then, call the CLI directly and repeat `--san` for each name.
 
 ## Results
 
