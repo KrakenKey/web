@@ -2,6 +2,7 @@
 title: "Case study: TLS for internal services without DNS credentials on the proxy"
 description: "How we moved an internal Caddy gateway from per-host Let's Encrypt certificates and a DNS API token to a single KrakenKey wildcard certificate, and what the migration showed about reverse proxies, DNS-01 validation and our own product."
 pubDate: 2026-10-03
+updatedDate: 2026-10-04
 author: "KrakenKey Team"
 tags: ["engineering", "acme", "dns", "certificate-transparency", "product"]
 draft: false
@@ -74,14 +75,14 @@ Shipped:
 
 - **API key privileges.** Keys can no longer create or delete keys, change the account, or make organization or billing changes.
 - **DNS setup feedback.** `krakenkey domain add` now prints the challenge CNAME alongside the TXT record. `krakenkey domain check` (CLI v0.5.0) confirms both records before you request a certificate.
+- **Renewal that is safe to schedule.** `cert renew --if-due` (CLI v0.7.0) renews only inside the plan's renewal window, so a daily timer no longer issues a new certificate on every run.
+- **Downloading a renewed certificate.** `cert renew --wait` now saves the renewed certificate, chain and full chain once the renewal finishes (CLI v0.7.0).
+- **Full chain output.** When you ask for a full chain file and it can't be fetched, the CLI now exits with an error that says how to fetch it later, instead of skipping it (CLI v0.7.0).
 
 In progress, with the current workaround for each:
 
 - **Scoped API keys.** Restriction to specific domains, certificates and source addresses. Until then, use a dedicated account for each environment.
-- **Renewal that is safe to schedule.** `cert renew` always issues a new certificate. A renewal window check in the API will make a daily schedule safe on its own. Until then, let the client decide when to renew. The guide's script renews with a third of the lifetime remaining, which keeps it well within Let's Encrypt's limit of five duplicate certificates per week.
-- **Downloading a renewed certificate.** `cert renew --wait` waits for the new certificate but doesn't download it, and the certificate can't be downloaded while a renewal is in progress. Keep the last good copy and download once the renewal completes, as the guide's script does.
-- **Full chain output.** `cert issue --wait` can skip writing the full chain without an error if fetching it fails. Running `cert download --format fullchain` afterwards avoids this.
-- **GitHub Action SAN input.** The `san` input is documented as comma-separated but is passed to the CLI as a single name. Until it's fixed, call the CLI directly and repeat `--san` for each name.
+- **GitHub Action SAN input.** The `san` input is documented as comma-separated but is passed to the CLI as a single name. The fix is merged and ships in the action's next release. Until then, call the CLI directly and repeat `--san` for each name.
 
 ## Results
 

@@ -45,7 +45,7 @@ krakenkey cert download <id> --format fullchain --out example.com.fullchain.pem
 chgrp caddy example.com.key && chmod 0640 example.com.key
 ```
 
-`--wait` also writes the leaf and chain as separate files, and skips the full chain if fetching it fails, so the explicit download is the file to use. The extra `.crt` files can be deleted.
+`--wait` also writes the leaf, chain and full chain as `.crt` files. This guide uses the downloaded `.pem`, so the `.crt` files can be deleted. CLI versions before v0.7.0 could skip the full chain without an error, which is another reason to download it explicitly.
 
 Check what you got before Caddy sees it:
 
@@ -93,10 +93,10 @@ A single-file bind mount follows the file's inode. Renewal replaces the files wi
 
 ## 3. Renew with a timer
 
-`krakenkey cert renew` reuses the certificate's existing CSR, so the key on disk stays valid and only the certificate changes. It always requests a new certificate, so the script decides when renewal is due. A few other things shape it:
+`krakenkey cert renew` reuses the certificate's existing CSR, so the key on disk stays valid and only the certificate changes. On its own it always requests a new certificate. CLI v0.7.0 adds `--if-due`, which renews only inside your plan's renewal window (30 days before expiry on paid plans, 5 on Free), so a daily `krakenkey cert renew <id> --if-due --wait --fullchain-out ...` is safe on its own. The script below decides when renewal is due itself, which keeps a wider margin on the Free plan and works with older CLI versions, and adds the checks below. A few things shape it:
 
 - **Renew at a third of the lifetime remaining.** For a 90-day certificate that's about 30 days out, which leaves weeks for retries. It also adjusts on its own as certificate lifetimes shrink. If KrakenKey's own auto-renew gets there first, the script sees the newer certificate and downloads it instead of renewing again.
-- **Download after renewing.** `cert renew --wait` waits for the new certificate but doesn't write it to disk.
+- **Download after renewing.** The script downloads the new certificate into a work directory instead of using the files `cert renew --wait` writes (CLI v0.7.0 and later), so it can check the result before Caddy sees it. The renew call also runs in that directory, so those extra files are cleaned up with it.
 - **Keep the served copy until the new one checks out.** While a renewal is in progress, KrakenKey holds no downloadable certificate. The script writes into a work directory, checks that the new certificate matches the key, covers the names and is newer than the live one, then moves it into place.
 - **Reload with `--force`.** A plain `caddy reload` does nothing when the Caddyfile hasn't changed, so Caddy keeps serving the old certificate from memory. `caddy reload --force` loads the new files without a restart.
 
@@ -142,7 +142,8 @@ if [[ $status == issued && -n $expires ]] && (( $(date -d "$expires" +%s) > end 
   log "KrakenKey already has a newer certificate; downloading it"
 else
   log "renewing certificate $ID"
-  krakenkey cert renew "$ID" --wait --poll-timeout 20m >/dev/null
+  # Run in $WORK: CLI v0.7.0+ also saves renewed .crt files to the current directory.
+  (cd "$WORK" && krakenkey cert renew "$ID" --wait --poll-timeout 20m >/dev/null)
 fi
 
 krakenkey cert download "$ID" --format fullchain --out "$WORK/new.pem" >/dev/null
