@@ -23,19 +23,10 @@ export const columns: RoadmapColumn[] = [
     summary: 'In progress or in review.',
     items: [
       {
-        title: 'Safe scheduled renewals',
+        title: 'GitHub Action renewals',
         description:
-          'An opt-in "renew only if due" mode for the API and CLI, so a daily cron job or systemd timer renews inside your plan\'s renewal window instead of reissuing every run.',
-      },
-      {
-        title: 'CLI and GitHub Action renewal fixes',
-        description:
-          'cert renew --wait saves the renewed certificate, a failed chain download is reported instead of skipped, and the action passes comma-separated SANs correctly.',
-      },
-      {
-        title: 'API key activity and revocation history',
-        description:
-          'See when and from which IP each key was last used. Revoked keys stay visible for 30 days so you can audit what was turned off.',
+          'An if-due input so scheduled workflows renew only when due, plus correct handling of comma-separated SANs.',
+        link: { href: 'https://github.com/KrakenKey/cert-action/pull/34', label: 'cert-action#34' },
       },
       {
         title: 'Scoped API keys',
@@ -108,6 +99,17 @@ export const columns: RoadmapColumn[] = [
 ];
 
 export const shipped: RoadmapItem[] = [
+  {
+    title: 'Renewals that are safe to schedule',
+    description:
+      'cert renew --if-due renews only inside your plan\'s renewal window, so a daily cron job or timer no longer reissues every run. renew --wait now saves the renewed certificate, and a missing chain is reported instead of skipped.',
+    link: { href: 'https://github.com/KrakenKey/cli/releases/tag/v0.7.0', label: 'CLI v0.7.0' },
+  },
+  {
+    title: 'API key activity and revocation history',
+    description:
+      'See when and from which IP each key was last used. Revoked keys stay visible for 30 days.',
+  },
   {
     title: 'Browser sign-in for the CLI',
     description: 'krakenkey auth login --web approves a CLI session from the dashboard, with no key to copy and paste.',
