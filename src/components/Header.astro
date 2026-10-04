@@ -1,5 +1,8 @@
 ---
+import { links } from '../data/links';
+
 const pathname = Astro.url.pathname;
+const isActive = (prefix: string) => pathname === prefix || pathname.startsWith(`${prefix}/`);
 ---
 
 <header class="site-header">
@@ -16,13 +19,40 @@ const pathname = Astro.url.pathname;
       <span></span>
     </label>
 
-    <nav class="header-nav">
-      <a href="/" class:list={[{ active: pathname === '/' }]}>Home</a>
-      <a href="/pricing" class:list={[{ active: pathname === '/pricing' || pathname === '/pricing/' }]}>Pricing</a>
-      <a href="/scanner" class:list={[{ active: pathname === '/scanner' || pathname === '/scanner/' }]}>Scanner</a>
-      <a href="/blog" class:list={[{ active: pathname.startsWith('/blog') }]}>Blog</a>
-      <a href="/docs/" class:list={[{ active: pathname.startsWith('/docs') }]}>Docs</a>
-      <a href="https://app.krakenkey.io" class="btn btn-primary">Get Started</a>
+    <nav class="header-nav" aria-label="Main">
+      <a href="/pricing" class:list={[{ active: isActive('/pricing') }]}>Pricing</a>
+      <a href="/scanner" class:list={[{ active: isActive('/scanner') }]}>Scanner</a>
+      <a href="/docs/" class:list={[{ active: isActive('/docs') }]}>Docs</a>
+      <a href="/blog" class:list={[{ active: isActive('/blog') }]}>Blog</a>
+      <a href="/roadmap" class:list={[{ active: isActive('/roadmap') }]}>Roadmap</a>
+
+      <span class="header-nav-divider" aria-hidden="true"></span>
+
+      <a href={links.login} class="header-login">Log in</a>
+
+      <!-- CSS-only menu: opens on hover or keyboard/tap focus; the site CSP allows no inline scripts. -->
+      <div class="nav-menu">
+        <button type="button" class="btn btn-primary nav-menu-trigger" aria-haspopup="true">
+          Get Started
+          <svg class="nav-menu-caret" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+            <path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <div class="nav-menu-panel">
+          <a href={links.signup} class="nav-menu-item">
+            <span class="nav-menu-title">Create a free account</span>
+            <span class="nav-menu-desc">No credit card. Sign up and add your first domain.</span>
+          </a>
+          <a href={links.quickStart} class="nav-menu-item">
+            <span class="nav-menu-title">Quick start</span>
+            <span class="nav-menu-desc">Issue your first certificate in about 10 minutes.</span>
+          </a>
+          <a href={links.agentQuickStart} class="nav-menu-item">
+            <span class="nav-menu-title">Quick start for AI agents</span>
+            <span class="nav-menu-desc">Hand the setup to Claude Code, Codex, Cursor and similar.</span>
+          </a>
+        </div>
+      </div>
     </nav>
   </div>
 </header>
