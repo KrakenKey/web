@@ -564,7 +564,83 @@ ul, ol {
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.75rem;
+}
+
+.header-nav-divider {
+  width: 1px;
+  height: 1.25rem;
+  background-color: var(--color-border);
+}
+
+/* Get Started menu (CSS-only; opens on hover or focus) */
+.nav-menu {
+  position: relative;
+}
+
+.nav-menu-caret {
+  transition: transform 0.2s;
+}
+
+.nav-menu:hover .nav-menu-caret,
+.nav-menu:focus-within .nav-menu-caret {
+  transform: rotate(180deg);
+}
+
+.nav-menu-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 120;
+  width: 320px;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Bridges the gap under the button so the menu stays open while the pointer moves down. */
+.nav-menu-panel::before {
+  content: '';
+  position: absolute;
+  top: -0.5rem;
+  left: 0;
+  right: 0;
+  height: 0.5rem;
+}
+
+.nav-menu:hover .nav-menu-panel,
+.nav-menu:focus-within .nav-menu-panel {
+  display: flex;
+}
+
+.header-nav .nav-menu-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: var(--radius-md);
+}
+
+.header-nav .nav-menu-item:hover,
+.header-nav .nav-menu-item:focus-visible {
+  background-color: var(--color-surface-elevated);
+}
+
+.nav-menu-title {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.nav-menu-desc {
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.4;
 }
 
 .header-nav a {
@@ -615,8 +691,14 @@ ul, ol {
   max-width: var(--max-width);
   margin-inline: auto;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: minmax(220px, 1fr) 3fr;
   gap: var(--space-2xl);
+}
+
+.footer-columns {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-xl);
 }
 
 .footer-brand p {
@@ -644,15 +726,6 @@ ul, ol {
 
 .footer-links a:hover {
   color: var(--color-accent);
-}
-
-.footer-coming-soon {
-  color: var(--color-muted);
-  font-size: 0.875rem;
-}
-
-.footer-coming-soon-label {
-  font-size: 0.75rem;
 }
 
 .footer-bottom {
@@ -932,6 +1005,16 @@ ul, ol {
 }
 
 /* ===== Responsive ===== */
+@media (max-width: 1024px) {
+  .footer-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .header-nav {
+    gap: 1.25rem;
+  }
+}
+
 @media (max-width: 768px) {
   .section-title {
     font-size: 1.75rem;
@@ -958,6 +1041,66 @@ ul, ol {
   .footer-inner {
     grid-template-columns: 1fr;
     gap: var(--space-xl);
+  }
+
+  .footer-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* In the slide-out menu the Get Started entries are listed inline. */
+  .header-nav {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .header-nav-divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .nav-menu {
+    width: 100%;
+  }
+
+  .nav-menu-trigger {
+    display: none;
+  }
+
+  .nav-menu-panel {
+    display: flex;
+    position: static;
+    width: auto;
+    padding: 0;
+    gap: var(--space-lg);
+    background: none;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .nav-menu-panel::before {
+    display: none;
+  }
+
+  .header-nav .nav-menu-item {
+    padding: 0;
+  }
+
+  .header-nav .nav-menu-item:hover {
+    background: none;
+  }
+
+  .nav-menu-title {
+    color: var(--color-muted);
+    font-weight: 500;
+  }
+
+  .nav-menu-desc {
+    display: none;
+  }
+
+  .header-nav .nav-menu-item:first-child .nav-menu-title {
+    color: var(--color-cta);
+    font-weight: 600;
   }
 
   .blog-grid {
