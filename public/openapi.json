@@ -1737,7 +1737,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The Health Check is successful",
+            "description": "All dependencies healthy\n\nThe Health Check is successful",
             "content": {
               "application/json": {
                 "schema": {
@@ -1811,7 +1811,7 @@
             }
           },
           "503": {
-            "description": "The Health Check is not successful",
+            "description": "One or more dependencies unhealthy\n\nThe Health Check is not successful",
             "content": {
               "application/json": {
                 "schema": {
