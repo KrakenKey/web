@@ -2498,6 +2498,59 @@
             "type": "string",
             "description": "ISO 8601 expiration date (optional, null = never expires)",
             "example": "2027-01-01T00:00:00.000Z"
+          },
+          "scopes": {
+            "type": "array",
+            "description": "Scopes the key may use. Omit for full access. Cannot be changed after creation.",
+            "example": [
+              "certs:read",
+              "certs:renew",
+              "account:read"
+            ],
+            "items": {
+              "type": "string",
+              "enum": [
+                "certs:read",
+                "certs:issue",
+                "certs:renew",
+                "certs:revoke",
+                "domains:read",
+                "domains:write",
+                "endpoints:read",
+                "endpoints:write",
+                "probes:report",
+                "account:read",
+                "account:write"
+              ]
+            }
+          },
+          "allowedDomainIds": {
+            "description": "Limit the key to these domain ids: certificates, domains and endpoints under other domains are hidden and new ones are refused.",
+            "maxItems": 50,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowedCertIds": {
+            "description": "Limit the key to these certificate ids. Such a key cannot request new certificates.",
+            "maxItems": 50,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "allowedIps": {
+            "description": "IP addresses or CIDR ranges (IPv4 or IPv6) the key may be used from. Requests from elsewhere get 403.",
+            "maxItems": 20,
+            "example": [
+              "203.0.113.10",
+              "2001:db8::/48"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
