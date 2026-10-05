@@ -14,26 +14,13 @@ export interface RoadmapColumn {
   items: RoadmapItem[];
 }
 
-export const updated = '2026-10-04';
+export const updated = '2026-10-05';
 
 export const columns: RoadmapColumn[] = [
   {
     id: 'now',
     title: 'Now',
     summary: 'In progress or in review.',
-    items: [
-      {
-        title: 'Scoped API keys',
-        description:
-          'Read-only, renewal-only and full scopes chosen at creation, with optional domain and source-IP restrictions.',
-        link: { href: 'https://github.com/KrakenKey/app/issues/122', label: 'app#122' },
-      },
-    ],
-  },
-  {
-    id: 'next',
-    title: 'Next',
-    summary: 'Planned after the current work ships.',
     items: [
       {
         title: 'Slack, Teams and webhook alerts',
@@ -73,9 +60,9 @@ export const columns: RoadmapColumn[] = [
     ],
   },
   {
-    id: 'later',
-    title: 'Later',
-    summary: 'On our list, not yet scheduled.',
+    id: 'next',
+    title: 'Next',
+    summary: 'Planned after the current work ships.',
     items: [
       {
         title: 'Kubernetes integration',
@@ -90,9 +77,21 @@ export const columns: RoadmapColumn[] = [
       },
     ],
   },
+  {
+    id: 'later',
+    title: 'Later',
+    summary: 'On our list, not yet scheduled.',
+    items: [],
+  },
 ];
 
 export const shipped: RoadmapItem[] = [
+  {
+    title: 'Scoped API keys',
+    description:
+      'Limit a key to what it needs when you create it: read-only, certificate renewal or a custom set of scopes, specific domains or certificates, and the IP addresses it may be used from.',
+    link: { href: 'https://github.com/KrakenKey/app/issues/122', label: 'app#122' },
+  },
   {
     title: 'GitHub Action renewals',
     description:
