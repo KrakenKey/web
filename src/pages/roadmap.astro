@@ -33,6 +33,9 @@ const ideasUrl = 'https://github.com/KrakenKey/KrakenKey/discussions/categories/
             <h2 id={`roadmap-${column.id}`} class={`roadmap-pill roadmap-pill--${column.id}`}>{column.title}</h2>
             <p class="roadmap-column-summary">{column.summary}</p>
           </header>
+          {column.items.length === 0 && (
+            <p class="roadmap-empty">Nothing here right now.</p>
+          )}
           <ul class="roadmap-list">
             {column.items.map((item) => (
               <li class="card card--compact roadmap-item">
@@ -144,6 +147,12 @@ const ideasUrl = 'https://github.com/KrakenKey/KrakenKey/discussions/categories/
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     color: var(--color-accent);
+  }
+
+  .roadmap-empty {
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    margin: 0;
   }
 
   .roadmap-shipped {

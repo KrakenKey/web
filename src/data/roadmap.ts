@@ -14,26 +14,13 @@ export interface RoadmapColumn {
   items: RoadmapItem[];
 }
 
-export const updated = '2026-10-04';
+export const updated = '2026-10-06';
 
 export const columns: RoadmapColumn[] = [
   {
     id: 'now',
     title: 'Now',
     summary: 'In progress or in review.',
-    items: [
-      {
-        title: 'Scoped API keys',
-        description:
-          'Read-only, renewal-only and full scopes chosen at creation, with optional domain and source-IP restrictions.',
-        link: { href: 'https://github.com/KrakenKey/app/issues/122', label: 'app#122' },
-      },
-    ],
-  },
-  {
-    id: 'next',
-    title: 'Next',
-    summary: 'Planned after the current work ships.',
     items: [
       {
         title: 'Slack, Teams and webhook alerts',
@@ -60,22 +47,17 @@ export const columns: RoadmapColumn[] = [
         link: { href: 'https://github.com/KrakenKey/cert-action/issues/32', label: 'cert-action#32' },
       },
       {
-        title: 'Homebrew install',
-        description: 'brew install for the CLI on macOS and Linux, with updates through brew upgrade.',
-        link: { href: 'https://github.com/KrakenKey/cli/issues/42', label: 'cli#42' },
-      },
-      {
-        title: 'apt and dnf packages',
+        title: 'Signed apt and dnf repositories',
         description:
-          'Signed package repositories we host ourselves for the CLI and the probe, with the probe installed as a systemd service.',
+          'Package repositories we host ourselves for the CLI and the probe, so apt and dnf keep them up to date, with the probe installed as a systemd service.',
         link: { href: 'https://github.com/KrakenKey/cli/issues/46', label: 'cli#46' },
       },
     ],
   },
   {
-    id: 'later',
-    title: 'Later',
-    summary: 'On our list, not yet scheduled.',
+    id: 'next',
+    title: 'Next',
+    summary: 'Planned after the current work ships.',
     items: [
       {
         title: 'Kubernetes integration',
@@ -90,9 +72,27 @@ export const columns: RoadmapColumn[] = [
       },
     ],
   },
+  {
+    id: 'later',
+    title: 'Later',
+    summary: 'On our list, not yet scheduled.',
+    items: [],
+  },
 ];
 
 export const shipped: RoadmapItem[] = [
+  {
+    title: 'Homebrew and Linux packages for the CLI',
+    description:
+      'brew install krakenkey/tap/krakenkey on macOS and Linux, with updates through brew upgrade, plus .deb and .rpm packages on every release.',
+    link: { href: 'https://github.com/KrakenKey/cli/releases/tag/v0.8.0', label: 'CLI v0.8.0' },
+  },
+  {
+    title: 'Scoped API keys',
+    description:
+      'Limit a key to what it needs when you create it: read-only, certificate renewal or a custom set of scopes, specific domains or certificates, and the IP addresses it may be used from.',
+    link: { href: 'https://github.com/KrakenKey/app/issues/122', label: 'app#122' },
+  },
   {
     title: 'GitHub Action renewals',
     description:
