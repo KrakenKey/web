@@ -2523,6 +2523,304 @@
         }
       }
     },
+    "/reports": {
+      "post": {
+        "operationId": "ReportsController_create",
+        "summary": "Create a portfolio TLS report for a list of hosts",
+        "description": "Hosts are scanned in the background; poll GET /reports/:id until status is complete. Free plan: 25 hosts per report, paid plans: 250.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReportDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Reports"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Report created (pending)"
+          },
+          "400": {
+            "description": "Invalid or private host"
+          },
+          "403": {
+            "description": "Plan limit exceeded"
+          }
+        }
+      },
+      "get": {
+        "operationId": "ReportsController_findAll",
+        "summary": "List reports, newest first (summary only)",
+        "parameters": [],
+        "tags": [
+          "Reports"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reports"
+          }
+        }
+      }
+    },
+    "/reports/{id}": {
+      "get": {
+        "operationId": "ReportsController_findOne",
+        "summary": "Get a report with every host, most urgent first",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Report UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report"
+          },
+          "404": {
+            "description": "Report not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "ReportsController_remove",
+        "summary": "Delete a report and its share link",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Report UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "404": {
+            "description": "Report not found"
+          }
+        }
+      }
+    },
+    "/reports/{id}/export": {
+      "get": {
+        "operationId": "ReportsController_export",
+        "summary": "Download a report as CSV",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Report UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "csv"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV file"
+          },
+          "404": {
+            "description": "Report not found"
+          }
+        }
+      }
+    },
+    "/reports/{id}/share": {
+      "post": {
+        "operationId": "ReportsController_share",
+        "summary": "Create a read-only share link (replaces any existing link)",
+        "description": "The link works without login for 30 days. The token is returned once and only its hash is stored.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Report UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "{ url, token, expiresAt }"
+          },
+          "404": {
+            "description": "Report not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "ReportsController_revokeShare",
+        "summary": "Revoke the share link",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Report UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Revoked"
+          },
+          "404": {
+            "description": "Report not found"
+          }
+        }
+      }
+    },
+    "/public/reports/{token}": {
+      "get": {
+        "operationId": "PublicReportsController_findShared",
+        "summary": "View a shared report (no auth required)",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "description": "Share token from the link",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "responses": {
+          "200": {
+            "description": "Report contents"
+          },
+          "404": {
+            "description": "Unknown, revoked or expired link"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          }
+        }
+      }
+    },
+    "/public/reports/{token}/export": {
+      "get": {
+        "operationId": "PublicReportsController_exportShared",
+        "summary": "Download a shared report as CSV (no auth)",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "description": "Share token from the link",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "csv"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV file"
+          },
+          "404": {
+            "description": "Unknown, revoked or expired link"
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "operationId": "UsersController_findAll",
@@ -3387,6 +3685,30 @@
       "PublicScanRequestDto": {
         "type": "object",
         "properties": {}
+      },
+      "CreateReportDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name shown in the report list and on the shared page",
+            "example": "Client sites, October"
+          },
+          "hosts": {
+            "description": "Hostnames to scan, one per entry, optionally with :port (default 443). Duplicates are dropped. Free plan: up to 25 hosts, paid plans: up to 250.",
+            "example": [
+              "example.com",
+              "api.example.com:8443"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "hosts"
+        ]
       },
       "UpdateUserDto": {
         "type": "object",
