@@ -23,33 +23,15 @@ export const columns: RoadmapColumn[] = [
     summary: 'In progress or in review.',
     items: [
       {
-        title: 'Slack, Teams and webhook alerts',
+        title: 'Renewal guides for 100-day certificates',
         description:
-          'Send expiry warnings, renewal results and scan failures to chat or your own endpoint, not just email.',
-        link: { href: 'https://github.com/KrakenKey/app/issues/120', label: 'app#120' },
+          'Certificate lifetimes drop to 100 days on 2027-03-15. Guides for nginx, Traefik, HAProxy, IIS and Kubernetes: issue with the CLI, renew on a daily timer, write the chain where the server expects it, and reload.',
+        link: { href: 'https://github.com/KrakenKey/web/issues/86', label: 'web#86' },
       },
       {
-        title: 'ACME Renewal Information (ARI)',
+        title: 'Probe as a system service',
         description:
-          'Let the CA tell us when to renew. This matters more as lifetimes drop to 100 days and when a CA has to replace certificates early.',
-        link: { href: 'https://github.com/KrakenKey/app/issues/121', label: 'app#121' },
-      },
-      {
-        title: 'Portfolio TLS report',
-        description:
-          'Check a list of domains at once and get a shareable report of expiry exposure, coverage and chain problems, sorted by urgency.',
-        link: { href: 'https://github.com/KrakenKey/app/issues/123', label: 'app#123' },
-      },
-      {
-        title: 'GitHub Action without a stored key',
-        description:
-          'Authenticate the certificate action with GitHub OIDC, so workflows hold no long-lived KrakenKey secret.',
-        link: { href: 'https://github.com/KrakenKey/cert-action/issues/32', label: 'cert-action#32' },
-      },
-      {
-        title: 'Signed apt and dnf repositories',
-        description:
-          'Package repositories we host ourselves for the CLI and the probe, so apt and dnf keep them up to date, with the probe installed as a systemd service.',
+          'Install the probe from the apt and dnf repositories and run it as a systemd service that checks your endpoints on a schedule.',
         link: { href: 'https://github.com/KrakenKey/cli/issues/46', label: 'cli#46' },
       },
     ],
@@ -70,17 +52,67 @@ export const columns: RoadmapColumn[] = [
           'Support for Let\'s Encrypt\'s post-quantum certificate format ahead of its 2027 production rollout.',
         link: { href: 'https://github.com/KrakenKey/app/issues/125', label: 'app#125' },
       },
+      {
+        title: 'Terraform provider',
+        description:
+          'Manage certificates, domains and alert channels as Terraform resources, published on the Terraform Registry.',
+      },
+      {
+        title: 'Domain verification that rides out DNS hiccups',
+        description:
+          'The daily recheck retries a failed lookup and allows a grace period, with an alert, before a domain loses its verified status.',
+      },
     ],
   },
   {
     id: 'later',
     title: 'Later',
     summary: 'On our list, not yet scheduled.',
-    items: [],
+    items: [
+      {
+        title: 'Certificates declared in your repository',
+        description:
+          'List the certificates you need in a file in your GitHub repository. KrakenKey checks pull requests, issues and renews them, and delivers them to repository secrets or a webhook.',
+      },
+      {
+        title: 'API key expiry alerts',
+        description: 'A heads-up before an API key expires, through the same email, Slack, Teams and webhook channels as certificate alerts.',
+      },
+    ],
   },
 ];
 
 export const shipped: RoadmapItem[] = [
+  {
+    title: 'Signed apt and dnf repositories',
+    description:
+      'Install the CLI from packages.krakenkey.io with apt or dnf and keep it current with normal upgrades. Signed metadata and packages, with key changes delivered by a keyring package. The probe joins with its next release.',
+    link: { href: '/docs/cli/', label: 'Install docs' },
+  },
+  {
+    title: 'GitHub Action without a stored key',
+    description:
+      'The certificate action authenticates with GitHub OIDC: trust a repository once, and its workflows get a 15-minute key with that trust policy\'s scopes and limits.',
+    link: { href: 'https://github.com/KrakenKey/cert-action/releases/tag/v1.4.0', label: 'cert-action v1.4.0' },
+  },
+  {
+    title: 'Portfolio TLS report',
+    description:
+      'Check a list of hosts at once for expiry, issuer, hostname coverage and chain problems, sorted by urgency, with a CSV export and a read-only share link.',
+    link: { href: 'https://github.com/KrakenKey/app/issues/123', label: 'app#123' },
+  },
+  {
+    title: 'ACME Renewal Information (ARI)',
+    description:
+      'KrakenKey checks each certificate\'s CA-suggested renewal window and renews early when the CA asks for a replacement, with an alert when it does.',
+    link: { href: 'https://github.com/KrakenKey/app/issues/121', label: 'app#121' },
+  },
+  {
+    title: 'Slack, Teams and webhook alerts',
+    description:
+      'Send issuance, renewal, expiry and scan-failure alerts to Slack, Microsoft Teams or your own HTTPS endpoint with signed payloads, alongside email.',
+    link: { href: 'https://github.com/KrakenKey/app/issues/120', label: 'app#120' },
+  },
   {
     title: 'Homebrew and Linux packages for the CLI',
     description:
