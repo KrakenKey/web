@@ -34,3 +34,106 @@
   cursor: pointer;
   font-weight: 600;
 }
+
+/* Diagrams in src/components/docs/: inline SVG drawn with theme colors. */
+.kk-diagram {
+  /* Fixed cyan: the light theme swaps the accent tokens but keeps the dark grays. */
+  --kk-accent: #06b6d4;
+  --kk-accent-low: #083344;
+  --kk-accent-high: #a5f3fc;
+  margin: 1.5rem 0;
+}
+
+.kk-diagram .kk-scroll {
+  overflow-x: auto;
+}
+
+/* Below this width the labels get too small to read, so scroll instead. */
+.kk-diagram svg {
+  display: block;
+  width: 100%;
+  min-width: 640px;
+  height: auto;
+  font-family: var(--sl-font);
+}
+
+.kk-diagram figcaption {
+  margin-top: 0.5rem;
+  font-size: var(--sl-text-sm);
+  color: var(--sl-color-gray-3);
+}
+
+.kk-diagram .kk-box {
+  fill: var(--sl-color-gray-6);
+  stroke: var(--sl-color-gray-4);
+  stroke-width: 1.5;
+}
+
+.kk-diagram .kk-ours {
+  fill: var(--kk-accent-low);
+  stroke: var(--kk-accent);
+}
+
+.kk-diagram .kk-yours {
+  stroke: var(--sl-color-gray-2);
+}
+
+.kk-diagram .kk-probe {
+  stroke-dasharray: 6 4;
+}
+
+.kk-diagram text {
+  fill: var(--sl-color-white);
+}
+
+.kk-diagram .kk-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.kk-diagram .kk-heading {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--sl-color-gray-3);
+}
+
+.kk-diagram .kk-note,
+.kk-diagram .kk-label {
+  font-size: 12.5px;
+  fill: var(--sl-color-gray-2);
+}
+
+.kk-diagram .kk-label {
+  fill: var(--kk-accent-high);
+}
+
+.kk-diagram .kk-strong {
+  font-weight: 600;
+  fill: var(--sl-color-white);
+}
+
+.kk-diagram .kk-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  fill: var(--kk-accent-high);
+}
+
+.kk-diagram .kk-mono {
+  font-family: var(--sl-font-mono);
+  font-size: 12px;
+  fill: var(--sl-color-gray-2);
+}
+
+.kk-diagram .kk-line {
+  stroke: var(--sl-color-gray-3);
+  stroke-width: 1.5;
+}
+
+.kk-diagram .kk-dashed {
+  stroke-dasharray: 5 4;
+}
+
+.kk-diagram .kk-arrowhead {
+  fill: var(--sl-color-gray-3);
+}

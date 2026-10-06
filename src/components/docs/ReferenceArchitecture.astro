@@ -1,0 +1,88 @@
+---
+// Where KrakenKey sits next to common stacks: three places the key can live,
+// what serves the certificate in each, and probes checking the live result.
+---
+
+<figure class="kk-diagram">
+  <div class="kk-scroll">
+  <svg viewBox="0 0 760 500" role="img" aria-labelledby="arch-title arch-desc">
+    <title id="arch-title">KrakenKey reference architecture</title>
+    <desc id="arch-desc">
+      KrakenKey exchanges CSRs and certificates with three kinds of client. On the host: a Linux server runs the
+      KrakenKey CLI on a timer and serves the certificate from nginx, HAProxy or Caddy. In a key vault: Azure Key
+      Vault creates the CSR, and App Service or Container Apps serve the merged certificate. In a pipeline: a
+      GitHub Actions workflow or scheduled job renews the certificate and deploys it to servers over SSH or imports
+      it into AWS Certificate Manager for load balancers and CloudFront. Probes, hosted by KrakenKey or running on
+      your network, scan what each endpoint actually serves and report back to KrakenKey.
+    </desc>
+    <defs>
+      <marker id="arch-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" class="kk-arrowhead"></path>
+      </marker>
+    </defs>
+
+    <!-- KrakenKey -->
+    <rect class="kk-box kk-ours" x="10" y="40" width="150" height="320" rx="10"></rect>
+    <text class="kk-title" x="85" y="180" text-anchor="middle">KrakenKey</text>
+    <text class="kk-note" x="85" y="204" text-anchor="middle">Issues, renews,</text>
+    <text class="kk-note" x="85" y="222" text-anchor="middle">stores certificates</text>
+
+    <!-- Column headings -->
+    <text class="kk-heading" x="350" y="24" text-anchor="middle">Where the private key lives</text>
+    <text class="kk-heading" x="630" y="24" text-anchor="middle">What serves TLS</text>
+
+    <!-- Lane A: on the host -->
+    <rect class="kk-box kk-yours" x="240" y="40" width="220" height="90" rx="10"></rect>
+    <text class="kk-tag" x="254" y="62">ON THE HOST</text>
+    <text class="kk-title" x="254" y="88">Linux server</text>
+    <text class="kk-note" x="254" y="110">CLI + systemd timer</text>
+    <rect class="kk-box" x="520" y="40" width="230" height="90" rx="10"></rect>
+    <text class="kk-title" x="535" y="78">nginx, HAProxy, Caddy</text>
+    <text class="kk-note" x="535" y="100">reads the files, reloads</text>
+
+    <!-- Lane B: key vault -->
+    <rect class="kk-box kk-yours" x="240" y="155" width="220" height="90" rx="10"></rect>
+    <text class="kk-tag" x="254" y="177">IN A KEY VAULT</text>
+    <text class="kk-title" x="254" y="203">Azure Key Vault</text>
+    <text class="kk-note" x="254" y="225">makes the CSR, merges cert</text>
+    <rect class="kk-box" x="520" y="155" width="230" height="90" rx="10"></rect>
+    <text class="kk-title" x="535" y="193">App Service,</text>
+    <text class="kk-title" x="535" y="215">Container Apps</text>
+
+    <!-- Lane C: pipeline -->
+    <rect class="kk-box kk-yours" x="240" y="270" width="220" height="90" rx="10"></rect>
+    <text class="kk-tag" x="254" y="292">IN A PIPELINE</text>
+    <text class="kk-title" x="254" y="318">GitHub Actions</text>
+    <text class="kk-note" x="254" y="340">or any scheduled job</text>
+    <rect class="kk-box" x="520" y="270" width="230" height="90" rx="10"></rect>
+    <text class="kk-title" x="535" y="300">Servers over SSH</text>
+    <text class="kk-title" x="535" y="324">AWS ACM</text>
+    <text class="kk-note" x="535" y="344">to ALB, CloudFront</text>
+
+    <!-- KrakenKey <-> clients: CSR in, cert out -->
+    <line class="kk-line" x1="162" y1="85" x2="238" y2="85" marker-start="url(#arch-arrow)" marker-end="url(#arch-arrow)"></line>
+    <line class="kk-line" x1="162" y1="200" x2="238" y2="200" marker-start="url(#arch-arrow)" marker-end="url(#arch-arrow)"></line>
+    <line class="kk-line" x1="162" y1="315" x2="238" y2="315" marker-start="url(#arch-arrow)" marker-end="url(#arch-arrow)"></line>
+    <text class="kk-label" x="200" y="75" text-anchor="middle">CSR / cert</text>
+    <text class="kk-label" x="200" y="190" text-anchor="middle">CSR / cert</text>
+    <text class="kk-label" x="200" y="305" text-anchor="middle">CSR / cert</text>
+
+    <!-- client -> terminator -->
+    <line class="kk-line" x1="460" y1="85" x2="518" y2="85" marker-end="url(#arch-arrow)"></line>
+    <line class="kk-line" x1="460" y1="200" x2="518" y2="200" marker-end="url(#arch-arrow)"></line>
+    <line class="kk-line" x1="460" y1="315" x2="518" y2="315" marker-end="url(#arch-arrow)"></line>
+
+    <!-- Probes -->
+    <rect class="kk-box kk-probe" x="240" y="410" width="510" height="76" rx="10"></rect>
+    <text class="kk-title" x="495" y="440" text-anchor="middle">Probes: hosted by KrakenKey or on your network</text>
+    <text class="kk-note" x="495" y="464" text-anchor="middle">scan what each endpoint really serves: expiry, chain, hostname</text>
+    <line class="kk-line kk-dashed" x1="635" y1="408" x2="635" y2="362" marker-end="url(#arch-arrow)"></line>
+    <text class="kk-label" x="645" y="392">scan</text>
+    <path class="kk-line kk-dashed" d="M240,448 L85,448 L85,362" fill="none" marker-end="url(#arch-arrow)"></path>
+    <text class="kk-label" x="100" y="438">results</text>
+  </svg>
+  </div>
+  <figcaption>
+    Pick one lane per certificate. The probes don't care how a certificate got there, so they also catch hosts that never picked up a renewal.
+  </figcaption>
+</figure>
