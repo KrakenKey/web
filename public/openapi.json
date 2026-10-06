@@ -1896,6 +1896,203 @@
         }
       }
     },
+    "/notifications/channels": {
+      "get": {
+        "operationId": "NotificationChannelsController_list",
+        "summary": "List Slack, Teams and webhook channels",
+        "parameters": [],
+        "tags": [
+          "Notification channels"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Channels (URLs masked)"
+          }
+        }
+      },
+      "post": {
+        "operationId": "NotificationChannelsController_create",
+        "summary": "Add a notification channel",
+        "description": "For webhook channels the response includes the signing secret. It is shown only once.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNotificationChannelDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Notification channels"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Channel created"
+          },
+          "400": {
+            "description": "Invalid URL, unknown event or channel limit reached"
+          }
+        }
+      }
+    },
+    "/notifications/channels/{id}": {
+      "patch": {
+        "operationId": "NotificationChannelsController_update",
+        "summary": "Update a notification channel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Channel UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNotificationChannelDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Notification channels"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Channel updated"
+          },
+          "404": {
+            "description": "Channel not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "NotificationChannelsController_remove",
+        "summary": "Delete a notification channel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Channel UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Notification channels"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Channel deleted"
+          },
+          "404": {
+            "description": "Channel not found"
+          }
+        }
+      }
+    },
+    "/notifications/channels/{id}/test": {
+      "post": {
+        "operationId": "NotificationChannelsController_test",
+        "summary": "Send a test alert",
+        "description": "Sends a `test` event right away and reports what the destination answered.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Channel UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Notification channels"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ ok, status, error }"
+          },
+          "404": {
+            "description": "Channel not found"
+          }
+        }
+      }
+    },
+    "/notifications/channels/{id}/rotate-secret": {
+      "post": {
+        "operationId": "NotificationChannelsController_rotateSecret",
+        "summary": "Rotate a webhook signing secret",
+        "description": "Returns the new secret once. The old secret stops working immediately.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Channel UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Notification channels"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ secret }"
+          },
+          "400": {
+            "description": "Not a webhook channel"
+          },
+          "404": {
+            "description": "Channel not found"
+          }
+        }
+      }
+    },
     "/organizations": {
       "post": {
         "operationId": "OrganizationsController_create",
@@ -2818,6 +3015,88 @@
           "message",
           "rating"
         ]
+      },
+      "CreateNotificationChannelDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "slack",
+              "teams",
+              "webhook"
+            ],
+            "example": "slack"
+          },
+          "name": {
+            "type": "string",
+            "example": "Ops alerts",
+            "maxLength": 100
+          },
+          "url": {
+            "type": "string",
+            "description": "Destination URL. Slack: an incoming webhook (https://hooks.slack.com/services/...). Teams: a Workflows webhook URL (Office 365 connectors are retired). Webhook: any https URL that resolves only to public addresses. Stored encrypted and never returned in full.",
+            "example": "https://hooks.slack.com/services/T000/B000/XXXX"
+          },
+          "events": {
+            "type": "array",
+            "description": "Events to send. Defaults to cert.failed, cert.expiring, cert.revoked, cert.replacement_requested, domain.verification_failed, endpoint.scan_failed.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "cert.issued",
+                "cert.renewed",
+                "cert.failed",
+                "cert.expiring",
+                "cert.revoked",
+                "cert.replacement_requested",
+                "domain.verification_failed",
+                "endpoint.scan_failed"
+              ]
+            }
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "url"
+        ]
+      },
+      "UpdateNotificationChannelDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "url": {
+            "type": "string",
+            "description": "Destination URL. Slack: an incoming webhook (https://hooks.slack.com/services/...). Teams: a Workflows webhook URL (Office 365 connectors are retired). Webhook: any https URL that resolves only to public addresses. Stored encrypted and never returned in full."
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "cert.issued",
+                "cert.renewed",
+                "cert.failed",
+                "cert.expiring",
+                "cert.revoked",
+                "cert.replacement_requested",
+                "domain.verification_failed",
+                "endpoint.scan_failed"
+              ]
+            }
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        }
       },
       "CreateOrgDto": {
         "type": "object",
