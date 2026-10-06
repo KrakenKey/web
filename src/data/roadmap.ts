@@ -21,7 +21,25 @@ export const columns: RoadmapColumn[] = [
     id: 'now',
     title: 'Now',
     summary: 'In progress or in review.',
-    items: [],
+    items: [
+      {
+        title: 'Renewal guides for 100-day certificates',
+        description:
+          'Certificate lifetimes drop to 100 days on 2027-03-15. Guides for nginx, Traefik, HAProxy, IIS and Kubernetes: issue with the CLI, renew on a daily timer, write the chain where the server expects it, and reload.',
+        link: { href: 'https://github.com/KrakenKey/web/issues/86', label: 'web#86' },
+      },
+      {
+        title: 'Probe as a system service',
+        description:
+          'Install the probe from the apt and dnf repositories and run it as a systemd service that checks your endpoints on a schedule.',
+        link: { href: 'https://github.com/KrakenKey/cli/issues/46', label: 'cli#46' },
+      },
+      {
+        title: 'Kubernetes integration',
+        description: 'Request and renew certificates from inside a cluster, with the private key staying in the cluster.',
+        link: { href: 'https://github.com/KrakenKey/app/issues/124', label: 'app#124' },
+      },
+    ],
   },
   {
     id: 'next',
@@ -29,15 +47,20 @@ export const columns: RoadmapColumn[] = [
     summary: 'Planned after the current work ships.',
     items: [
       {
-        title: 'Kubernetes integration',
-        description: 'Request and renew certificates from inside a cluster, with the private key staying in the cluster.',
-        link: { href: 'https://github.com/KrakenKey/app/issues/124', label: 'app#124' },
-      },
-      {
         title: 'Merkle Tree Certificates',
         description:
           'Support for Let\'s Encrypt\'s post-quantum certificate format ahead of its 2027 production rollout.',
         link: { href: 'https://github.com/KrakenKey/app/issues/125', label: 'app#125' },
+      },
+      {
+        title: 'Terraform provider',
+        description:
+          'Manage certificates, domains and alert channels as Terraform resources, published on the Terraform Registry.',
+      },
+      {
+        title: 'Domain verification that rides out DNS hiccups',
+        description:
+          'The daily recheck retries a failed lookup and allows a grace period, with an alert, before a domain loses its verified status.',
       },
     ],
   },
@@ -45,7 +68,17 @@ export const columns: RoadmapColumn[] = [
     id: 'later',
     title: 'Later',
     summary: 'On our list, not yet scheduled.',
-    items: [],
+    items: [
+      {
+        title: 'Certificates declared in your repository',
+        description:
+          'List the certificates you need in a file in your GitHub repository. KrakenKey checks pull requests, issues and renews them, and delivers them to repository secrets or a webhook.',
+      },
+      {
+        title: 'API key expiry alerts',
+        description: 'A heads-up before an API key expires, through the same email, Slack, Teams and webhook channels as certificate alerts.',
+      },
+    ],
   },
 ];
 
