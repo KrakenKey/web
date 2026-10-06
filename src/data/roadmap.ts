@@ -14,7 +14,7 @@ export interface RoadmapColumn {
   items: RoadmapItem[];
 }
 
-export const updated = '2026-10-05';
+export const updated = '2026-10-06';
 
 export const columns: RoadmapColumn[] = [
   {
@@ -47,14 +47,9 @@ export const columns: RoadmapColumn[] = [
         link: { href: 'https://github.com/KrakenKey/cert-action/issues/32', label: 'cert-action#32' },
       },
       {
-        title: 'Homebrew install',
-        description: 'brew install for the CLI on macOS and Linux, with updates through brew upgrade.',
-        link: { href: 'https://github.com/KrakenKey/cli/issues/42', label: 'cli#42' },
-      },
-      {
-        title: 'apt and dnf packages',
+        title: 'Signed apt and dnf repositories',
         description:
-          'Signed package repositories we host ourselves for the CLI and the probe, with the probe installed as a systemd service.',
+          'Package repositories we host ourselves for the CLI and the probe, so apt and dnf keep them up to date, with the probe installed as a systemd service.',
         link: { href: 'https://github.com/KrakenKey/cli/issues/46', label: 'cli#46' },
       },
     ],
@@ -86,6 +81,12 @@ export const columns: RoadmapColumn[] = [
 ];
 
 export const shipped: RoadmapItem[] = [
+  {
+    title: 'Homebrew and Linux packages for the CLI',
+    description:
+      'brew install krakenkey/tap/krakenkey on macOS and Linux, with updates through brew upgrade, plus .deb and .rpm packages on every release.',
+    link: { href: 'https://github.com/KrakenKey/cli/releases/tag/v0.8.0', label: 'CLI v0.8.0' },
+  },
   {
     title: 'Scoped API keys',
     description:
