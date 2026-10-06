@@ -34,11 +34,6 @@ export const columns: RoadmapColumn[] = [
           'Install the probe from the apt and dnf repositories and run it as a systemd service that checks your endpoints on a schedule.',
         link: { href: 'https://github.com/KrakenKey/cli/issues/46', label: 'cli#46' },
       },
-      {
-        title: 'Kubernetes integration',
-        description: 'Request and renew certificates from inside a cluster, with the private key staying in the cluster.',
-        link: { href: 'https://github.com/KrakenKey/app/issues/124', label: 'app#124' },
-      },
     ],
   },
   {
@@ -46,6 +41,11 @@ export const columns: RoadmapColumn[] = [
     title: 'Next',
     summary: 'Planned after the current work ships.',
     items: [
+      {
+        title: 'Kubernetes integration',
+        description: 'Request and renew certificates from inside a cluster, with the private key staying in the cluster.',
+        link: { href: 'https://github.com/KrakenKey/app/issues/124', label: 'app#124' },
+      },
       {
         title: 'Merkle Tree Certificates',
         description:
