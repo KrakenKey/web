@@ -12,13 +12,43 @@ Source and releases: [github.com/KrakenKey/cli](https://github.com/KrakenKey/cli
 
 ## Installation
 
-**Binary download** (Linux, macOS, Windows): download the latest release from [github.com/KrakenKey/cli/releases](https://github.com/KrakenKey/cli/releases).
+**Homebrew** (macOS and Linux):
 
 ```bash
-# Linux amd64 example
-curl -Lo krakenkey.tar.gz https://github.com/KrakenKey/cli/releases/latest/download/krakenkey_linux_amd64.tar.gz
-tar -xzf krakenkey.tar.gz
-sudo mv krakenkey /usr/local/bin/
+brew install krakenkey/tap/krakenkey
+```
+
+Update with `brew upgrade krakenkey`. The cask comes from [KrakenKey/homebrew-tap](https://github.com/KrakenKey/homebrew-tap) and checks the download against the release checksums.
+
+**Debian, Ubuntu, Fedora, RHEL** (amd64 and arm64): each [release](https://github.com/KrakenKey/cli/releases) has `.deb` and `.rpm` packages that install `/usr/bin/krakenkey`.
+
+```bash
+VERSION=0.8.0   # latest: https://github.com/KrakenKey/cli/releases/latest
+ARCH=amd64      # or arm64
+BASE=https://github.com/KrakenKey/cli/releases/download/v$VERSION
+
+# Debian, Ubuntu
+curl -fLO "$BASE/krakenkey_${VERSION}_linux_${ARCH}.deb"
+sudo apt install "./krakenkey_${VERSION}_linux_${ARCH}.deb"
+
+# Fedora, RHEL
+curl -fLO "$BASE/krakenkey_${VERSION}_linux_${ARCH}.rpm"
+sudo dnf install "./krakenkey_${VERSION}_linux_${ARCH}.rpm"
+```
+
+The packages don't add a repository, so upgrade by installing the next release the same way.
+
+**Binary download** (Linux, macOS, Windows): release archives are named `krakenkey_<version>_<os>_<arch>.tar.gz` (`.zip` for Windows). Check the archive against `checksums.txt` before installing it:
+
+```bash
+VERSION=0.8.0
+ASSET=krakenkey_${VERSION}_linux_amd64.tar.gz   # or darwin_arm64, linux_arm64, ...
+BASE=https://github.com/KrakenKey/cli/releases/download/v$VERSION
+
+curl -fLO "$BASE/$ASSET" && curl -fLO "$BASE/checksums.txt"
+grep " $ASSET\$" checksums.txt | sha256sum -c -   # macOS: shasum -a 256 -c -
+tar -xzf "$ASSET" krakenkey
+sudo install -m 0755 krakenkey /usr/local/bin/
 ```
 
 **go install:**
@@ -30,8 +60,10 @@ go install github.com/krakenkey/cli/cmd/krakenkey@latest
 **Docker:**
 
 ```bash
-docker pull ghcr.io/krakenkey/cli:latest
+docker run --rm -e KK_API_KEY ghcr.io/krakenkey/cli:latest --version
 ```
+
+Check the install with `krakenkey --version`.
 
 ## Quick start
 
