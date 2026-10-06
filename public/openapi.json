@@ -3222,6 +3222,11 @@
             "type": "string",
             "example": "krakenkey/website"
           },
+          "repositoryId": {
+            "type": "string",
+            "description": "GitHub's numeric repository id, to pin the policy before its first run. Find it with `gh api repos/OWNER/NAME --jq .id`. Public repositories are looked up automatically when omitted.",
+            "example": "123456789"
+          },
           "allowedRefs": {
             "description": "Refs allowed to exchange tokens, e.g. refs/heads/main or refs/tags/v*. Omit for any ref.",
             "type": "array",
