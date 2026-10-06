@@ -20,23 +20,31 @@ brew install krakenkey/tap/krakenkey
 
 Update with `brew upgrade krakenkey`. The cask comes from [KrakenKey/homebrew-tap](https://github.com/KrakenKey/homebrew-tap) and checks the download against the release checksums.
 
-**Debian, Ubuntu, Fedora, RHEL** (amd64 and arm64): each [release](https://github.com/KrakenKey/cli/releases) has `.deb` and `.rpm` packages that install `/usr/bin/krakenkey`.
+**Debian and Ubuntu** (amd64 and arm64): add the KrakenKey apt repository, then install and upgrade with apt.
 
 ```bash
-VERSION=0.8.0   # latest: https://github.com/KrakenKey/cli/releases/latest
-ARCH=amd64      # or arm64
-BASE=https://github.com/KrakenKey/cli/releases/download/v$VERSION
-
-# Debian, Ubuntu
-curl -fLO "$BASE/krakenkey_${VERSION}_linux_${ARCH}.deb"
-sudo apt install "./krakenkey_${VERSION}_linux_${ARCH}.deb"
-
-# Fedora, RHEL
-curl -fLO "$BASE/krakenkey_${VERSION}_linux_${ARCH}.rpm"
-sudo dnf install "./krakenkey_${VERSION}_linux_${ARCH}.rpm"
+curl -fsSLo /tmp/krakenkey-archive-keyring.deb https://packages.krakenkey.io/keys/krakenkey-archive-keyring.deb
+sudo apt install /tmp/krakenkey-archive-keyring.deb
+sudo apt update && sudo apt install krakenkey
 ```
 
-The packages don't add a repository, so upgrade by installing the next release the same way.
+**Fedora, RHEL, Rocky, Alma, Amazon Linux 2023** (x86_64 and aarch64): add the KrakenKey rpm repository, then install and upgrade with dnf.
+
+```bash
+sudo dnf install https://packages.krakenkey.io/keys/krakenkey-archive-keyring.rpm
+sudo dnf install krakenkey
+```
+
+`krakenkey-archive-keyring` installs the signing key and the repository settings (`/etc/apt/sources.list.d/krakenkey.sources`, or `/etc/yum.repos.d/krakenkey.repo`). After that, `apt upgrade` or `dnf upgrade` keeps the CLI current, and a future key change arrives the same way. Supported: Debian 11+, Ubuntu 20.04+, RHEL/Rocky/Alma 8+, Fedora, Amazon Linux 2023. On older systems, such as Amazon Linux 2 or RHEL 7, use the binary download below.
+
+The repositories are signed with this key. The first time dnf uses it, it asks you to confirm the key; check the fingerprint:
+
+```
+KrakenKey Packages <packages@krakenkey.io>
+386E 2558 2384 DD74 692A  4EE9 F7BA 53A4 E94F A5DA
+```
+
+To check it yourself: `curl -fsSL https://packages.krakenkey.io/keys/krakenkey.asc | gpg --show-keys`. If you'd rather not add a repository, each [release](https://github.com/KrakenKey/cli/releases) also has the `.deb` and `.rpm` files to install directly.
 
 **Binary download** (Linux, macOS, Windows): release archives are named `krakenkey_<version>_<os>_<arch>.tar.gz` (`.zip` for Windows). Check the archive against `checksums.txt` before installing it:
 
@@ -49,6 +57,14 @@ curl -fLO "$BASE/$ASSET" && curl -fLO "$BASE/checksums.txt"
 grep " $ASSET\$" checksums.txt | sha256sum -c -   # macOS: shasum -a 256 -c -
 tar -xzf "$ASSET" krakenkey
 sudo install -m 0755 krakenkey /usr/local/bin/
+```
+
+Every release is also mirrored at `https://packages.krakenkey.io/releases/cli/v<version>/`, with a signature for `checksums.txt`. To check that signature as well:
+
+```bash
+curl -fsSL https://packages.krakenkey.io/keys/krakenkey.asc | gpg --import
+curl -fLO "https://packages.krakenkey.io/releases/cli/v$VERSION/checksums.txt.asc"
+gpg --verify checksums.txt.asc checksums.txt
 ```
 
 **go install:**
