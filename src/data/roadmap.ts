@@ -21,38 +21,7 @@ export const columns: RoadmapColumn[] = [
     id: 'now',
     title: 'Now',
     summary: 'In progress or in review.',
-    items: [
-      {
-        title: 'Slack, Teams and webhook alerts',
-        description:
-          'Send expiry warnings, renewal results and scan failures to chat or your own endpoint, not just email.',
-        link: { href: 'https://github.com/KrakenKey/app/issues/120', label: 'app#120' },
-      },
-      {
-        title: 'ACME Renewal Information (ARI)',
-        description:
-          'Let the CA tell us when to renew. This matters more as lifetimes drop to 100 days and when a CA has to replace certificates early.',
-        link: { href: 'https://github.com/KrakenKey/app/issues/121', label: 'app#121' },
-      },
-      {
-        title: 'Portfolio TLS report',
-        description:
-          'Check a list of domains at once and get a shareable report of expiry exposure, coverage and chain problems, sorted by urgency.',
-        link: { href: 'https://github.com/KrakenKey/app/issues/123', label: 'app#123' },
-      },
-      {
-        title: 'GitHub Action without a stored key',
-        description:
-          'Authenticate the certificate action with GitHub OIDC, so workflows hold no long-lived KrakenKey secret.',
-        link: { href: 'https://github.com/KrakenKey/cert-action/issues/32', label: 'cert-action#32' },
-      },
-      {
-        title: 'Signed apt and dnf repositories',
-        description:
-          'Package repositories we host ourselves for the CLI and the probe, so apt and dnf keep them up to date, with the probe installed as a systemd service.',
-        link: { href: 'https://github.com/KrakenKey/cli/issues/46', label: 'cli#46' },
-      },
-    ],
+    items: [],
   },
   {
     id: 'next',
@@ -81,6 +50,36 @@ export const columns: RoadmapColumn[] = [
 ];
 
 export const shipped: RoadmapItem[] = [
+  {
+    title: 'Signed apt and dnf repositories',
+    description:
+      'Install the CLI from packages.krakenkey.io with apt or dnf and keep it current with normal upgrades. Signed metadata and packages, with key changes delivered by a keyring package. The probe joins with its next release.',
+    link: { href: '/docs/cli/', label: 'Install docs' },
+  },
+  {
+    title: 'GitHub Action without a stored key',
+    description:
+      'The certificate action authenticates with GitHub OIDC: trust a repository once, and its workflows get a 15-minute key with that trust policy\'s scopes and limits.',
+    link: { href: 'https://github.com/KrakenKey/cert-action/releases/tag/v1.4.0', label: 'cert-action v1.4.0' },
+  },
+  {
+    title: 'Portfolio TLS report',
+    description:
+      'Check a list of hosts at once for expiry, issuer, hostname coverage and chain problems, sorted by urgency, with a CSV export and a read-only share link.',
+    link: { href: 'https://github.com/KrakenKey/app/issues/123', label: 'app#123' },
+  },
+  {
+    title: 'ACME Renewal Information (ARI)',
+    description:
+      'KrakenKey checks each certificate\'s CA-suggested renewal window and renews early when the CA asks for a replacement, with an alert when it does.',
+    link: { href: 'https://github.com/KrakenKey/app/issues/121', label: 'app#121' },
+  },
+  {
+    title: 'Slack, Teams and webhook alerts',
+    description:
+      'Send issuance, renewal, expiry and scan-failure alerts to Slack, Microsoft Teams or your own HTTPS endpoint with signed payloads, alongside email.',
+    link: { href: 'https://github.com/KrakenKey/app/issues/120', label: 'app#120' },
+  },
   {
     title: 'Homebrew and Linux packages for the CLI',
     description:
