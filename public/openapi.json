@@ -461,6 +461,117 @@
         }
       }
     },
+    "/auth/github-oidc": {
+      "post": {
+        "operationId": "GithubOidcController_exchange",
+        "summary": "Exchange a GitHub Actions OIDC token for a short-lived API key (15 minutes)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GithubOidcExchangeDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "GitHub OIDC"
+        ],
+        "responses": {
+          "200": {
+            "description": "Short-lived API key"
+          },
+          "401": {
+            "description": "Token invalid, expired or for another audience"
+          },
+          "403": {
+            "description": "No trust policy matches the repository, ref and environment"
+          },
+          "409": {
+            "description": "Several trust policies match; pass trustId"
+          }
+        }
+      }
+    },
+    "/auth/github-oidc/trusts": {
+      "get": {
+        "operationId": "GithubOidcController_list",
+        "summary": "List GitHub OIDC trust policies",
+        "parameters": [],
+        "tags": [
+          "GitHub OIDC"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "operationId": "GithubOidcController_create",
+        "summary": "Trust a GitHub repository to exchange OIDC tokens for keys (dashboard session only)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGithubOidcTrustDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "GitHub OIDC"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Trust policy created"
+          }
+        }
+      }
+    },
+    "/auth/github-oidc/trusts/{id}": {
+      "delete": {
+        "operationId": "GithubOidcController_remove",
+        "summary": "Delete a GitHub OIDC trust policy (dashboard session only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "GitHub OIDC"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/billing/checkout": {
       "post": {
         "operationId": "BillingController_checkout",
@@ -3082,6 +3193,81 @@
         },
         "required": [
           "userCode"
+        ]
+      },
+      "GithubOidcExchangeDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "GitHub Actions OIDC token (JWT)"
+          },
+          "trustId": {
+            "type": "string",
+            "description": "Trust policy id; needed only when several policies match the repository"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "CreateGithubOidcTrustDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "pfe renewal"
+          },
+          "repository": {
+            "type": "string",
+            "example": "krakenkey/website"
+          },
+          "allowedRefs": {
+            "description": "Refs allowed to exchange tokens, e.g. refs/heads/main or refs/tags/v*. Omit for any ref.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "environment": {
+            "type": "string",
+            "description": "Only jobs in this GitHub environment match"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "certs:read",
+                "certs:issue",
+                "certs:renew",
+                "certs:revoke",
+                "domains:read",
+                "domains:write",
+                "endpoints:read",
+                "endpoints:write",
+                "probes:report",
+                "account:read",
+                "account:write"
+              ]
+            }
+          },
+          "allowedDomainIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowedCertIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "repository"
         ]
       },
       "CreateCheckoutDto": {
