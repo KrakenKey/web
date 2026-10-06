@@ -38,6 +38,8 @@ cd - >/dev/null && rm -rf "$TMP"
 
 Make sure `~/.local/bin` is on `PATH`. The CLI reads its key from `~/.config/krakenkey/config.yaml`, which is where `krakenkey auth login --web` saves it on the machine you run it on. `KK_API_KEY` in the environment also works. Windows (amd64) uses a `.zip` asset of the same name. Other options:
 
+- `brew install krakenkey/tap/krakenkey` (macOS and Linux, if Homebrew is installed)
+- `.deb` and `.rpm` packages on the same release, which install `/usr/bin/krakenkey`
 - `go install github.com/krakenkey/cli/cmd/krakenkey@latest`
 - `docker run --rm -e KK_API_KEY -v "$PWD:/out" -w /out ghcr.io/krakenkey/cli:latest <command>`
 

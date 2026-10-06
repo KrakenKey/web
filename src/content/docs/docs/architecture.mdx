@@ -1,0 +1,90 @@
+---
+title: How KrakenKey fits your stack
+description: Where KrakenKey sits between your DNS, Let's Encrypt and the servers that terminate TLS, with reference architectures for hosts, key vaults and CI/CD pipelines.
+sidebar:
+  label: How it fits your stack
+  order: 2
+---
+
+import IssuanceFlow from '../../../components/docs/IssuanceFlow.astro';
+import ReferenceArchitecture from '../../../components/docs/ReferenceArchitecture.astro';
+
+KrakenKey does one job: it turns a certificate signing request (CSR) into a publicly trusted certificate, and keeps doing that every time the certificate needs renewing. It doesn't replace your web server, load balancer or secret store. It sits next to them and hands them certificates.
+
+This page shows where it fits, so you can pick the setup that matches what you already run.
+
+## How a certificate gets issued
+
+<IssuanceFlow />
+
+1. Whatever will use the certificate creates a private key and a CSR. That can be the [KrakenKey CLI](/docs/cli/) on a server, a CI job, or a key vault. Only the CSR, which carries the public key, goes to KrakenKey.
+2. KrakenKey checks that every name in the CSR belongs to a domain you verified, then places an ACME order with Let's Encrypt.
+3. Let's Encrypt validates the domain with a DNS-01 challenge. It looks up `_acme-challenge.example.com`, finds your one-time CNAME, and follows it into KrakenKey's DNS zone, where KrakenKey has already published the answer.
+4. Let's Encrypt signs the certificate. You download it with the CLI, the API, the GitHub Action or the dashboard, and install it next to the key.
+
+Two things follow from this:
+
+- **No DNS credentials anywhere.** Your servers and pipelines never need an API token that can edit your DNS zone. After the [one-time setup](/docs/getting-started/), the CNAME does the work for every issuance and renewal.
+- **No inbound ports.** Nothing has to answer on port 80, so this works for internal hosts, private networks and services behind a firewall. The client only needs HTTPS out to `api.krakenkey.io`.
+
+## Reference architecture
+
+<ReferenceArchitecture />
+
+The main decision is where the private key lives, because that decides who creates the CSR and who installs the certificate. There are three common answers.
+
+### On the host
+
+The server that terminates TLS runs the KrakenKey CLI. It creates its own key, gets the certificate, and a daily systemd timer renews it and reloads the server. The key never leaves the machine.
+
+This fits single servers, reverse proxies, homelabs and internal services: anything you can SSH into.
+
+- [nginx and HAProxy](/docs/integrations/nginx-haproxy/)
+- [Caddy](/docs/integrations/caddy/)
+
+### In a key vault
+
+A managed key store creates the key and the CSR and never lets the key out. You submit the CSR to KrakenKey and merge the signed certificate back into the vault, and your cloud services load it from there.
+
+This fits teams whose security policy says keys live in a vault, and platforms that read certificates from one.
+
+- [Azure Key Vault, App Service, and Container Apps](/docs/integrations/azure-key-vault/)
+
+### In a pipeline
+
+A CI/CD workflow or scheduled job owns the certificate. It renews on a schedule and pushes the result to wherever it's needed: servers over SSH, a cloud certificate store, or a deploy artifact.
+
+This fits teams that already deploy everything from CI, and managed services that take an uploaded certificate, like AWS load balancers and CloudFront.
+
+- [GitHub Actions](/docs/integrations/github-actions/)
+- [AWS Certificate Manager, ALB, and CloudFront](/docs/integrations/aws-acm/)
+
+## Choosing a setup
+
+| You run | Key lives | Renewal driven by | Guide |
+| --- | --- | --- | --- |
+| nginx, HAProxy or Caddy on a VM or bare metal | On the server | systemd timer on the server | [nginx and HAProxy](/docs/integrations/nginx-haproxy/), [Caddy](/docs/integrations/caddy/) |
+| Azure App Service or Container Apps | Azure Key Vault | You, each renewal | [Azure Key Vault](/docs/integrations/azure-key-vault/) |
+| Servers you deploy to from GitHub | Created by the workflow, then on the server | Scheduled workflow | [GitHub Actions](/docs/integrations/github-actions/) |
+| AWS Application Load Balancer or CloudFront | AWS Secrets Manager and ACM | Scheduled workflow or job | [AWS ACM](/docs/integrations/aws-acm/) |
+| Something else | Wherever your CSR comes from | `krakenkey cert renew --if-due` on any scheduler | [CLI](/docs/cli/), [API](/docs/api/) |
+
+If your platform already gets certificates on its own (a public site on Caddy, a single ALB with ACM), that's often simpler and you may not need KrakenKey for it. KrakenKey earns its place when you want one issuance process across many platforms, internal hosts that can't do HTTP validation, no DNS credentials on servers, or monitoring of what's actually being served.
+
+## Who renews
+
+Certificates are getting shorter-lived: the CA/Browser Forum schedule cuts the maximum lifetime to 200 days from March 2026, 100 days from March 2027 and 47 days from March 2029. Renewal has to be automatic. There are two ways to drive it, and every guide uses one of them.
+
+- **Your scheduler renews.** A timer or scheduled workflow runs `krakenkey cert renew <id> --if-due` (or the GitHub Action with `if-due: true`). It only renews once the certificate is inside your plan's renewal window (30 days before expiry on paid plans, 5 days on Free), so running it daily is safe. Then it downloads the new certificate and installs it.
+- **KrakenKey renews, your side pulls.** With auto-renew on, KrakenKey renews the certificate itself inside the same window. Your side still has to fetch and install the new certificate, so a daily `krakenkey cert download` that compares expiry dates and reloads on change is enough. On the Free plan, auto-renew pauses until you re-confirm it in the dashboard every six months.
+
+Renewal reuses the certificate's original CSR, so the private key stays the same and only the certificate changes. That's what lets a renewed certificate drop in next to a key that never moved.
+
+## Watching what's actually served
+
+Issuing a certificate and serving it are different things. A renewal can succeed while a server keeps the old certificate in memory, a load balancer points at a stale copy, or a node was missed. KrakenKey's endpoint monitoring checks the live result:
+
+- **Hosted probes** scan public endpoints from KrakenKey's regions (Starter plan and above).
+- **Connected probes** run the open-source probe on your network and report to KrakenKey, so internal hosts are covered too.
+
+Both record expiry, chain and hostname problems for each endpoint, whichever setup issued the certificate, including certificates that didn't come from KrakenKey. Add endpoints with [`krakenkey endpoint add`](/docs/cli/commands/#krakenkey-endpoint) or in the dashboard.
