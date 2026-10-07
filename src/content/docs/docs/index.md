@@ -21,4 +21,5 @@ KrakenKey issues TLS certificates through ACME DNS-01. You do a one-time DNS set
 - **[Caddy](/docs/integrations/caddy/)**: load a KrakenKey wildcard with the `tls` directive for internal hosts, with no DNS credentials on the proxy.
 - **[GitHub Actions](/docs/integrations/github-actions/)**: issue once, renew on a schedule, and deploy to servers over SSH only when they serve an older certificate.
 - **[AWS Certificate Manager, ALB, and CloudFront](/docs/integrations/aws-acm/)**: import into ACM, keep the key in Secrets Manager, and re-import each renewal to the same ARN.
+- **[Terraform](/docs/integrations/terraform/)**: register domains, publish their DNS records, issue certificates and set up monitoring in code, without the private key in state.
 - **[Azure Key Vault, App Service, and Container Apps](/docs/integrations/azure-key-vault/)**: keep the private key in Key Vault, have KrakenKey sign its CSR, and bind the certificate in App Service or Container Apps.

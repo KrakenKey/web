@@ -53,11 +53,6 @@ export const columns: RoadmapColumn[] = [
         link: { href: 'https://github.com/KrakenKey/app/issues/125', label: 'app#125' },
       },
       {
-        title: 'Terraform provider',
-        description:
-          'Manage certificates, domains and alert channels as Terraform resources, published on the Terraform Registry.',
-      },
-      {
         title: 'Domain verification that rides out DNS hiccups',
         description:
           'The daily recheck retries a failed lookup and allows a grace period, with an alert, before a domain loses its verified status.',
@@ -83,6 +78,12 @@ export const columns: RoadmapColumn[] = [
 ];
 
 export const shipped: RoadmapItem[] = [
+  {
+    title: 'Terraform provider',
+    description:
+      'Manage domains, certificates, endpoint monitoring and alert channels as Terraform resources. Issue from a CSR without putting the private key in state.',
+    link: { href: '/docs/integrations/terraform/', label: 'Terraform guide' },
+  },
   {
     title: 'Signed apt and dnf repositories',
     description:
