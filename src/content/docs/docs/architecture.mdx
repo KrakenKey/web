@@ -58,6 +58,7 @@ This fits teams that already deploy everything from CI, and managed services tha
 
 - [GitHub Actions](/docs/integrations/github-actions/)
 - [AWS Certificate Manager, ALB, and CloudFront](/docs/integrations/aws-acm/)
+- [Terraform](/docs/integrations/terraform/), when your infrastructure is already in code
 
 ## Choosing a setup
 
@@ -67,6 +68,7 @@ This fits teams that already deploy everything from CI, and managed services tha
 | Azure App Service or Container Apps | Azure Key Vault | You, each renewal | [Azure Key Vault](/docs/integrations/azure-key-vault/) |
 | Servers you deploy to from GitHub | Created by the workflow, then on the server | Scheduled workflow | [GitHub Actions](/docs/integrations/github-actions/) |
 | AWS Application Load Balancer or CloudFront | AWS Secrets Manager and ACM | Scheduled workflow or job | [AWS ACM](/docs/integrations/aws-acm/) |
+| Infrastructure managed with Terraform | Your secret store, written by Terraform but never in state | KrakenKey, with a pull on the server or a scheduled apply | [Terraform](/docs/integrations/terraform/) |
 | Something else | Wherever your CSR comes from | `krakenkey cert renew --if-due` on any scheduler | [CLI](/docs/cli/), [API](/docs/api/) |
 
 If your platform already gets certificates on its own (a public site on Caddy, a single ALB with ACM), that's often simpler and you may not need KrakenKey for it. KrakenKey earns its place when you want one issuance process across many platforms, internal hosts that can't do HTTP validation, no DNS credentials on servers, or monitoring of what's actually being served.

@@ -202,4 +202,5 @@ Use the REST API at `https://api.krakenkey.io` with `Authorization: Bearer <kk_ 
 
 - Docs: https://krakenkey.io/docs/
 - CLI reference: https://krakenkey.io/docs/cli/commands/
+- Terraform provider (`krakenkey/krakenkey`), if the user manages infrastructure with Terraform: https://krakenkey.io/docs/integrations/terraform/
 - Tool definitions for function calling: https://github.com/KrakenKey/KrakenKey/tree/main/tools
