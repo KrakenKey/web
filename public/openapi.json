@@ -738,7 +738,7 @@
     "/connectors": {
       "get": {
         "operationId": "ConnectorsController_list",
-        "summary": "List connectors, including revoked ones",
+        "summary": "List connectors, including revoked ones, with counts of their deployments",
         "parameters": [],
         "tags": [
           "Connectors"
