@@ -935,6 +935,9 @@
           "200": {
             "description": "Certificate updated"
           },
+          "400": {
+            "description": "Validation failed, for example managedBy not 'connector' or null"
+          },
           "403": {
             "description": "Viewers cannot update certificates"
           },
@@ -1034,6 +1037,7 @@
       "post": {
         "operationId": "TlsController_renew",
         "summary": "Renew a certificate",
+        "description": "Queues a renewal. Without a body the CSR stored at first issuance is used again. With { csrPem } the certificate is renewed with that CSR (for example a new key) and it replaces the stored CSR.",
         "parameters": [
           {
             "name": "id",
@@ -1048,12 +1052,22 @@
             "name": "ifDue",
             "required": false,
             "in": "query",
-            "description": "Only renew if the certificate is inside its plan renewal window (free: 5 days, paid: 30 days before expiry). Otherwise nothing is queued and the response has skipped: true. Default: false (always renew).",
+            "description": "Only renew if the certificate is inside its renewal window (free: 5 days, paid: 30 days before expiry; at least 30 days for connector-managed certificates, which are due once their renewAfter has passed). Otherwise nothing is queued and the response has skipped: true. Default: false (always renew).",
             "schema": {
               "type": "boolean"
             }
           }
         ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenewTlsCrtDto"
+              }
+            }
+          }
+        },
         "tags": [
           "TLS Certificates"
         ],
@@ -1070,7 +1084,7 @@
             "description": "Certificate renewal initiated (skipped: false)"
           },
           "400": {
-            "description": "Certificate not issued or missing CSR data"
+            "description": "Certificate not issued or missing CSR data, invalid CSR, or 'CSR names must match the certificate'"
           },
           "403": {
             "description": "Viewers cannot renew certificates"
@@ -3337,6 +3351,14 @@
           "autoRenew": {
             "type": "boolean",
             "description": "Enable or disable automatic renewal"
+          },
+          "managedBy": {
+            "type": "string",
+            "description": "Who renews the certificate. 'connector': a customer-hosted connector renews it with its own keys and KrakenKey never renews it on its own (expiry alerts and ARI checks still run). null: KrakenKey renews it as usual.",
+            "enum": [
+              "connector"
+            ],
+            "nullable": true
           }
         }
       },
@@ -3349,6 +3371,16 @@
             "example": 0,
             "minimum": 0,
             "maximum": 10
+          }
+        }
+      },
+      "RenewTlsCrtDto": {
+        "type": "object",
+        "properties": {
+          "csrPem": {
+            "type": "string",
+            "description": "PEM-encoded CSR to renew with, usually for a new private key. It gets the same checks as a new request, and its names (CN and DNS SANs, case-insensitive) must equal the certificate's names. It replaces the stored CSR, so later renewals use it too. Not stored when ifDue=true skips the renewal.",
+            "example": "-----BEGIN CERTIFICATE REQUEST-----\n...\n-----END CERTIFICATE REQUEST-----"
           }
         }
       },
