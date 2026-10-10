@@ -760,6 +760,7 @@
       "post": {
         "operationId": "TlsController_create",
         "summary": "Request a new TLS certificate",
+        "description": "Send `csrPem` to issue a certificate now (status `pending`). Or send `names` with `managedBy: 'connector'` to create a certificate a connector will issue with its own key (status `awaiting_csr`); nothing is sent to the CA until the connector posts a CSR to `POST /certs/tls/:id/renew`. Exactly one of `csrPem` and `names`.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -781,16 +782,22 @@
         ],
         "responses": {
           "201": {
-            "description": "Certificate request submitted"
+            "description": "Certificate request submitted: { id, status: 'pending' }, or { id, status: 'awaiting_csr' } for a request by names"
+          },
+          "400": {
+            "description": "Invalid CSR or names, both or neither of csrPem and names, names without managedBy: 'connector', or a name outside the account's verified domains"
           },
           "401": {
             "description": "Unauthorized"
           },
+          "402": {
+            "description": "Plan limit reached (total active, monthly or concurrent pending certificates; requests by names skip the concurrent pending limit)"
+          },
           "403": {
-            "description": "Viewers cannot request certificates"
+            "description": "Viewers cannot request certificates; API keys limited to certificates cannot request new ones, and keys limited to domains only for names under them"
           },
           "409": {
-            "description": "An identical certificate request (same CSR) is already being processed. Duplicate requests within 15 minutes return the original certificate instead of creating a new one."
+            "description": "An identical certificate request (same CSR, or same set of names) is already being processed. Duplicate requests within 15 minutes return the original certificate instead of creating a new one."
           }
         }
       }
@@ -948,7 +955,7 @@
       },
       "delete": {
         "operationId": "TlsController_remove",
-        "summary": "Delete a failed or revoked certificate",
+        "summary": "Delete a failed, revoked or awaiting_csr certificate",
         "parameters": [
           {
             "name": "id",
@@ -973,7 +980,7 @@
             "description": "Certificate deleted"
           },
           "400": {
-            "description": "Certificate not in failed or revoked state"
+            "description": "Certificate not in failed, revoked or awaiting_csr state"
           },
           "403": {
             "description": "Viewers cannot delete certificates"
@@ -1037,7 +1044,7 @@
       "post": {
         "operationId": "TlsController_renew",
         "summary": "Renew a certificate",
-        "description": "Queues a renewal. Without a body the CSR stored at first issuance is used again. With { csrPem } the certificate is renewed with that CSR (for example a new key) and it replaces the stored CSR.",
+        "description": "Queues a renewal. Without a body the CSR stored at first issuance is used again. With { csrPem } the certificate is renewed with that CSR (for example a new key) and it replaces the stored CSR. For an `awaiting_csr` certificate, { csrPem } is required and its names must equal `requestedNames`; the certificate is then issued like a new request (status 'pending'), and ifDue always treats it as due.",
         "parameters": [
           {
             "name": "id",
@@ -1084,13 +1091,16 @@
             "description": "Certificate renewal initiated (skipped: false)"
           },
           "400": {
-            "description": "Certificate not issued or missing CSR data, invalid CSR, or 'CSR names must match the certificate'"
+            "description": "Certificate not issued or missing CSR data, invalid CSR, 'CSR names must match the certificate', or 'This certificate is waiting for a CSR' (awaiting_csr without csrPem)"
           },
           "403": {
             "description": "Viewers cannot renew certificates"
           },
           "404": {
             "description": "Certificate not found"
+          },
+          "409": {
+            "description": "The awaiting_csr certificate was completed by another request meanwhile"
           }
         }
       }
@@ -3332,13 +3342,29 @@
         "properties": {
           "csrPem": {
             "type": "string",
-            "description": "PEM-encoded Certificate Signing Request",
+            "description": "PEM-encoded Certificate Signing Request. Required unless `names` is given.",
             "example": "-----BEGIN CERTIFICATE REQUEST-----\n...\n-----END CERTIFICATE REQUEST-----"
+          },
+          "names": {
+            "description": "Instead of `csrPem`: the DNS names (wildcards allowed) of a certificate a connector will issue with its own key. Needs `managedBy: 'connector'`. Creates the certificate with status `awaiting_csr`; the connector completes it with `POST /certs/tls/:id/renew` and a CSR for exactly these names. Names get the same domain ownership checks as CSR names.",
+            "example": [
+              "example.com",
+              "www.example.com"
+            ],
+            "maxItems": 100,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "managedBy": {
+            "type": "string",
+            "description": "Required with `names`, and must be 'connector'. Not accepted with `csrPem`; use PATCH /certs/tls/:id to change it later.",
+            "enum": [
+              "connector"
+            ]
           }
-        },
-        "required": [
-          "csrPem"
-        ]
+        }
       },
       "UpdateTlsCrtDto": {
         "type": "object",
@@ -3374,7 +3400,7 @@
         "properties": {
           "csrPem": {
             "type": "string",
-            "description": "PEM-encoded CSR to renew with, usually for a new private key. It gets the same checks as a new request, and its names (CN and DNS SANs, case-insensitive) must equal the certificate's names. It replaces the stored CSR, so later renewals use it too. Not stored when ifDue=true skips the renewal.",
+            "description": "PEM-encoded CSR to renew with, usually for a new private key. It gets the same checks as a new request, and its names (CN and DNS SANs, case-insensitive) must equal the certificate's names. It replaces the stored CSR, so later renewals use it too. Not stored when ifDue=true skips the renewal. Required for an awaiting_csr certificate, whose names are its requestedNames; it is then issued for the first time.",
             "example": "-----BEGIN CERTIFICATE REQUEST-----\n...\n-----END CERTIFICATE REQUEST-----"
           }
         }
