@@ -735,6 +735,266 @@
         }
       }
     },
+    "/connectors": {
+      "get": {
+        "operationId": "ConnectorsController_list",
+        "summary": "List connectors, including revoked ones",
+        "parameters": [],
+        "tags": [
+          "Connectors"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "operationId": "ConnectorsController_create",
+        "summary": "Create a connector and its single-use enrollment token (dashboard session only)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConnectorDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Connectors"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Connector created; the enrollment token is shown once"
+          },
+          "402": {
+            "description": "Connector limit reached"
+          }
+        }
+      }
+    },
+    "/connectors/{id}": {
+      "get": {
+        "operationId": "ConnectorsController_get",
+        "summary": "Get a connector",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Connectors"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Connector not found"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "ConnectorsController_update",
+        "summary": "Rename a connector or change its client label (dashboard session only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConnectorDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Connectors"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "operationId": "ConnectorsController_revoke",
+        "summary": "Revoke a connector and every key it was issued (dashboard session only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Connectors"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Revoked"
+          }
+        }
+      }
+    },
+    "/connectors/{id}/enrollment-token": {
+      "post": {
+        "operationId": "ConnectorsController_reissueToken",
+        "summary": "Issue a new enrollment token for a connector that has not enrolled (dashboard session only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "Connectors"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New token; any previous token stops working"
+          },
+          "409": {
+            "description": "Already enrolled or revoked"
+          }
+        }
+      }
+    },
+    "/connectors/enroll": {
+      "post": {
+        "operationId": "ConnectorsController_enroll",
+        "summary": "Enroll a connector with its single-use token and public key",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorEnrollDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Connectors"
+        ],
+        "responses": {
+          "200": {
+            "description": "Enrolled"
+          },
+          "401": {
+            "description": "Invalid enrollment token"
+          }
+        }
+      }
+    },
+    "/connectors/token": {
+      "post": {
+        "operationId": "ConnectorsController_token",
+        "summary": "Exchange a signed request for an API key that lasts one hour",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorTokenDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Connectors"
+        ],
+        "responses": {
+          "200": {
+            "description": "Short-lived API key"
+          },
+          "401": {
+            "description": "Invalid connector credentials"
+          }
+        }
+      }
+    },
+    "/connectors/rotate": {
+      "post": {
+        "operationId": "ConnectorsController_rotate",
+        "summary": "Replace a connector's public key, signed by the current key",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorRotateDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Connectors"
+        ],
+        "responses": {
+          "204": {
+            "description": "Key replaced"
+          },
+          "401": {
+            "description": "Invalid connector credentials"
+          }
+        }
+      }
+    },
     "/certs/tls": {
       "get": {
         "operationId": "TlsController_findAll",
@@ -3335,6 +3595,192 @@
         },
         "required": [
           "plan"
+        ]
+      },
+      "CreateConnectorDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "web-01",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "clientLabel": {
+            "type": "string",
+            "description": "Customer or site the connector runs for",
+            "example": "Acme Corp",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "scopes": {
+            "type": "array",
+            "description": "Scopes of the keys the connector gets. Must include certs:read.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "certs:read",
+                "certs:renew"
+              ]
+            }
+          },
+          "allowedCertIds": {
+            "description": "Certificates the connector may use. At least one of allowedCertIds and allowedDomainIds is required.",
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "allowedDomainIds": {
+            "description": "Domains the connector may use certificates for. At least one of allowedCertIds and allowedDomainIds is required.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "scopes"
+        ]
+      },
+      "UpdateConnectorDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "clientLabel": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 64,
+            "description": "null clears it"
+          },
+          "scopes": {
+            "type": "array",
+            "description": "Replaces the scopes. Must include certs:read. Changing it revokes live keys.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "certs:read",
+                "certs:renew"
+              ]
+            }
+          },
+          "allowedCertIds": {
+            "nullable": true,
+            "description": "Replaces the certificate restriction; [] or null clears it. At least one restriction must remain. Changing it revokes live keys.",
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "allowedDomainIds": {
+            "nullable": true,
+            "description": "Replaces the domain restriction; [] or null clears it. At least one restriction must remain. Changing it revokes live keys.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ConnectorEnrollDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Enrollment token from the dashboard (kkce_...)"
+          },
+          "publicKey": {
+            "type": "string",
+            "description": "Standard base64 (padded) of the raw 32-byte Ed25519 public key"
+          },
+          "version": {
+            "type": "string",
+            "example": "0.2.0",
+            "maxLength": 64
+          },
+          "os": {
+            "type": "string",
+            "example": "linux",
+            "maxLength": 32
+          },
+          "arch": {
+            "type": "string",
+            "example": "amd64",
+            "maxLength": 32
+          }
+        },
+        "required": [
+          "token",
+          "publicKey",
+          "version",
+          "os",
+          "arch"
+        ]
+      },
+      "ConnectorTokenDto": {
+        "type": "object",
+        "properties": {
+          "connectorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "RFC 3339 UTC with second precision",
+            "example": "2026-10-10T14:00:00Z"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "base64url (no padding) of at least 16 random bytes, at most 64 characters"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Standard base64 of the 64-byte Ed25519 signature"
+          }
+        },
+        "required": [
+          "connectorId",
+          "timestamp",
+          "nonce",
+          "signature"
+        ]
+      },
+      "ConnectorRotateDto": {
+        "type": "object",
+        "properties": {
+          "connectorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "RFC 3339 UTC with second precision",
+            "example": "2026-10-10T14:00:00Z"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "base64url (no padding) of at least 16 random bytes, at most 64 characters"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Standard base64 of the 64-byte Ed25519 signature"
+          },
+          "newPublicKey": {
+            "type": "string",
+            "description": "The new key: standard base64 (padded) of the raw 32-byte Ed25519 public key"
+          }
+        },
+        "required": [
+          "connectorId",
+          "timestamp",
+          "nonce",
+          "signature",
+          "newPublicKey"
         ]
       },
       "CreateTlsCrtDto": {
