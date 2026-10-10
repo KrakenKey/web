@@ -3343,11 +3343,6 @@
       "UpdateTlsCrtDto": {
         "type": "object",
         "properties": {
-          "csrPem": {
-            "type": "string",
-            "description": "PEM-encoded Certificate Signing Request",
-            "example": "-----BEGIN CERTIFICATE REQUEST-----\n...\n-----END CERTIFICATE REQUEST-----"
-          },
           "autoRenew": {
             "type": "boolean",
             "description": "Enable or disable automatic renewal"
