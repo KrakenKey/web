@@ -786,10 +786,40 @@
         }
       }
     },
+    "/connectors/deployments": {
+      "get": {
+        "operationId": "ConnectorsController_deployments",
+        "summary": "Where a certificate is deployed, across the user's active connectors",
+        "parameters": [
+          {
+            "name": "certificateId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "example": 42,
+              "type": "number"
+            }
+          }
+        ],
+        "tags": [
+          "Connectors"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/connectors/{id}": {
       "get": {
         "operationId": "ConnectorsController_get",
-        "summary": "Get a connector",
+        "summary": "Get a connector with its deployments",
         "parameters": [
           {
             "name": "id",
@@ -907,6 +937,39 @@
           },
           "409": {
             "description": "Already enrolled or revoked"
+          }
+        }
+      }
+    },
+    "/connectors/report": {
+      "post": {
+        "operationId": "ConnectorsController_report",
+        "summary": "Report where the connector deployed each certificate (connector-issued keys only)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorReportDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Connectors"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stored; certificates outside the connector restrictions are skipped and listed in rejectedCertificateIds"
+          },
+          "403": {
+            "description": "Not a connector-issued key"
           }
         }
       }
@@ -3687,6 +3750,104 @@
           }
         }
       },
+      "ConnectorReportTargetDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "nginx-main",
+            "pattern": "^[A-Za-z0-9._-]{1,64}$"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "staged",
+              "activated",
+              "verified",
+              "activated_unverifiable",
+              "failed",
+              "rolled_back"
+            ]
+          },
+          "serial": {
+            "type": "object",
+            "description": "Hex serial of the installed certificate",
+            "nullable": true,
+            "maxLength": 64
+          },
+          "error": {
+            "type": "object",
+            "description": "Short error code or message",
+            "nullable": true,
+            "maxLength": 200
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "When the target last changed: RFC 3339 in UTC (Z), seconds or fractional seconds, at most 5 minutes in the future",
+            "example": "2026-10-10T14:00:00.000Z"
+          }
+        },
+        "required": [
+          "label",
+          "state",
+          "updatedAt"
+        ]
+      },
+      "ConnectorReportCertificateDto": {
+        "type": "object",
+        "properties": {
+          "certificateId": {
+            "type": "number",
+            "example": 42
+          },
+          "targets": {
+            "maxItems": 50,
+            "description": "Every target the certificate is deployed to. Targets left out are removed.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectorReportTargetDto"
+            }
+          }
+        },
+        "required": [
+          "certificateId",
+          "targets"
+        ]
+      },
+      "ConnectorReportDto": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "example": "0.2.0",
+            "maxLength": 64
+          },
+          "os": {
+            "type": "string",
+            "example": "linux",
+            "maxLength": 32
+          },
+          "arch": {
+            "type": "string",
+            "example": "amd64",
+            "maxLength": 32
+          },
+          "certificates": {
+            "maxItems": 500,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectorReportCertificateDto"
+            }
+          }
+        },
+        "required": [
+          "version",
+          "os",
+          "arch",
+          "certificates"
+        ]
+      },
       "ConnectorEnrollDto": {
         "type": "object",
         "properties": {
@@ -4028,7 +4189,7 @@
           },
           "events": {
             "type": "array",
-            "description": "Events to send. Defaults to cert.failed, cert.expiring, cert.revoked, cert.replacement_requested, domain.verification_failed, endpoint.scan_failed.",
+            "description": "Events to send. Defaults to cert.failed, cert.expiring, cert.revoked, cert.replacement_requested, domain.verification_failed, endpoint.scan_failed, deploy.failed, connector.stale.",
             "items": {
               "type": "string",
               "enum": [
@@ -4039,7 +4200,9 @@
                 "cert.revoked",
                 "cert.replacement_requested",
                 "domain.verification_failed",
-                "endpoint.scan_failed"
+                "endpoint.scan_failed",
+                "deploy.failed",
+                "connector.stale"
               ]
             }
           },
@@ -4077,7 +4240,9 @@
                 "cert.revoked",
                 "cert.replacement_requested",
                 "domain.verification_failed",
-                "endpoint.scan_failed"
+                "endpoint.scan_failed",
+                "deploy.failed",
+                "connector.stale"
               ]
             }
           },
