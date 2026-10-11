@@ -14,6 +14,7 @@ If you are an AI agent setting up certificates for a user, follow the runbook: i
 - [Getting started](https://krakenkey.io/docs/getting-started/): account, domain, DNS records and a first certificate
 - [CLI install and configuration](https://krakenkey.io/docs/cli/): install, config, output formats, CI usage, exit codes
 - [CLI command reference](https://krakenkey.io/docs/cli/commands/): every command and flag
+- [Connector](https://krakenkey.io/docs/connector/): customer-hosted service that renews certificates with local or Key Vault keys and deploys them to files, Azure Application Gateway or AWS ACM, with TLS verification and rollback
 - [Azure Key Vault](https://krakenkey.io/docs/integrations/azure-key-vault/): issue from a Key Vault CSR and bind in App Service or Container Apps
 - [Terraform](https://krakenkey.io/docs/integrations/terraform/): the krakenkey/krakenkey provider for domains, certificates, monitoring and alert channels
 

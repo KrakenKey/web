@@ -60,6 +60,14 @@ This fits teams that already deploy everything from CI, and managed services tha
 - [AWS Certificate Manager, ALB, and CloudFront](/docs/integrations/aws-acm/)
 - [Terraform](/docs/integrations/terraform/), when your infrastructure is already in code
 
+### With the connector
+
+The [KrakenKey connector](/docs/connector/) is a service you run on your network that handles the whole cycle. Its key store creates a new key for each renewal, on the machine or inside Azure Key Vault. When KrakenKey says the certificate is due, it renews, installs the result on each target, checks the endpoint over TLS, and rolls the target back if the check fails. The dashboard shows what is deployed where, and alerts you when a deployment fails.
+
+This fits teams that look after many systems or several environments, and services that load certificates from somewhere other than a local file, like Azure Application Gateway or AWS Certificate Manager.
+
+- [KrakenKey Connector](/docs/connector/): files with a reload command, Azure Key Vault and Application Gateway, AWS Certificate Manager
+
 ## Choosing a setup
 
 | You run | Key lives | Renewal driven by | Guide |
@@ -68,6 +76,8 @@ This fits teams that already deploy everything from CI, and managed services tha
 | Azure App Service or Container Apps | Azure Key Vault | You, each renewal | [Azure Key Vault](/docs/integrations/azure-key-vault/) |
 | Servers you deploy to from GitHub | Created by the workflow, then on the server | Scheduled workflow | [GitHub Actions](/docs/integrations/github-actions/) |
 | AWS Application Load Balancer or CloudFront | AWS Secrets Manager and ACM | Scheduled workflow or job | [AWS ACM](/docs/integrations/aws-acm/) |
+| Azure Application Gateway v2 | Azure Key Vault | The connector, with TLS verification and rollback | [Connector](/docs/connector/) |
+| Many servers or cloud endpoints, renewed and installed hands-off | On the connector's host or in Azure Key Vault | The connector, with TLS verification and rollback | [Connector](/docs/connector/) |
 | Infrastructure managed with Terraform | Your secret store, written by Terraform but never in state | KrakenKey, with a pull on the server or a scheduled apply | [Terraform](/docs/integrations/terraform/) |
 | Something else | Wherever your CSR comes from | `krakenkey cert renew --if-due` on any scheduler | [CLI](/docs/cli/), [API](/docs/api/) |
 
@@ -81,6 +91,8 @@ Certificates are getting shorter-lived: the CA/Browser Forum schedule cuts the m
 - **KrakenKey renews, your side pulls.** With auto-renew on, KrakenKey renews the certificate itself inside the same window. Your side still has to fetch and install the new certificate, so a daily `krakenkey cert download` that compares expiry dates and reloads on change is enough. On the Free plan, auto-renew pauses until you re-confirm it in the dashboard every six months.
 
 Renewal reuses the certificate's original CSR, so the private key stays the same and only the certificate changes. That's what lets a renewed certificate drop in next to a key that never moved.
+
+The [connector](/docs/connector/) works differently: it renews with a new key each time, then installs and verifies the certificate itself, so nothing on your side has to fetch it.
 
 ## Watching what's actually served
 

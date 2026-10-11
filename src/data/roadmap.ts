@@ -14,7 +14,7 @@ export interface RoadmapColumn {
   items: RoadmapItem[];
 }
 
-export const updated = '2026-10-06';
+export const updated = '2026-10-11';
 
 export const columns: RoadmapColumn[] = [
   {
@@ -78,6 +78,12 @@ export const columns: RoadmapColumn[] = [
 ];
 
 export const shipped: RoadmapItem[] = [
+  {
+    title: 'KrakenKey Connector',
+    description:
+      'A service on your own network that renews certificates with keys it creates locally or in Azure Key Vault, deploys them to files, Azure Application Gateway or AWS Certificate Manager, verifies each endpoint over TLS and rolls back on failure. Deployment status and alerts in the dashboard.',
+    link: { href: '/docs/connector/', label: 'Connector guide' },
+  },
   {
     title: 'Terraform provider',
     description:
