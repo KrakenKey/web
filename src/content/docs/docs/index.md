@@ -13,6 +13,7 @@ KrakenKey issues TLS certificates through ACME DNS-01. You do a one-time DNS set
 - **[How KrakenKey fits your stack](/docs/architecture/)**: how issuance works, where the private key can live, and which setup matches what you run.
 - **[Set up with an AI agent](/docs/ai-agents/)**: point your coding agent at the runbook, do the few steps that need a person, and say go.
 - **[KrakenKey CLI](/docs/cli/)**: issue, submit, download and renew certificates from a terminal or CI job.
+- **[KrakenKey Connector](/docs/connector/)**: a service on your network that renews certificates with local keys, deploys them to files, Azure Application Gateway or AWS Certificate Manager, and rolls back if the endpoint doesn't serve them.
 - **[API reference](/docs/api/)**: every endpoint in the KrakenKey REST API.
 
 ## Integrations

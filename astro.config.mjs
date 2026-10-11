@@ -53,6 +53,10 @@ export default defineConfig({
           items: [{ autogenerate: { directory: 'docs/integrations' } }],
         },
         {
+          label: 'Connector',
+          items: [{ autogenerate: { directory: 'docs/connector' } }],
+        },
+        {
           label: 'CLI',
           items: [{ autogenerate: { directory: 'docs/cli' } }],
         },
