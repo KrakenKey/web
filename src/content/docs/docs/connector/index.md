@@ -8,7 +8,7 @@ sidebar:
 
 The KrakenKey connector is a small service you run on your own network. It renews KrakenKey certificates with private keys it creates locally (or inside Azure Key Vault), installs each renewed certificate where it is served, checks over TLS that the endpoint serves it, and rolls the target back if it doesn't. The dashboard's **Connectors** page shows what is deployed where, and KrakenKey alerts you when a deployment fails or a connector stops checking in.
 
-Source and releases: [github.com/KrakenKey/connector](https://github.com/KrakenKey/connector) (Apache-2.0). This page covers v0.2.0. The connector is pre-1.0, so its configuration may still change between minor versions; read the [changelog](https://github.com/KrakenKey/connector/blob/main/CHANGELOG.md) before you upgrade, and see [Upgrading from v0.1.0](#upgrading-from-v010).
+Source and releases: [github.com/KrakenKey/connector](https://github.com/KrakenKey/connector) (Apache-2.0). This page covers v0.3.0. The connector is pre-1.0, so its configuration may still change between minor versions; read the [changelog](https://github.com/KrakenKey/connector/blob/main/CHANGELOG.md) before you upgrade, and see [Upgrading](#upgrading).
 
 ## When this fits
 
@@ -30,7 +30,19 @@ If you have one server and can run the [CLI](/docs/cli/) on it, a [systemd timer
 
 ### What KrakenKey sees
 
-KrakenKey sees CSRs, the issued certificates, certificate IDs, and the label and state of each target. It never sees private keys, your cloud credentials, or anything about a target beyond its label.
+KrakenKey sees CSRs, the issued certificates, certificate IDs, and the label and state of each target. It never sees private keys or your cloud credentials.
+
+From v0.3.0, an enrolled connector also shares a read-only summary of its config, which the connector's page in the dashboard shows. Nothing in KrakenKey can change the config: it lives on the host. The summary has the certificates with their names, the key store and targets of each (label, plugin, whether the key store added the target by itself, whether a command runs after deployment, and the `verify` host and port), the plugin versions, and a short list of settings:
+
+| Plugin | Settings in the summary |
+|---|---|
+| `azure-keyvault` | `vault`, `certificate_name`, `exportable`, `reuse_key`, `adopt` |
+| `azure-appgateway` | `resource_group`, `gateway`, `ssl_certificate`, `replace_uploaded_certificate` |
+| `aws-acm` | `region` |
+| `file` | `dir` and the file names under `files` |
+| `exec`, `local`, any other plugin | none |
+
+Commands and their arguments or environment, file owners and modes, Key Vault tags, the Application Gateway subscription ID, ACM ARNs, `verify.address` and `verify.ca_file`, plugin paths and checksums, and anything from the environment are never sent. To keep the config to yourself, set `share_config: false` under `krakenkey:`; the connector then deletes any summary it sent before. Connectors that use an API key instead of enrollment never send one.
 
 The connector holds the private keys and the access it needs to deploy (file permissions, a cloud identity), so run it where that access already lives. It doesn't store a long-lived API key either: at enrollment it creates its own Ed25519 identity key on the machine, and on each pass it trades a signed request for an API key that lasts an hour, stays in memory, and is limited to the scopes and certificates you set for the connector in the dashboard.
 
@@ -41,9 +53,9 @@ The connector holds the private keys and the access it needs to deploy (file per
 | `local` | Key store | Built in | Creates keys on the machine and keeps them under the data directory. |
 | `file` | Target | Built in | Writes the certificate, chain, full chain and key as PEM files, then runs a command such as a reload. |
 | `exec` | Target | Built in | Runs your own command with the certificate files, and again to roll back. |
-| [`azure-keyvault`](https://github.com/KrakenKey/connector/blob/v0.2.0/plugins/azure-keyvault/README.md) | Key store and target | Plugin | As a key store, Key Vault creates the key and the CSR and keeps the certificate. As a target, it deploys certificates to Key Vault certificates for services that read them without a version, in the same vault or others. |
-| [`azure-appgateway`](https://github.com/KrakenKey/connector/blob/v0.2.0/plugins/azure-appgateway/README.md) | Target | Plugin | Points an Application Gateway v2 SSL certificate at a specific Key Vault secret version. |
-| [`aws-acm`](https://github.com/KrakenKey/connector/blob/v0.2.0/plugins/aws-acm/README.md) | Target | Plugin | Re-imports into an existing ACM certificate, so load balancers, CloudFront and API Gateway keep the same ARN. |
+| [`azure-keyvault`](https://github.com/KrakenKey/connector/blob/v0.3.0/plugins/azure-keyvault/README.md) | Key store and target | Plugin | As a key store, Key Vault creates the key and the CSR and keeps the certificate. As a target, it deploys certificates to Key Vault certificates for services that read them without a version, in the same vault or others. |
+| [`azure-appgateway`](https://github.com/KrakenKey/connector/blob/v0.3.0/plugins/azure-appgateway/README.md) | Target | Plugin | Points an Application Gateway v2 SSL certificate at a specific Key Vault secret version. |
+| [`aws-acm`](https://github.com/KrakenKey/connector/blob/v0.3.0/plugins/aws-acm/README.md) | Target | Plugin | Re-imports into an existing ACM certificate, so load balancers, CloudFront and API Gateway keep the same ARN. |
 
 Plugins are separate executables that the connector starts and talks to over gRPC, the same model Terraform uses for providers. The Linux packages and the container image include all three, and each release ships them with the connector's version.
 
@@ -159,7 +171,7 @@ KrakenKey Packages <packages@krakenkey.io>
 386E 2558 2384 DD74 692A  4EE9 F7BA 53A4 E94F A5DA
 ```
 
-To check it yourself: `curl -fsSL https://packages.krakenkey.io/keys/krakenkey.asc | gpg --show-keys`. If you'd rather not add a repository, each [release](https://github.com/KrakenKey/connector/releases/tag/v0.2.0) also has the `.deb` and `.rpm` files (`krakenkey-connector_<version>_linux_<arch>.deb` and `.rpm`), covered by the signed `checksums.txt` described under [Release binaries](#release-binaries):
+To check it yourself: `curl -fsSL https://packages.krakenkey.io/keys/krakenkey.asc | gpg --show-keys`. If you'd rather not add a repository, each [release](https://github.com/KrakenKey/connector/releases/tag/v0.3.0) also has the `.deb` and `.rpm` files (`krakenkey-connector_<version>_linux_<arch>.deb` and `.rpm`), covered by the signed `checksums.txt` described under [Release binaries](#release-binaries):
 
 ```bash
 # Debian, Ubuntu
@@ -186,10 +198,10 @@ You enroll and start it in steps 5 and 6.
 
 ### Container image
 
-`ghcr.io/krakenkey/connector`, for `linux/amd64` and `linux/arm64`. Pin a version tag (`v0.2.0`, or `0.2` for the latest patch release) rather than `latest`, so upgrades happen when you choose. Images are signed with Sigstore by the release workflow. Checking the signature needs [cosign](https://docs.sigstore.dev/cosign/system_config/installation/) v3 or later:
+`ghcr.io/krakenkey/connector`, for `linux/amd64` and `linux/arm64`. Pin a version tag (`v0.3.0`, or `0.3` for the latest patch release) rather than `latest`, so upgrades happen when you choose. Images are signed with Sigstore by the release workflow. Checking the signature needs [cosign](https://docs.sigstore.dev/cosign/system_config/installation/) v3 or later:
 
 ```bash
-VERSION=0.2.0
+VERSION=0.3.0
 docker pull ghcr.io/krakenkey/connector:v${VERSION}
 cosign verify ghcr.io/krakenkey/connector:v${VERSION} \
   --certificate-identity "https://github.com/KrakenKey/connector/.github/workflows/release.yaml@refs/tags/v${VERSION}" \
@@ -216,10 +228,10 @@ On Linux, prefer the packages: they include the plugins and the systemd service.
 
 ### Release binaries
 
-Each [release](https://github.com/KrakenKey/connector/releases/tag/v0.2.0) has archives for Linux and macOS (amd64 and arm64) of the connector and each plugin, a `checksums.txt` covering them, and its Sigstore signature, `checksums.txt.sigstore.json`. There is no long-lived signing key: the signature is tied to the release workflow and the tag.
+Each [release](https://github.com/KrakenKey/connector/releases/tag/v0.3.0) has archives for Linux and macOS (amd64 and arm64) of the connector and each plugin, a `checksums.txt` covering them, and its Sigstore signature, `checksums.txt.sigstore.json`. There is no long-lived signing key: the signature is tied to the release workflow and the tag.
 
 ```bash
-VERSION=0.2.0
+VERSION=0.3.0
 OS=linux        # linux or darwin
 ARCH=amd64      # amd64 or arm64
 ARCHIVE="krakenkey-connector_${VERSION}_${OS}_${ARCH}.tar.gz"
@@ -247,7 +259,7 @@ krakenkey-connector version
 The packages and the container image already have the plugins. With Homebrew or the release binaries, download each plugin you need from the same release as the connector, named `krakenkey-connector-plugin-<name>_<version>_<os>_<arch>.tar.gz`, check it against the same `checksums.txt`, and install it under the data directory:
 
 ```bash
-VERSION=0.2.0
+VERSION=0.3.0
 OS=linux
 ARCH=amd64
 PLUGIN=azure-keyvault   # or azure-appgateway, aws-acm
@@ -266,12 +278,12 @@ Then declare it in the config with that version and the checksum it printed:
 
 ```yaml
 plugins:
-  azure-keyvault: { version: 0.2.0, sha256: "<sha256 printed above>" }
+  azure-keyvault: { version: 0.3.0, sha256: "<sha256 printed above>" }
 ```
 
 A plugin under the data directory always needs both `version` and `sha256`. Connector upgrades don't touch it; to move it to a new release, install the new version the same way and update `version` and `sha256`.
 
-To keep plugins out of the connector user's reach, install them as root in the system plugin directory instead, `/usr/lib/krakenkey-connector/plugins/<name>/<version>/`, and write its `plugins.lock` by running `sha256sum */*/krakenkey-connector-plugin-* > plugins.lock` in that directory. The binaries, `plugins.lock` and every directory up to `/` must be owned by root. Plugins there need no `sha256` in the config, and can be declared without a version, like the [bundled plugins](#plugin-versions). See the [connector README](https://github.com/KrakenKey/connector/blob/v0.2.0/README.md#external-plugins) for every rule.
+To keep plugins out of the connector user's reach, install them as root in the system plugin directory instead, `/usr/lib/krakenkey-connector/plugins/<name>/<version>/`, and write its `plugins.lock` by running `sha256sum */*/krakenkey-connector-plugin-* > plugins.lock` in that directory. The binaries, `plugins.lock` and every directory up to `/` must be owned by root. Plugins there need no `sha256` in the config, and can be declared without a version, like the [bundled plugins](#plugin-versions). See the [connector README](https://github.com/KrakenKey/connector/blob/v0.3.0/README.md#external-plugins) for every rule.
 
 ### Service user and data directory
 
@@ -323,7 +335,7 @@ plugins:
 
 The config keeps working when you upgrade the package or the image. You can still pin a plugin by setting `version` to the connector's version (what `krakenkey-connector version` prints, without the leading `v`), but then you have to change it on every upgrade. A plugin without a version is never taken from `<data_dir>/plugins`; plugins installed there, as with Homebrew or the release binaries, always need `version` and `sha256`. `validate` shows which version it used.
 
-The examples below declare plugins without a version. With Homebrew or the release binaries, use `{ version: 0.2.0, sha256: "..." }` instead, as in [Plugins on a host](#plugins-on-a-host).
+The examples below declare plugins without a version. With Homebrew or the release binaries, use `{ version: 0.3.0, sha256: "..." }` instead, as in [Plugins on a host](#plugins-on-a-host).
 
 ### Verify
 
@@ -365,7 +377,7 @@ certificates:
 
 A connector that doesn't run as root, such as the packaged service or the container, can only set `owner` to its own user or a group it belongs to. With the packaged service, the target directory and the reload command also need the setup in [File targets and reload commands](#file-targets-and-reload-commands).
 
-To install somewhere the `file` target doesn't cover, use the `exec` target: it runs your command with `KK_ACTION=deploy` and the paths in `KK_CERT_FILE`, `KK_CHAIN_FILE`, `KK_FULLCHAIN_FILE` and `KK_KEY_FILE`, and again with `KK_ACTION=rollback` and the previous files if the deployment fails. See the [README](https://github.com/KrakenKey/connector/blob/v0.2.0/README.md#built-in-target-exec).
+To install somewhere the `file` target doesn't cover, use the `exec` target: it runs your command with `KK_ACTION=deploy` and the paths in `KK_CERT_FILE`, `KK_CHAIN_FILE`, `KK_FULLCHAIN_FILE` and `KK_KEY_FILE`, and again with `KK_ACTION=rollback` and the previous files if the deployment fails. See the [README](https://github.com/KrakenKey/connector/blob/v0.3.0/README.md#built-in-target-exec).
 
 ### Azure Key Vault and Application Gateway
 
@@ -660,7 +672,7 @@ List each certificate ARN the connector manages. It never creates, tags or delet
 
 With the Linux packages, put these settings in the service's environment file: `/etc/default/krakenkey-connector` on Debian and Ubuntu, `/etc/sysconfig/krakenkey-connector` on RPM-based systems. It is readable only by root and the `krakenkey-connector` group, and has commented examples. Don't put an API key or enrollment token there.
 
-Plugins inherit the connector's environment, minus its KrakenKey credentials. Some cloud SDK settings decide where a plugin sends private keys and tokens, such as `AWS_ENDPOINT_URL`, `AZURE_AUTHORITY_HOST`, `HTTPS_PROXY` and `SSL_CERT_FILE`. Whoever can set the connector's environment or the SDK config files is inside your trust boundary, so set these only on purpose. The [README](https://github.com/KrakenKey/connector/blob/v0.2.0/README.md#trust-boundary) has the full list.
+Plugins inherit the connector's environment, minus its KrakenKey credentials. Some cloud SDK settings decide where a plugin sends private keys and tokens, such as `AWS_ENDPOINT_URL`, `AZURE_AUTHORITY_HOST`, `HTTPS_PROXY` and `SSL_CERT_FILE`. Whoever can set the connector's environment or the SDK config files is inside your trust boundary, so set these only on purpose. The [README](https://github.com/KrakenKey/connector/blob/v0.3.0/README.md#trust-boundary) has the full list.
 
 ## 5. Enroll, validate and run once
 
@@ -690,7 +702,7 @@ docker run --rm \
   -v /etc/krakenkey-connector/enrollment-token:/run/secrets/kk_enrollment_token:ro \
   -v /etc/krakenkey-connector/config.yaml:/etc/krakenkey-connector/config.yaml:ro \
   -v krakenkey-connector-data:/var/lib/krakenkey-connector \
-  ghcr.io/krakenkey/connector:v0.2.0 enroll --config /etc/krakenkey-connector/config.yaml
+  ghcr.io/krakenkey/connector:v0.3.0 enroll --config /etc/krakenkey-connector/config.yaml
 sudo rm /etc/krakenkey-connector/enrollment-token
 ```
 
@@ -833,7 +845,7 @@ The image runs `run` with the default config path, so no command is needed. Moun
 docker run -d --name krakenkey-connector --restart unless-stopped \
   -v /etc/krakenkey-connector/config.yaml:/etc/krakenkey-connector/config.yaml:ro \
   -v krakenkey-connector-data:/var/lib/krakenkey-connector \
-  ghcr.io/krakenkey/connector:v0.2.0
+  ghcr.io/krakenkey/connector:v0.3.0
 ```
 
 Pass cloud settings such as `AZURE_TOKEN_CREDENTIALS` with `-e`. With plugins declared without a version, the config keeps working when you move to a new image tag.
@@ -857,6 +869,10 @@ Pass cloud settings such as `AZURE_TOKEN_CREDENTIALS` with `-e`. With plugins de
 - **Container:** change the image tag. Plugins declared without a version keep working.
 - **Homebrew:** `brew upgrade krakenkey-connector`. Plugins under the data directory stay as they are until you install a new version and update `version` and `sha256` in the config.
 
+### Upgrading from v0.2.0
+
+- An enrolled connector now shares a read-only summary of its config (see [What KrakenKey sees](#what-krakenkey-sees)). Nothing changes on the host. Set `share_config: false` under `krakenkey:` before upgrading if you don't want that.
+
 ### Upgrading from v0.1.0
 
 - Plugins that ship with the container image or the packages can be declared without `version`; the connector uses the bundled one. Pinned versions keep working, but must be changed on every upgrade.
@@ -866,7 +882,7 @@ Pass cloud settings such as `AZURE_TOKEN_CREDENTIALS` with `-e`. With plugins de
 ## Monitoring and alerts
 
 - **Connectors page:** each connector's status (*Waiting to enroll*, *Enrollment token expired*, *Active*, *Stale* after 24 hours without contact, *Revoked*), version, when it was last seen, and how many certificates it has deployed, with failing targets counted in red.
-- **A connector's page:** every target with its state (*Pending*, *Staged*, *Activated*, *Verified*, *Activated (not verified)*, *Failed*, *Rolled back*), the serial it serves, and the error.
+- **A connector's page:** a read-only **Configuration** section from the config summary (certificates, key stores, targets and plugin versions, with hints when the config lists certificates the connector isn't allowed to manage, or misses ones it is), and every target with its state (*Pending*, *Staged*, *Activated*, *Verified*, *Activated (not verified)*, *Failed*, *Rolled back*), the serial it serves, and the error.
 - **Certificates page:** a connector-managed certificate lists the connectors and targets it is deployed to.
 
 Two alerts cover what needs a person. Both go by email (set under **Deployment Failed** and **Connector Offline** in your notification settings) and to Slack, Teams and webhook alert channels, which subscribe to them by default:
@@ -919,7 +935,7 @@ Nothing on the targets is removed: Key Vault keeps its certificate versions, and
 
 ## Reference
 
-- [Connector repository](https://github.com/KrakenKey/connector) and [README](https://github.com/KrakenKey/connector/blob/v0.2.0/README.md): every command, flag and config key.
+- [Connector repository](https://github.com/KrakenKey/connector) and [README](https://github.com/KrakenKey/connector/blob/v0.3.0/README.md): every command, flag and config key.
 - [Changelog](https://github.com/KrakenKey/connector/blob/main/CHANGELOG.md) and [releases](https://github.com/KrakenKey/connector/releases).
-- Plugin READMEs: [azure-keyvault](https://github.com/KrakenKey/connector/blob/v0.2.0/plugins/azure-keyvault/README.md), [azure-appgateway](https://github.com/KrakenKey/connector/blob/v0.2.0/plugins/azure-appgateway/README.md), [aws-acm](https://github.com/KrakenKey/connector/blob/v0.2.0/plugins/aws-acm/README.md).
-- [Writing a plugin](https://github.com/KrakenKey/connector/blob/v0.2.0/README.md#writing-a-plugin): the gRPC protocol and Go SDK.
+- Plugin READMEs: [azure-keyvault](https://github.com/KrakenKey/connector/blob/v0.3.0/plugins/azure-keyvault/README.md), [azure-appgateway](https://github.com/KrakenKey/connector/blob/v0.3.0/plugins/azure-appgateway/README.md), [aws-acm](https://github.com/KrakenKey/connector/blob/v0.3.0/plugins/aws-acm/README.md).
+- [Writing a plugin](https://github.com/KrakenKey/connector/blob/v0.3.0/README.md#writing-a-plugin): the gRPC protocol and Go SDK.
