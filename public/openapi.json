@@ -816,10 +816,64 @@
         }
       }
     },
+    "/connectors/config": {
+      "put": {
+        "operationId": "ConnectorsController_putConfig",
+        "summary": "Share a read-only summary of the connector's config (connector-issued keys only)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorConfigDto"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Connectors"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Stored, replacing the previous summary; certificates outside the connector restrictions are kept and flagged in the dashboard"
+          },
+          "403": {
+            "description": "Not a connector-issued key"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "ConnectorsController_deleteConfig",
+        "summary": "Clear the connector's shared config summary (connector-issued keys only)",
+        "parameters": [],
+        "tags": [
+          "Connectors"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Cleared, also when nothing was stored"
+          },
+          "403": {
+            "description": "Not a connector-issued key"
+          }
+        }
+      }
+    },
     "/connectors/{id}": {
       "get": {
         "operationId": "ConnectorsController_get",
-        "summary": "Get a connector with its deployments",
+        "summary": "Get a connector with its deployments and the config summary it last shared",
         "parameters": [
           {
             "name": "id",
@@ -3658,6 +3712,238 @@
         },
         "required": [
           "plan"
+        ]
+      },
+      "ConnectorConfigPluginDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "azure-keyvault"
+          },
+          "version": {
+            "type": "object",
+            "example": "0.3.0",
+            "nullable": true,
+            "maxLength": 64
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "bundled",
+              "data_dir",
+              "path",
+              "builtin"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "source"
+        ]
+      },
+      "ConnectorConfigKeyStoreDto": {
+        "type": "object",
+        "properties": {
+          "plugin": {
+            "type": "string",
+            "example": "azure-keyvault"
+          },
+          "keyType": {
+            "type": "object",
+            "example": "ecdsa-p256",
+            "nullable": true,
+            "maxLength": 32
+          },
+          "settings": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "maxProperties": 10,
+            "example": {
+              "vault": "kv-prod",
+              "certificate_name": "www"
+            },
+            "description": "Flat map of known-safe settings: keys match ^[a-z][a-z0-9_]{0,31}$, values are strings (at most 256 characters), booleans or finite numbers"
+          }
+        },
+        "required": [
+          "plugin"
+        ]
+      },
+      "ConnectorConfigVerifyDto": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "type": "object",
+            "example": "www.example.com",
+            "nullable": true,
+            "maxLength": 253
+          },
+          "port": {
+            "type": "object",
+            "example": 443,
+            "nullable": true
+          },
+          "skipChainValidation": {
+            "type": "boolean",
+            "example": false
+          }
+        },
+        "required": [
+          "skipChainValidation"
+        ]
+      },
+      "ConnectorConfigTargetDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "nginx-main",
+            "pattern": "^[A-Za-z0-9._-]{1,64}$"
+          },
+          "plugin": {
+            "type": "string",
+            "example": "file"
+          },
+          "implicit": {
+            "type": "boolean",
+            "description": "Added by the connector rather than listed in the config"
+          },
+          "runsCommand": {
+            "type": "boolean",
+            "description": "Runs a command after deploying, or is the exec target"
+          },
+          "verify": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ConnectorConfigVerifyDto"
+              }
+            ]
+          },
+          "settings": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "maxProperties": 10,
+            "example": {
+              "vault": "kv-prod",
+              "certificate_name": "www"
+            },
+            "description": "Flat map of known-safe settings: keys match ^[a-z][a-z0-9_]{0,31}$, values are strings (at most 256 characters), booleans or finite numbers"
+          }
+        },
+        "required": [
+          "label",
+          "plugin",
+          "implicit",
+          "runsCommand"
+        ]
+      },
+      "ConnectorConfigCertificateDto": {
+        "type": "object",
+        "properties": {
+          "certificateId": {
+            "type": "number",
+            "example": 42
+          },
+          "names": {
+            "example": [
+              "www.example.com"
+            ],
+            "maxItems": 100,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "keyStore": {
+            "$ref": "#/components/schemas/ConnectorConfigKeyStoreDto"
+          },
+          "targets": {
+            "maxItems": 50,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectorConfigTargetDto"
+            }
+          }
+        },
+        "required": [
+          "certificateId",
+          "names",
+          "keyStore",
+          "targets"
+        ]
+      },
+      "ConnectorConfigDto": {
+        "type": "object",
+        "properties": {
+          "hash": {
+            "type": "string",
+            "description": "sha256 (lowercase hex) of the canonical summary without this field",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "version": {
+            "type": "string",
+            "example": "0.3.0",
+            "maxLength": 64
+          },
+          "checkIntervalSeconds": {
+            "type": "object",
+            "example": 3600,
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 604800
+          },
+          "plugins": {
+            "maxItems": 50,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectorConfigPluginDto"
+            }
+          },
+          "certificates": {
+            "maxItems": 500,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectorConfigCertificateDto"
+            }
+          },
+          "truncated": {
+            "type": "boolean",
+            "description": "True when the connector cut anything (certificates, targets, plugins, names or long setting values) to fit the limits",
+            "default": false
+          }
+        },
+        "required": [
+          "hash",
+          "version",
+          "plugins",
+          "certificates"
         ]
       },
       "CreateConnectorDto": {
