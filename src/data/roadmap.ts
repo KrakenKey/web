@@ -81,7 +81,7 @@ export const shipped: RoadmapItem[] = [
   {
     title: 'KrakenKey Connector',
     description:
-      'A service on your own network that renews certificates with keys it creates locally or in Azure Key Vault, deploys them to files, Azure Application Gateway or AWS Certificate Manager, verifies each endpoint over TLS and rolls back on failure. Deployment status and alerts in the dashboard.',
+      'A service on your own network that renews certificates with keys it creates locally or in Azure Key Vault, deploys them to files, Azure Key Vault, Azure Application Gateway or AWS Certificate Manager, verifies each endpoint over TLS and rolls back on failure. Deployment status and alerts in the dashboard.',
     link: { href: '/docs/connector/', label: 'Connector guide' },
   },
   {
@@ -93,7 +93,7 @@ export const shipped: RoadmapItem[] = [
   {
     title: 'Signed apt and dnf repositories',
     description:
-      'Install the CLI from packages.krakenkey.io with apt or dnf and keep it current with normal upgrades. Signed metadata and packages, with key changes delivered by a keyring package. The probe joins with its next release.',
+      'Install the CLI and the connector from packages.krakenkey.io with apt or dnf and keep them current with normal upgrades. Signed metadata and packages, with key changes delivered by a keyring package. The probe joins with its next release.',
     link: { href: '/docs/cli/', label: 'Install docs' },
   },
   {
