@@ -7,6 +7,8 @@ sidebar:
 
 KrakenKey can issue a public TLS certificate from a certificate signing request (CSR) created in Azure Key Vault. Key Vault keeps the private key, and App Service or Container Apps imports the finished certificate from Key Vault for custom-domain TLS. This guide covers manual issuance and renewal. You don't need to run a KrakenKey VM or container in Azure.
 
+To have renewals happen on their own, run the [KrakenKey connector](/docs/connector/#azure-key-vault-as-a-target) with Key Vault as its key store and target: it creates each new version and CSR, has it signed, and merges it, and services that read the certificate without a version pick it up as described here.
+
 KrakenKey only receives the CSR, which carries the public key. The Azure service that terminates TLS reads the private key through Key Vault, so it has to be an exportable software key. Non-exportable and HSM-backed keys won't work here.
 
 Each step has collapsible Portal, Azure CLI and Terraform instructions. Terraform can set up the vault policy, access and workload bindings, but signing the CSR and merging the result are one-off operations you run yourself. A `terraform apply` against a pending Key Vault certificate doesn't issue or renew it.
@@ -142,7 +144,7 @@ Use [`azurerm_container_app_environment_certificate`](https://registry.terraform
 
 ## 5. Renew and verify the live certificate
 
-Renewal is manual. Key Vault can't request a new certificate from a non-integrated CA like KrakenKey, and KrakenKey's auto-renew doesn't run the Key Vault sequence of new version, new CSR, signing and merge. Start well before expiry to leave time for issuance, the merge, Azure's sync and any retries. [Microsoft: renew a non-integrated CA certificate](https://learn.microsoft.com/en-us/azure/key-vault/certificates/overview-renew-certificate).
+Without the [connector](/docs/connector/#azure-key-vault-as-a-target), renewal is manual. Key Vault can't request a new certificate from a non-integrated CA like KrakenKey, and KrakenKey's auto-renew doesn't run the Key Vault sequence of new version, new CSR, signing and merge. Start well before expiry to leave time for issuance, the merge, Azure's sync and any retries. [Microsoft: renew a non-integrated CA certificate](https://learn.microsoft.com/en-us/azure/key-vault/certificates/overview-renew-certificate).
 
 <details>
 <summary>Azure portal</summary>
