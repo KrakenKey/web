@@ -604,6 +604,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "409": {
+            "description": "A paid subscription already exists (use upgrade or the billing portal), or a checkout was just started"
           }
         }
       }
