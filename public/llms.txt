@@ -26,5 +26,6 @@ If you are an AI agent setting up certificates for a user, follow the runbook: i
 ## Optional
 
 - [Pricing](https://krakenkey.io/pricing): plan limits for domains, certificates and monitoring
+- [Support](https://krakenkey.io/support): how to contact support, what to include, and where to report bugs and vulnerabilities
 - [Blog](https://krakenkey.io/blog)
 - [GitHub](https://github.com/KrakenKey)

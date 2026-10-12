@@ -1,0 +1,401 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { links } from '../data/links';
+
+const supportEmail = 'support@krakenkey.io';
+const securityEmail = 'security@krakenkey.io';
+const securityPolicy = 'https://github.com/KrakenKey/KrakenKey/security/policy';
+const external = { target: '_blank', rel: 'noopener noreferrer' };
+
+const docs = [
+  {
+    title: 'Getting started',
+    description: 'Account, domain, DNS records and a first certificate.',
+    href: links.quickStart,
+  },
+  {
+    title: 'CLI',
+    description: 'Install, sign in, configuration, CI usage and exit codes.',
+    href: links.cli,
+  },
+  {
+    title: 'Connector',
+    description: 'Renew with local or Key Vault keys and deploy to files, Key Vault, Application Gateway or ACM.',
+    href: '/docs/connector/',
+  },
+  {
+    title: 'Connector troubleshooting',
+    description: 'Common connector errors, what causes them and how to fix each one.',
+    href: '/docs/connector/#troubleshooting',
+  },
+  {
+    title: 'GitHub Action',
+    description: 'Issue and renew certificates in a workflow and deploy them over SSH.',
+    href: '/docs/integrations/github-actions/',
+  },
+  {
+    title: 'Terraform provider',
+    description: 'Domains, DNS records, certificates, monitoring and alert channels as code.',
+    href: '/docs/integrations/terraform/',
+  },
+  {
+    title: 'API reference',
+    description: 'Every REST endpoint, generated from the OpenAPI spec.',
+    href: links.apiReference,
+  },
+  {
+    title: 'Quick start for AI agents',
+    description: 'Hand setup to an agent such as Claude Code, Codex or Cursor.',
+    href: links.agentQuickStart,
+  },
+];
+
+const repos = [
+  { name: 'cli', description: 'The krakenkey command-line tool' },
+  { name: 'connector', description: 'Customer-hosted renewal and deployment, and its plugins' },
+  { name: 'probe', description: 'TLS endpoint monitoring probe' },
+  { name: 'cert-action', description: 'GitHub Action for issuing and renewing certificates' },
+  { name: 'terraform-provider-krakenkey', description: 'Terraform and OpenTofu provider' },
+  { name: 'examples', description: 'Runnable examples for Actions, Terraform and hosts' },
+];
+---
+
+<PageLayout
+  title="Support"
+  description="How to get help with KrakenKey: contact support, what to include in a request, docs and troubleshooting guides, GitHub issues for the open-source tools, and security reporting."
+>
+  <div class="section-container">
+    <div class="section-header section-header--lg">
+      <h1 class="section-title section-title--xl">Support</h1>
+      <p class="section-subtitle">
+        A certificate that won't issue, a connector that won't deploy, or a question about your account?
+        Here's where to ask, and what to send so we can look into it without a round of follow-up questions.
+      </p>
+    </div>
+
+    <div class="features-grid support-channels">
+      <section class="card support-card">
+        <h2 class="card-title">Email support</h2>
+        <p class="card-description">
+          For your account, billing, certificates, domains, monitoring and the connector. Write from
+          the email address on your KrakenKey account if you can.
+        </p>
+        <p class="support-address"><a href={`mailto:${supportEmail}`}>{supportEmail}</a></p>
+        <a href={`mailto:${supportEmail}`} class="btn btn-primary btn-full">Email support</a>
+      </section>
+
+      <section class="card support-card">
+        <h2 class="card-title">Read the docs</h2>
+        <p class="card-description">
+          Setup guides for every integration, troubleshooting tables for the errors people hit most,
+          and the full API reference.
+        </p>
+        <a href="/docs/" class="btn btn-outline btn-full">Open the docs</a>
+      </section>
+
+      <section class="card support-card">
+        <h2 class="card-title">Ask the community</h2>
+        <p class="card-description">
+          Questions, ideas and how others run KrakenKey, in GitHub Discussions. Don't post API keys,
+          account details or anything you wouldn't want public.
+        </p>
+        <a href={links.discussions} class="btn btn-outline btn-full" {...external}>Discussions</a>
+      </section>
+    </div>
+
+    <section class="support-section" aria-labelledby="support-include">
+      <h2 id="support-include" class="support-section-title">What to include</h2>
+      <p class="support-section-lead">
+        Send whichever of these apply. Copy error messages exactly instead of describing them.
+      </p>
+
+      <div class="support-include-grid">
+        <ul class="support-list">
+          <li><strong>Your account email,</strong> the one you sign in to KrakenKey with.</li>
+          <li><strong>Certificate ID</strong> and the domain names on it. <code>krakenkey cert list</code> prints the IDs.</li>
+          <li>
+            <strong>Connector version:</strong> the output of <code>krakenkey-connector version</code>, the
+            connector's name on the <strong>Connectors</strong> page, and the target state and error shown there.
+          </li>
+          <li><strong>CLI version:</strong> the output of <code>krakenkey --version</code>, and the command you ran.</li>
+          <li>
+            <strong>Other tools:</strong> the cert-action reference from your workflow (for example
+            <code>krakenkey/cert-action@v1</code>) or the provider version from <code>terraform version</code>.
+          </li>
+          <li><strong>The error text,</strong> copied in full, with the log lines around it.</li>
+          <li><strong>When it happened,</strong> with the time zone, or in UTC.</li>
+          <li><strong>What you expected</strong> and what happened instead.</li>
+        </ul>
+
+        <div class="support-include-side">
+          <pre class="code-block"><span class="code-comment"># CLI version and certificate IDs</span>
+<span class="code-cmd">krakenkey</span> --version
+<span class="code-cmd">krakenkey</span> cert list
+
+<span class="code-comment"># Connector version and recent logs</span>
+<span class="code-cmd">krakenkey-connector</span> version
+<span class="code-cmd">journalctl</span> -u krakenkey-connector --since <span class="code-string">"1 hour ago"</span></pre>
+
+          <div class="support-callout">
+            <h3>Never send secrets</h3>
+            <p>
+              Leave out private keys, API keys (<code>kk_...</code>), connector enrollment tokens and anything
+              from the connector's data directory. Remove them from logs and config files before you send them.
+              Nobody needs them to help you.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="support-section" aria-labelledby="support-docs">
+      <h2 id="support-docs" class="support-section-title">Guides and troubleshooting</h2>
+      <p class="support-section-lead">Many problems already have a documented fix.</p>
+      <ul class="support-docs-grid">
+        {docs.map((doc) => (
+          <li>
+            <a href={doc.href} class="card card--compact support-doc">
+              <span class="card-title">{doc.title}</span>
+              <span class="card-description">{doc.description}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="support-section" aria-labelledby="support-github">
+      <h2 id="support-github" class="support-section-title">Bugs in the open-source tools</h2>
+      <p class="support-section-lead">
+        Found a bug or want a feature in one of these? Search the repository's issues first, then open a new one.
+        GitHub issues are public, so for anything about your account or certificates, email support instead.
+      </p>
+      <ul class="support-repos">
+        {repos.map((repo) => (
+          <li class="support-repo">
+            <div>
+              <span class="support-repo-name">KrakenKey/{repo.name}</span>
+              <span class="support-repo-desc">{repo.description}</span>
+            </div>
+            <a href={`https://github.com/KrakenKey/${repo.name}/issues`} class="support-repo-link" {...external}>Issues</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="card support-security" aria-labelledby="support-security">
+      <h2 id="support-security" class="card-title">Report a security vulnerability</h2>
+      <p class="card-description">
+        Please don't open a public issue. Email <a href={`mailto:${securityEmail}`}>{securityEmail}</a> with a
+        description, steps to reproduce and the impact you expect. Scope and details are in
+        our <a href={securityPolicy} {...external}>security policy</a>.
+      </p>
+    </section>
+  </div>
+</PageLayout>
+
+<style>
+  .support-card {
+    gap: var(--space-sm);
+  }
+
+  .support-card:hover,
+  .support-security:hover {
+    transform: none;
+  }
+
+  .support-card .card-description {
+    margin-bottom: var(--space-md);
+  }
+
+  .support-card .btn-full {
+    margin-top: auto;
+  }
+
+  .support-address {
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .support-section {
+    margin-top: 4rem;
+  }
+
+  .support-section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+  }
+
+  .support-section-lead {
+    color: var(--color-muted);
+    margin-bottom: var(--space-lg);
+    max-width: 720px;
+  }
+
+  .support-include-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .support-list {
+    list-style: disc;
+    padding-left: var(--space-lg);
+    color: var(--color-muted);
+  }
+
+  .support-list li {
+    margin-bottom: 0.625rem;
+  }
+
+  .support-list strong,
+  .support-callout h3 {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  .support-section code,
+  .support-callout code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background-color: var(--color-surface);
+    padding: 0.1rem 0.375rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+  }
+
+  .support-list code {
+    white-space: nowrap;
+  }
+
+  .support-include-side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .support-include-side .code-block {
+    margin: 0;
+    white-space: pre;
+  }
+
+  .support-callout {
+    border: 1px solid var(--color-warning);
+    background-color: var(--color-warning-surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) 1.25rem;
+  }
+
+  .support-callout h3 {
+    font-size: 1rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  .support-callout p {
+    color: var(--color-muted);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .support-docs-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-md);
+  }
+
+  .support-docs-grid li {
+    display: flex;
+  }
+
+  .support-doc {
+    width: 100%;
+    color: var(--color-text);
+  }
+
+  .support-doc:hover {
+    color: var(--color-text);
+  }
+
+  .support-doc .card-title {
+    font-size: 1rem;
+    color: var(--color-text);
+  }
+
+  .support-doc .card-description {
+    font-size: 0.875rem;
+  }
+
+  .support-repos {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 var(--space-xl);
+  }
+
+  .support-repo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .support-repo-name {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+  }
+
+  .support-repo-desc {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+
+  .support-repo-link {
+    flex-shrink: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .support-security {
+    margin-top: 4rem;
+    border-color: var(--color-border);
+  }
+
+  @media (max-width: 1024px) {
+    .support-docs-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .support-include-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .support-repos {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .support-section {
+      margin-top: var(--space-2xl);
+    }
+
+    .support-include-side .code-block {
+      font-size: 0.8125rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .support-docs-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
