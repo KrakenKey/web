@@ -782,6 +782,9 @@
           },
           "402": {
             "description": "Connector limit reached"
+          },
+          "403": {
+            "description": "Viewers cannot add connectors"
           }
         }
       }
@@ -930,8 +933,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
+          "403": {
+            "description": "Viewers cannot change connectors"
           }
         }
       },
@@ -988,6 +991,9 @@
         "responses": {
           "201": {
             "description": "New token; any previous token stops working"
+          },
+          "403": {
+            "description": "Viewers cannot add connectors"
           },
           "409": {
             "description": "Already enrolled or revoked"
@@ -2456,6 +2462,9 @@
           },
           "400": {
             "description": "Invalid URL, unknown event or channel limit reached"
+          },
+          "403": {
+            "description": "Viewers cannot manage notification channels"
           }
         }
       }
@@ -2497,6 +2506,9 @@
           "200": {
             "description": "Channel updated"
           },
+          "403": {
+            "description": "Viewers cannot manage notification channels"
+          },
           "404": {
             "description": "Channel not found"
           }
@@ -2527,6 +2539,9 @@
         "responses": {
           "204": {
             "description": "Channel deleted"
+          },
+          "403": {
+            "description": "Viewers cannot manage notification channels"
           },
           "404": {
             "description": "Channel not found"
@@ -2561,6 +2576,9 @@
         "responses": {
           "200": {
             "description": "{ ok, status, error }"
+          },
+          "403": {
+            "description": "Viewers cannot manage notification channels"
           },
           "404": {
             "description": "Channel not found"
@@ -2598,6 +2616,9 @@
           },
           "400": {
             "description": "Not a webhook channel"
+          },
+          "403": {
+            "description": "Viewers cannot manage notification channels"
           },
           "404": {
             "description": "Channel not found"
@@ -3067,7 +3088,7 @@
             "description": "Invalid or private host"
           },
           "403": {
-            "description": "Plan limit exceeded"
+            "description": "Plan limit exceeded, or viewers cannot create reports"
           }
         }
       },
@@ -3148,6 +3169,9 @@
           "204": {
             "description": "Deleted"
           },
+          "403": {
+            "description": "Viewers cannot change reports"
+          },
           "404": {
             "description": "Report not found"
           }
@@ -3226,6 +3250,9 @@
           "201": {
             "description": "{ url, token, expiresAt }"
           },
+          "403": {
+            "description": "Viewers cannot change reports"
+          },
           "404": {
             "description": "Report not found"
           }
@@ -3256,6 +3283,9 @@
         "responses": {
           "204": {
             "description": "Revoked"
+          },
+          "403": {
+            "description": "Viewers cannot change reports"
           },
           "404": {
             "description": "Report not found"
