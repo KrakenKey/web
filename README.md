@@ -77,6 +77,7 @@ web/
 │   │   ├── pricing.astro          # Plans, FAQ
 │   │   ├── roadmap.astro          # Public roadmap (content in src/data/roadmap.ts)
 │   │   ├── scanner.astro          # Free TLS scanner
+│   │   ├── support.astro          # Support: contacts, what to include, docs and issue links
 │   │   ├── terms.astro            # Terms of service
 │   │   ├── privacy.astro          # Privacy policy
 │   │   ├── 404.astro              # Custom 404
@@ -173,6 +174,7 @@ If you're working from the [main KrakenKey repo](https://github.com/krakenkey/kr
 | `/blog/:slug` | Individual blog posts (rendered from Markdown) |
 | `/docs` | Starlight docs: getting started (`/getting-started` redirects here), AI agents, CLI, integration guides |
 | `/docs/api` | API reference generated from the OpenAPI spec (Starlight) |
+| `/support` | How to get help: support and security contacts, what to include, docs, GitHub issues |
 | `/terms` | Terms of service |
 | `/privacy` | Privacy policy |
 
