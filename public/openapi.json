@@ -47,13 +47,61 @@
       "get": {
         "operationId": "AuthController_login",
         "summary": "Redirect to SSO login",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "source",
+            "required": false,
+            "in": "query",
+            "description": "Sign in with an external account instead of showing the login page. \"microsoft\" accepts work, school and personal Microsoft accounts and creates a KrakenKey account on first sign-in.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "microsoft"
+              ]
+            }
+          }
+        ],
         "tags": [
           "Authentication"
         ],
         "responses": {
           "302": {
-            "description": "Redirects to Authentik login flow"
+            "description": "Redirects to Authentik login flow, or straight to the chosen external account provider"
+          },
+          "400": {
+            "description": "Unknown source"
+          }
+        }
+      }
+    },
+    "/auth/connect": {
+      "get": {
+        "operationId": "AuthController_connect",
+        "summary": "Redirect to connect an external account",
+        "description": "Asks the user to sign in to their existing account (or uses their current SSO session), then sends them to the provider and links that external account to the signed-in user. Afterwards they can sign in with either.",
+        "parameters": [
+          {
+            "name": "source",
+            "required": true,
+            "in": "query",
+            "description": "External account to connect to the signed-in account",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "microsoft"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects to Authentik login, then to the provider"
+          },
+          "400": {
+            "description": "Unknown source"
           }
         }
       }
