@@ -1429,6 +1429,7 @@
       "post": {
         "operationId": "TlsController_revoke",
         "summary": "Revoke a certificate",
+        "description": "Revokes an issued certificate. A certificate whose renewal is still waiting for a slot (status 'renewing', renewalQueuedAt set) can be revoked too; the waiting renewal is dropped.",
         "parameters": [
           {
             "name": "id",
@@ -1463,13 +1464,16 @@
             "description": "Certificate revocation initiated"
           },
           "400": {
-            "description": "Certificate not in issued state"
+            "description": "Certificate not issued (or not waiting to renew), or has no PEM data"
           },
           "403": {
             "description": "Viewers cannot revoke certificates"
           },
           "404": {
             "description": "Certificate not found"
+          },
+          "409": {
+            "description": "The certificate changed state meanwhile, for example its waiting renewal started"
           }
         }
       }
@@ -1478,7 +1482,7 @@
       "post": {
         "operationId": "TlsController_renew",
         "summary": "Renew a certificate",
-        "description": "Queues a renewal. Without a body the CSR stored at first issuance is used again. With { csrPem } the certificate is renewed with that CSR (for example a new key) and it replaces the stored CSR. For an `awaiting_csr` certificate, { csrPem } is required and its names must equal `requestedNames`; the certificate is then issued like a new request (status 'pending'), and ifDue always treats it as due.",
+        "description": "Queues a renewal. Without a body the CSR stored at first issuance is used again. With { csrPem } the certificate is renewed with that CSR (for example a new key) and it replaces the stored CSR. For an `awaiting_csr` certificate, { csrPem } is required and its names must equal `requestedNames`; the certificate is then issued like a new request (status 'pending'), and ifDue always treats it as due. A renewal past the concurrent pending limit is not refused: it waits (202, queued: true, status 'renewing', renewalQueuedAt set) and starts on its own, oldest first, as earlier requests finish. Rate limited by the 'renewal' allowance, not 'expensive'.",
         "parameters": [
           {
             "name": "id",
@@ -1519,13 +1523,19 @@
         ],
         "responses": {
           "200": {
-            "description": "ifDue=true and the certificate is not due yet; nothing was queued (skipped: true, reason: 'not_due')"
+            "description": "ifDue=true and the certificate is not due yet; nothing was queued (skipped: true, reason: 'not_due'). Or ifDue=true and a renewal of it is already running or waiting (skipped: true, reason: 'in_progress', queued tells which)"
           },
           "201": {
-            "description": "Certificate renewal initiated (skipped: false)"
+            "description": "Certificate renewal started (skipped: false, queued: false), or an awaiting_csr certificate's issuance started"
+          },
+          "202": {
+            "description": "Renewal accepted but waiting for a free slot under the plan's concurrent pending limit (skipped: false, queued: true, status 'renewing'); it starts on its own"
           },
           "400": {
-            "description": "Certificate not issued or missing CSR data, invalid CSR, 'CSR names must match the certificate', or 'This certificate is waiting for a CSR' (awaiting_csr without csrPem)"
+            "description": "Certificate not issued (pending, issuing, failed, revoking, revoked) or missing CSR data, invalid CSR, 'CSR names must match the certificate', or 'This certificate is waiting for a CSR' (awaiting_csr without csrPem)"
+          },
+          "402": {
+            "description": "Completing an awaiting_csr certificate only: monthly or concurrent pending limit reached. Renewals are never refused for plan limits."
           },
           "403": {
             "description": "Viewers cannot renew certificates"
@@ -1534,7 +1544,7 @@
             "description": "Certificate not found"
           },
           "409": {
-            "description": "The awaiting_csr certificate was completed by another request meanwhile"
+            "description": "A renewal of the certificate is already running or waiting (status 'renewing', without ifDue), another request started one at the same moment, or another request completed the awaiting_csr certificate meanwhile"
           }
         }
       }
