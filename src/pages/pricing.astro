@@ -14,7 +14,7 @@ const faqItems = [
   },
   {
     question: 'How does endpoint monitoring work?',
-    answer: 'Register any TLS endpoint (host:port) and KrakenKey scans it on a schedule using distributed probes. Each scan performs a real TLS handshake and reports connection health, certificate details, chain validation, and latency. Use our hosted probes for zero-ops monitoring from multiple regions, or run the open-source probe on your own infrastructure for internal services.',
+    answer: 'Register any TLS endpoint (host:port) and KrakenKey scans it on a schedule using distributed probes. Each scan performs a real TLS handshake and reports connection health, certificate details, chain validation, and latency. Use our hosted probes (currently in the US East region) for zero-ops monitoring, or run the open-source probe on your own infrastructure for internal services.',
   },
   {
     question: 'How does client-side CSR generation work?',
@@ -26,7 +26,7 @@ const faqItems = [
   },
   {
     question: 'Do I need a paid plan?',
-    answer: 'No. The free tier includes ACME automation, certificate issuance, and 3 monitored endpoints with connected probes. Starter ($29/mo) adds 10 endpoints, 2 hosted probe regions, a 30-day auto-renewal window, and expiry alerts. Team ($79/mo) adds 50 endpoints, 5 hosted regions, organizations with RBAC, and 5-minute scan intervals.',
+    answer: 'No. The free tier includes ACME automation, certificate issuance, and 3 monitored endpoints with connected probes. Every plan gets expiry alerts. Starter ($29/mo) adds 10 endpoints (5 on hosted probes), 10 domains and a 30-day auto-renewal window. Team ($79/mo) adds 50 endpoints (25 on hosted probes), 25 domains and organizations with RBAC.',
   },
 ];
 ---
@@ -64,6 +64,10 @@ const faqItems = [
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
             Auto-renewal, 5 days before expiry
+          </li>
+          <li class="pricing-feature">
+            <span class="pricing-feature-check">&#10003;</span>
+            Certificate expiry alerts by email
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
@@ -105,15 +109,11 @@ const faqItems = [
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
-            Certificate expiry notifications
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
             Double API rate limits
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
-            10 endpoints, 2 hosted probe regions
+            10 endpoints, 5 on hosted probes
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
@@ -149,7 +149,7 @@ const faqItems = [
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
-            50 endpoints, 5 hosted regions, 5-min scans
+            50 endpoints, 25 on hosted probes
           </li>
           <li class="pricing-feature">
             <span class="pricing-feature-check">&#10003;</span>
