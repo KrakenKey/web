@@ -27,7 +27,7 @@ If a server can run the [CLI](/docs/cli/) itself, a [systemd timer on the host](
 | `krakenkey_domain` | A domain, plus the names and values of its TXT and CNAME records |
 | `krakenkey_domain_verification` | Verifying the domain once its TXT record is published |
 | `krakenkey_certificate` | A certificate issued from a CSR, kept current by KrakenKey |
-| `krakenkey_endpoint`, `krakenkey_endpoint_region` | A monitored TLS endpoint, and hosted probe regions for it (Starter plan and above) |
+| `krakenkey_endpoint`, `krakenkey_endpoint_region` | A monitored TLS endpoint, and hosted probe regions for it (how many endpoints can use hosted probes depends on the plan) |
 | `krakenkey_alert_channel` | Alerts sent to a webhook, Slack, Discord or Microsoft Teams |
 | `data.krakenkey_certificate`, `data.krakenkey_endpoint` | Reading a certificate or endpoint by ID |
 

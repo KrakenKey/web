@@ -102,7 +102,7 @@ haproxy -c -f /etc/haproxy/haproxy.cfg && systemctl reload haproxy
 
 ## 3. Renew with a timer
 
-`krakenkey cert renew` reuses the certificate's original CSR, so the key on disk stays valid and only the certificate changes. With `--if-due` it renews only inside your plan's renewal window (30 days before expiry on paid plans, 5 days on Free) and otherwise exits cleanly, so it's safe to run every day.
+`krakenkey cert renew` reuses the certificate's original CSR, so the key on disk stays valid and only the certificate changes. With `--if-due` it renews only inside your plan's renewal window (30 days before expiry on Pro and Business, 10 days on the free Starter plan) and otherwise exits cleanly, so it's safe to run every day.
 
 The script below runs the renewal in a scratch directory, downloads whatever certificate KrakenKey currently holds, and installs it only if it expires later than the live one, matches the key and covers your names. That last check also picks up renewals done by KrakenKey's own auto-renew, so it works whichever side renews. Save it as `/usr/local/bin/krakenkey-renew` and make it executable:
 
@@ -201,7 +201,7 @@ systemctl enable --now krakenkey-renew.timer
 systemctl start krakenkey-renew.service && journalctl -u krakenkey-renew -n 5
 ```
 
-On a paid plan renewal starts 30 days out, so a missed day or a failed run doesn't matter: the next run tries again and the old certificate keeps serving. On Free the window is 5 days, so keep an eye on failed runs, or use the [Caddy guide's script](/docs/integrations/caddy/#3-renew-with-a-timer), which renews when a third of the lifetime is left instead of waiting for the plan window.
+On Pro and Business renewal starts 30 days out, so a missed day or a failed run doesn't matter: the next run tries again and the old certificate keeps serving. On the free Starter plan the window is 10 days, so keep an eye on failed runs, or use the [Caddy guide's script](/docs/integrations/caddy/#3-renew-with-a-timer), which renews when a third of the lifetime is left instead of waiting for the plan window.
 
 If you rebuild the server and lose the key, run step 1 again. That issues a new certificate with a new key; `cert renew` can't help, because the old CSR belongs to a key you no longer have.
 

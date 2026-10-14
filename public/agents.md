@@ -174,7 +174,7 @@ krakenkey --output json cert issue \
   ```
 
 - Renewals: `krakenkey cert download <cert-id> --format fullchain --out <path>` fetches the current certificate. Suggest a daily cron job or CI step that downloads it and reloads the server, or use the GitHub Action `KrakenKey/cert-action` in CI.
-- Optional monitoring: `krakenkey endpoint add example.com` makes KrakenKey watch the live certificate. Free plans use a self-hosted probe; hosted probes start on the Starter plan.
+- Optional monitoring: `krakenkey endpoint add example.com` makes KrakenKey watch the live certificate. Add KrakenKey's hosted probes with `krakenkey endpoint region add <endpoint-id> us-east-1`; the free Starter plan includes one hosted endpoint, Pro 25 and Business 150. Other endpoints need a probe the user runs.
 
 Finish by telling the user:
 
@@ -187,7 +187,7 @@ Finish by telling the user:
 - **`domain verify` fails.** The TXT isn't visible yet, or it is on the wrong name. It must sit on the registered hostname itself. Wait and retry.
 - **Certificate status `failed`.** The `--wait` error and `krakenkey cert show <cert-id>` include the reason (`failureReason` in JSON). It is almost always a missing or wrong `_acme-challenge` CNAME, or a CAA record that blocks Let's Encrypt. Fix it, confirm with `domain check`, then run `krakenkey --output json cert retry <cert-id> --wait`.
 - **`No verified domains` or names not authorized.** Every name on the certificate must be a verified domain or a subdomain of one.
-- **402 or `plan_limit_exceeded`.** The plan limit is reached. The free plan allows 3 domains, 5 certificates per month and 2 concurrent pending orders. Tell the user; don't retry.
+- **402 or `plan_limit_exceeded`.** The plan limit is reached. The free Starter plan allows 3 domains, 10 active certificates, 5 new certificates per month and 2 concurrent pending orders. The error's `message`, `limit`, `current` and `plan` fields say which limit was hit. Tell the user; don't retry.
 - **429 (exit 4).** Rate limited. Issuance, renewal, retry and verification are limited per hour, so back off before retrying.
 
 ## No shell access

@@ -147,7 +147,7 @@ jobs:
 
 How it behaves:
 
-- **Most days nothing happens.** With `if-due: 'true'` the action renews only inside your plan's renewal window (30 days before expiry on paid plans, 5 on Free). Outside it, it still downloads the current certificate and sets `renewed` to `false`.
+- **Most days nothing happens.** With `if-due: 'true'` the action renews only inside your plan's renewal window (30 days before expiry on Pro and Business, 10 on the free Starter plan). Outside it, it still downloads the current certificate and sets `renewed` to `false`.
 - **The deploy compares fingerprints with what the server actually serves.** If a renewal ran but the deploy failed, or someone restored an old file, the next run notices and deploys again. Connect to the server's own address in `HOST`, not a load balancer or CDN in front of it.
 - **Only the certificate moves.** Renewal reuses the original CSR, so the key already on the server still matches.
 - **One run at a time.** The `concurrency` group stops a manual run and a scheduled one from renewing together.

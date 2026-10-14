@@ -98,7 +98,7 @@ The [connector](/docs/connector/) works differently: it renews with a new key ea
 
 Issuing a certificate and serving it are different things. A renewal can succeed while a server keeps the old certificate in memory, a load balancer points at a stale copy, or a node was missed. KrakenKey's endpoint monitoring checks the live result:
 
-- **Hosted probes** scan public endpoints from KrakenKey's regions (Starter plan and above).
+- **Hosted probes** scan public endpoints from KrakenKey's US East region. Every plan includes at least one hosted endpoint.
 - **Connected probes** run the open-source probe on your network and report to KrakenKey, so internal hosts are covered too.
 
 Both record expiry, chain and hostname problems for each endpoint, whichever setup issued the certificate, including certificates that didn't come from KrakenKey. Add endpoints with [`krakenkey endpoint add`](/docs/cli/commands/#krakenkey-endpoint) or in the dashboard.

@@ -88,6 +88,8 @@ krakenkey probe register --name "dc-west-probe"
 
 Endpoint monitoring is available on all plans. The free plan includes 3 monitored endpoints with connected probes. Starter ($29/mo) gets 10 endpoints with 2 hosted probe regions and 5 hosted endpoints, enough to monitor your production services without running your own probe. Team and above expand from there with more regions, faster scan intervals, and longer retention. Check our [pricing page](/pricing) for full details.
 
+> **Update, October 2026:** Plans and prices have changed since this post was published. The free plan is now called Starter, and the paid plans are Pro ($29/mo) and Business ($149/mo), billed monthly or yearly. See the [pricing page](/pricing) for current limits.
+
 If you already use KrakenKey for issuance, monitoring covers the step after deployment: checking the cert is served correctly everywhere it needs to be.
 
 ---
