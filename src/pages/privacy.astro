@@ -5,7 +5,7 @@ import PageLayout from '../layouts/PageLayout.astro';
 <PageLayout title="Privacy Policy" description="How KrakenKey collects, uses, and protects your personal data.">
   <div class="legal-page">
     <h1>Privacy Policy</h1>
-    <p class="legal-updated">Last updated: September 29, 2026</p>
+    <p class="legal-updated">Last updated: October 14, 2026</p>
 
     <h2>1. Introduction</h2>
     <p>KrakenKey LLC ("we," "us," or "our") is committed to protecting your personal data. This privacy policy explains what data we collect, how we use it, and how we protect it when you use our automated TLS certificate issuance service.</p>
@@ -19,20 +19,26 @@ import PageLayout from '../layouts/PageLayout.astro';
     <h2>3. Data We Collect</h2>
     <p>We collect the following data when you use our service:</p>
     <ul>
-      <li><strong>Account Information:</strong> Email address and authentication credentials</li>
+      <li><strong>Account Information:</strong> Email address, username, display name, and authentication credentials</li>
       <li><strong>Domain Information:</strong> Domain names you add for certificate issuance</li>
       <li><strong>Certificate Data:</strong> Certificate Signing Requests (CSRs), issued certificate metadata, and issuance status</li>
       <li><strong>Technical Data:</strong> IP address, browser type, and access logs</li>
+      <li><strong>Billing Information:</strong> Your plan, subscription status, and billing period, plus the customer and subscription identifiers of the company that bills you (Stripe or Microsoft)</li>
+      <li><strong>Feedback:</strong> Messages and ratings you send us through the feedback form</li>
     </ul>
-    <p>We do not collect phone numbers, physical addresses, or payment information. Private keys generated using our in-browser CSR tool are created client-side and never sent to our servers.</p>
+    <p>We do not collect phone numbers, physical addresses, or payment card details. Card payments are handled by Stripe, and purchases through Microsoft Marketplace are paid to Microsoft. Private keys generated using our in-browser CSR tool are created client-side and never sent to our servers.</p>
+    <p><strong>Signing in with a Microsoft account.</strong> If you sign in with a Microsoft work, school, or personal account, Microsoft shares your name, email address, and a Microsoft account identifier with our identity provider, the service that handles KrakenKey sign-in. We use them to create your account, sign you in, and link your Microsoft account to it. We ask Microsoft only for basic profile information and do not access your mailbox, files, or other Microsoft data.</p>
+    <p><strong>Purchases through Microsoft Marketplace.</strong> If you buy a KrakenKey plan through Microsoft Marketplace, Microsoft bills you and collects your payment. To set up the purchase, Microsoft shares with us the offer and plan you bought, the subscription name and ID, its status, quantity, and billing term, and the email addresses and Microsoft Entra tenant and account identifiers of the purchaser and of the person the subscription is for. We use the email addresses only to check that the purchase belongs to the account you activate it on, and we do not store them or the tenant and account identifiers. We store the Microsoft subscription ID, offer, plan, status, quantity, and billing period with your account or organization, along with a record of each change Microsoft notifies us about, such as a plan change or cancellation. Microsoft may also share the contact details you gave Microsoft when you looked at or bought the offer, such as your name, company, and email address. Microsoft's handling of your data is covered by the <a href="https://privacy.microsoft.com/privacystatement" target="_blank" rel="noopener noreferrer">Microsoft Privacy Statement</a>.</p>
 
     <h2>4. How We Use Your Data</h2>
     <p>We use your data to:</p>
     <ul>
       <li>Provide and operate the certificate issuance service</li>
       <li>Complete DNS-01 domain validation on your behalf</li>
+      <li>Manage your subscription and apply the limits of your plan</li>
       <li>Communicate service updates and security notifications</li>
       <li>Maintain service security and prevent abuse</li>
+      <li>Improve the service, including by reading the feedback you send us</li>
       <li>Comply with legal obligations</li>
     </ul>
 
@@ -40,7 +46,10 @@ import PageLayout from '../layouts/PageLayout.astro';
     <p>We share data with the following third parties as necessary to operate the service:</p>
     <ul>
       <li><strong>Let's Encrypt (ISRG):</strong> CSR data is submitted to Let's Encrypt as the Certificate Authority to issue your TLS certificates</li>
-      <li><strong>Amazon Route 53 (AWS):</strong> DNS records are created temporarily for DNS-01 challenge validation</li>
+      <li><strong>Amazon Web Services (AWS):</strong> Hosts the service and its database, stores encrypted database backups, and creates DNS records temporarily in Amazon Route 53 for DNS-01 challenge validation</li>
+      <li><strong>Stripe:</strong> Processes card payments and subscriptions for plans bought in the KrakenKey app</li>
+      <li><strong>Microsoft:</strong> Provides sign-in with a Microsoft account, and bills plans bought through Microsoft Marketplace (see Data We Collect above)</li>
+      <li><strong>Email delivery provider:</strong> Sends account, billing, and alert emails to your email address</li>
       <li><strong>Cloudflare Web Analytics:</strong> Aggregate, cookieless page-view statistics for the marketing website (see Cookies below)</li>
     </ul>
     <p>We do not sell your data. We do not share your data with third parties for marketing purposes.</p>
