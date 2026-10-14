@@ -1552,7 +1552,8 @@
     "/certs/tls/{id}/retry": {
       "post": {
         "operationId": "TlsController_retry",
-        "summary": "Retry a failed certificate issuance",
+        "summary": "Retry a failed certificate issuance or renewal",
+        "description": "A 'failed' certificate is issued again with its stored CSR (status 'pending'; plan limits apply; needs certs:issue on a scoped key). An 'issued' certificate whose last renewal failed (renewalFailedAt set) is renewed again, like POST /certs/tls/:id/renew (status 'renewing', queued as for a renewal; needs certs:renew on a scoped key).",
         "parameters": [
           {
             "name": "id",
@@ -1573,17 +1574,23 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Certificate retry initiated"
           },
+          "202": {
+            "description": "Renewal retry accepted but waiting for a free slot under the plan's concurrent pending limit (queued: true, status 'renewing')"
+          },
           "400": {
-            "description": "Certificate not in failed state"
+            "description": "Certificate neither 'failed' nor 'issued' with a failed renewal, or missing CSR data"
           },
           "403": {
-            "description": "Viewers cannot retry certificates"
+            "description": "Viewers cannot retry certificates, or the API key lacks the scope for this retry"
           },
           "404": {
             "description": "Certificate not found"
+          },
+          "409": {
+            "description": "A renewal of the certificate started meanwhile"
           }
         }
       }
