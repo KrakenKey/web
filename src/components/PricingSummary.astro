@@ -1,4 +1,8 @@
 ---
+import { APP_URL, CONTACT_URL, PLANS, formatPrice } from '../data/pricing';
+
+// The home page shows the first few lines of each plan; /pricing has the rest.
+const SUMMARY_LINES = 4;
 ---
 
 <section>
@@ -6,89 +10,59 @@
     <div class="section-header">
       <h2 class="section-title">Pricing</h2>
       <p class="section-subtitle">
-        Free tier includes full ACME automation and auto-renewal. Paid plans add higher limits, a 30-day renewal window, and team access.
+        Start free on Starter. Pro and Business raise the limits, renew 30 days ahead, scan hosted endpoints more often and add organizations.
       </p>
     </div>
 
     <div class="pricing-grid pricing-grid--3">
-      <div class="card">
-        <h3 class="card-title">Free</h3>
-        <div class="pricing-price">
-          <span>$0</span>
+      {PLANS.map((plan) => (
+        <div class:list={['card', { 'card-highlighted': plan.highlighted }]}>
+          {plan.highlighted && <span class="card-badge">Popular</span>}
+          <h3 class="card-title">{plan.name}</h3>
+          <div class="pricing-price">
+            {plan.monthly === null || plan.yearly === null ? (
+              <span>$0</span>
+            ) : (
+              <>
+                <span>{formatPrice(plan.monthly)}</span><span class="pricing-sublabel">/mo</span>
+              </>
+            )}
+            <p class="price-note">
+              {plan.yearly === null ? 'No credit card required' : `or ${formatPrice(plan.yearly)}/yr, 2 months free`}
+            </p>
+          </div>
+          <ul class="pricing-features">
+            {plan.highlights.slice(0, SUMMARY_LINES).map((feature) => (
+              <li class="pricing-feature">
+                <span class="pricing-feature-check" aria-hidden="true">&#10003;</span>
+                {feature}
+              </li>
+            ))}
+          </ul>
+          <a href={APP_URL} class="btn btn-primary btn-full">{plan.cta}</a>
         </div>
-        <ul class="pricing-features">
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            3 domains, 10 certificates
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            ACME automation
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Auto-renewal, 5 days before expiry
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            REST API &amp; dashboard
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            3 monitored endpoints
-          </li>
-        </ul>
-        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Get Started Free</a>
-      </div>
-
-      <div class="card card-highlighted">
-        <span class="card-badge">Popular</span>
-        <h3 class="card-title">Starter</h3>
-        <div class="pricing-price">
-          <span>$29</span><span class="pricing-sublabel">/mo</span>
-        </div>
-        <ul class="pricing-features">
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            10 domains, 75 certificates
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            30-day auto-renewal
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            10 endpoints, 5 on hosted probes
-          </li>
-        </ul>
-        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Upgrade to Starter</a>
-      </div>
-
-      <div class="card">
-        <h3 class="card-title">Team</h3>
-        <div class="pricing-price">
-          <span>$79</span><span class="pricing-sublabel">/mo</span>
-        </div>
-        <ul class="pricing-features">
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            25 domains, 375 certificates
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Organizations with RBAC
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            50 endpoints, 25 on hosted probes
-          </li>
-        </ul>
-        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Upgrade to Team</a>
-      </div>
+      ))}
     </div>
 
     <div class="center-text" style="margin-top: var(--space-lg);">
       <a href="/pricing" class="link">View full plan comparison &rarr;</a>
+      <p class="contact-note">
+        Need more? <a href={CONTACT_URL} class="link">Contact us</a> about Enterprise.
+      </p>
     </div>
   </div>
 </section>
+
+<style>
+  .price-note {
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+
+  .contact-note {
+    margin-top: var(--space-sm);
+    color: var(--color-muted);
+  }
+</style>

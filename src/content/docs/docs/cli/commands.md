@@ -126,7 +126,7 @@ krakenkey endpoint disable <id>                      Disable an endpoint
 krakenkey endpoint delete <id>                       Delete an endpoint
 krakenkey endpoint probe add <id> <probe-id>         Assign a connected probe
 krakenkey endpoint probe remove <id> <probe-id>      Remove a connected probe
-krakenkey endpoint region add <id> <region>          Add a hosted probe region (Starter+)
+krakenkey endpoint region add <id> <region>          Add a hosted probe region
 krakenkey endpoint region remove <id> <region>       Remove a hosted probe region
 ```
 

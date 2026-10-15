@@ -66,6 +66,8 @@ Every operation is available via REST API, so you can issue certs from deploymen
 
 ## The Free Tier
 
+> **Update, October 2026:** Plans and prices have changed since this post was published. The free plan is now called Starter, and the paid plans are Pro ($29/mo) and Business ($149/mo), billed monthly or yearly. See the [pricing page](/pricing) for current limits.
+
 The free tier needs no credit card and has no trial expiry:
 
 | What | Limit |

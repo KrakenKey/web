@@ -98,6 +98,8 @@ At launch, KrakenKey includes:
 
 Starter ($29/mo) and Team ($79/mo) plans are available now with expanded limits, 30-day auto-renewal windows, and team access with RBAC. Check our [pricing page](/pricing) for details.
 
+> **Update, October 2026:** Plans and prices have changed since this post was published. The free plan is now called Starter, and the paid plans are Pro ($29/mo) and Business ($149/mo), billed monthly or yearly. See the [pricing page](/pricing) for current limits.
+
 We'd love your feedback. Sign up at [app.krakenkey.io](https://app.krakenkey.io) and let us know what you think.
 
 ---

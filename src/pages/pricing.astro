@@ -2,11 +2,12 @@
 import PageLayout from '../layouts/PageLayout.astro';
 import FAQ from '../components/FAQ.astro';
 import CTA from '../components/CTA.astro';
+import { APP_URL, CONTACT_URL, COMPARISON, EVERY_PLAN, PLANS, formatPrice } from '../data/pricing';
 
 const faqItems = [
   {
     question: 'What does KrakenKey do?',
-    answer: 'KrakenKey automates TLS certificate issuance, renewal, monitoring, and revocation. Issue certificates via Let\'s Encrypt in ~4 minutes through the dashboard, REST API, or CLI. Monitor your TLS endpoints from distributed probes to catch expiring certs, broken chains, and misconfigurations before they cause outages.',
+    answer: 'KrakenKey automates TLS certificate issuance, renewal, monitoring, and revocation. Issue certificates via Let\'s Encrypt in ~4 minutes through the dashboard, REST API, or CLI. Monitor your TLS endpoints with probes to catch expiring certs, broken chains, and misconfigurations before they cause outages.',
   },
   {
     question: 'Why are certificate lifetimes getting shorter?',
@@ -14,7 +15,7 @@ const faqItems = [
   },
   {
     question: 'How does endpoint monitoring work?',
-    answer: 'Register any TLS endpoint (host:port) and KrakenKey scans it on a schedule using distributed probes. Each scan performs a real TLS handshake and reports connection health, certificate details, chain validation, and latency. Use our hosted probes (currently in the US East region) for zero-ops monitoring, or run the open-source probe on your own infrastructure for internal services.',
+    answer: 'Register any TLS endpoint (host:port) and KrakenKey scans it on a schedule. Each scan performs a real TLS handshake and reports connection health, certificate details, chain validation, and latency. Hosted probes (currently in the US East region) need no setup: Starter includes one hosted endpoint, Pro 25 and Business 150. For internal services, run the open-source probe on your own infrastructure.',
   },
   {
     question: 'How does client-side CSR generation work?',
@@ -22,146 +23,331 @@ const faqItems = [
   },
   {
     question: 'Is there a REST API and CLI?',
-    answer: 'Yes. Every action available in the dashboard is also available via REST API and the krakenkey CLI. Issue certificates, manage domains, configure endpoint monitoring, and export scan results programmatically. AI agent tool definitions are included for automated workflows.',
+    answer: 'Yes, on every plan. Every action available in the dashboard is also available via REST API and the krakenkey CLI. Issue certificates, manage domains, configure endpoint monitoring, and export scan results programmatically. AI agent tool definitions are included for automated workflows.',
   },
   {
     question: 'Do I need a paid plan?',
-    answer: 'No. The free tier includes ACME automation, certificate issuance, and 3 monitored endpoints with connected probes. Every plan gets expiry alerts. Starter ($29/mo) adds 10 endpoints (5 on hosted probes), 10 domains and a 30-day auto-renewal window. Team ($79/mo) adds 50 endpoints (25 on hosted probes), 25 domains and organizations with RBAC.',
+    answer: 'No. Starter is free with no credit card: 3 domains, 10 active certificates, auto-renewal 10 days before expiry, 3 monitored endpoints (one on hosted probes), and expiry alerts by email. Pro ($29/mo) raises the limits, starts renewal 30 days before expiry, scans hosted endpoints every 30 minutes and adds organizations with up to 3 members. Business ($149/mo) adds higher limits, 5-minute hosted scans, 90 days of scan history and organizations with unlimited members.',
+  },
+  {
+    question: 'Can I pay yearly?',
+    answer: 'Yes. Pro costs $290 a year and Business $1,490 a year, two months free compared with paying monthly. You can switch between monthly and yearly billing from the billing page in the dashboard.',
+  },
+  {
+    question: 'What happens when I upgrade or downgrade?',
+    answer: 'An upgrade takes effect right away, and you pay a prorated amount for the rest of your billing period. If the upgrade also moves you from monthly to yearly billing, a new yearly period starts that day. A downgrade, or a switch from yearly to monthly billing, takes effect at the end of the period you have paid for, and you keep your current plan until then. Your domains, certificates and endpoints stay when you move to a smaller plan; you just can\'t add more of something until you are under the new limit.',
+  },
+  {
+    question: 'Can I cancel anytime?',
+    answer: 'Yes. Cancel from the billing page in the dashboard. Your plan stays active until the end of the period you have paid for, and then your account moves to the free Starter plan.',
+  },
+  {
+    question: 'Can I buy KrakenKey through Microsoft Marketplace?',
+    answer: 'Not yet. Pro and Business are coming to Microsoft Marketplace, billed through your Microsoft account. Until then, plans are paid by card through Stripe.',
+  },
+  {
+    question: 'What if I need more than Business?',
+    answer: 'Contact us at support@krakenkey.io about Enterprise: higher or custom limits and terms that fit your organization.',
   },
 ];
 ---
 
 <PageLayout
   title="Pricing"
-  description="Free automated TLS certificate issuance and renewal via Let's Encrypt. Starter and Team plans for higher limits, earlier renewal, and team access."
+  description="Free automated TLS certificate issuance, renewal and monitoring on the Starter plan. Pro and Business add higher limits, earlier renewal, faster hosted scans and organizations, billed monthly or yearly."
 >
   <div class="section-container">
     <div class="section-header section-header--lg">
       <h1 class="section-title section-title--xl">Pricing</h1>
       <p class="section-subtitle">
-        Free tier includes full ACME automation and auto-renewal. Paid plans add higher limits, a 30-day renewal window, and team access.
+        Start free on Starter. Pro and Business raise the limits, renew 30 days ahead, scan hosted endpoints more often and add organizations.
       </p>
     </div>
 
-    <!-- Pricing Grid -->
-    <div class="pricing-grid pricing-grid--3">
-      <!-- Free Tier -->
-      <div class="card center-text">
-        <h3 class="pricing-label">Free</h3>
-        <p class="pricing-sublabel">Full ACME automation, no credit card</p>
-        <div class="pricing-price">
-          <span>$0</span>
-        </div>
-        <ul class="pricing-features pricing-features--left">
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            3 domains, 10 active certificates
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            ACME automation via Let's Encrypt
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Auto-renewal, 5 days before expiry
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Certificate expiry alerts by email
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            In-browser CSR generator
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            DNS-01 via one-time CNAME delegation
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            REST API &amp; web dashboard
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            3 monitored endpoints (connected probes)
-          </li>
-        </ul>
-        <p class="pricing-cta-note">No credit card required</p>
-        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Get Started Free</a>
+    <div class="billing">
+      <input type="radio" name="billing-interval" id="billing-month" class="billing-input" checked />
+      <input type="radio" name="billing-interval" id="billing-year" class="billing-input" />
+      <div class="billing-toggle" role="group" aria-label="Billing period">
+        <label for="billing-month" class="billing-option billing-option--month">Monthly</label>
+        <label for="billing-year" class="billing-option billing-option--year">
+          Yearly <span class="billing-save">2 months free</span>
+        </label>
       </div>
 
-      <!-- Starter Tier -->
-      <div class="card card-highlighted center-text">
-        <span class="card-badge">Popular</span>
-        <h3 class="pricing-label">Starter</h3>
-        <p class="pricing-sublabel">More domains, earlier renewal, alerts</p>
-        <div class="pricing-price">
-          <span>$29</span><span class="pricing-sublabel">/mo</span>
-        </div>
-        <ul class="pricing-features pricing-features--left">
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            10 domains, 75 active certificates
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            30-day auto-renewal window
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Double API rate limits
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            10 endpoints, 5 on hosted probes
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Everything in Free
-          </li>
-        </ul>
-        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Upgrade to Starter</a>
-      </div>
-
-      <!-- Team Tier -->
-      <div class="card center-text">
-        <h3 class="pricing-label">Team</h3>
-        <p class="pricing-sublabel">Multi-user access with role-based control</p>
-        <div class="pricing-price">
-          <span>$79</span><span class="pricing-sublabel">/mo</span>
-        </div>
-        <ul class="pricing-features pricing-features--left">
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            25 domains, 375 active certificates
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Organizations with RBAC
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Invite team members (owner, admin, member, viewer)
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Higher rate limits (300 reads/min)
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            50 endpoints, 25 on hosted probes
-          </li>
-          <li class="pricing-feature">
-            <span class="pricing-feature-check">&#10003;</span>
-            Everything in Starter
-          </li>
-        </ul>
-        <a href="https://app.krakenkey.io" class="btn btn-primary btn-full">Upgrade to Team</a>
+      <div class="pricing-grid pricing-grid--3">
+        {PLANS.map((plan) => (
+          <div class:list={['card', 'center-text', { 'card-highlighted': plan.highlighted }]}>
+            {plan.highlighted && <span class="card-badge">Popular</span>}
+            <h2 class="pricing-label">{plan.name}</h2>
+            <p class="pricing-sublabel">{plan.tagline}</p>
+            {plan.monthly === null || plan.yearly === null ? (
+              <div class="pricing-price">
+                <span>$0</span>
+                <p class="price-note">No time limit</p>
+              </div>
+            ) : (
+              <>
+                <div class="pricing-price price--month">
+                  <span>{formatPrice(plan.monthly)}</span><span class="pricing-sublabel">/mo</span>
+                  <p class="price-note">or {formatPrice(plan.yearly)}/yr, 2 months free</p>
+                </div>
+                <div class="pricing-price price--year">
+                  <span>{formatPrice(plan.yearly)}</span><span class="pricing-sublabel">/yr</span>
+                  <p class="price-note">2 months free compared with monthly</p>
+                </div>
+              </>
+            )}
+            <ul class="pricing-features pricing-features--left">
+              {plan.highlights.map((feature) => (
+                <li class="pricing-feature">
+                  <span class="pricing-feature-check" aria-hidden="true">&#10003;</span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+            {plan.id === 'free' && <p class="pricing-cta-note">No credit card required</p>}
+            <a href={APP_URL} class="btn btn-primary btn-full">{plan.cta}</a>
+          </div>
+        ))}
       </div>
     </div>
+
+    <p class="contact-line">
+      Need more? <a href={CONTACT_URL} class="link">Contact us</a> about Enterprise for custom limits and terms.
+    </p>
+
+    <section class="compare" aria-labelledby="compare-title">
+      <div class="section-header">
+        <h2 class="section-title" id="compare-title">Compare plans</h2>
+      </div>
+
+      <div class="compare-scroll">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th scope="col"><span class="sr-only">Feature</span></th>
+              {PLANS.map((plan) => <th scope="col">{plan.name}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Price</th>
+              {PLANS.map((plan) => (
+                <td>
+                  {plan.monthly === null || plan.yearly === null
+                    ? 'Free'
+                    : `${formatPrice(plan.monthly)}/mo or ${formatPrice(plan.yearly)}/yr`}
+                </td>
+              ))}
+            </tr>
+          </tbody>
+          {COMPARISON.map((group) => (
+            <tbody>
+              <tr class="compare-group">
+                <th scope="colgroup" colspan="4">{group.title}</th>
+              </tr>
+              {group.rows.map((row) => (
+                <tr>
+                  <th scope="row">
+                    {row.label}
+                    {row.note && <span class="compare-note">{row.note}</span>}
+                  </th>
+                  {row.values.map((value) => <td>{value}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          ))}
+          <tbody>
+            <tr class="compare-group">
+              <th scope="colgroup" colspan="4">On every plan</th>
+            </tr>
+            {EVERY_PLAN.map((feature) => (
+              <tr>
+                <th scope="row">{feature}</th>
+                {PLANS.map(() => (
+                  <td><span class="pricing-feature-check" aria-hidden="true">&#10003;</span><span class="sr-only">Included</span></td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
 
     <FAQ items={faqItems} />
   </div>
 
   <CTA />
 </PageLayout>
+
+<style>
+  .billing-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+
+  .billing-toggle {
+    display: flex;
+    width: fit-content;
+    margin: 0 auto var(--space-xl);
+    padding: 0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 99px;
+    background-color: var(--color-surface);
+  }
+
+  .billing-option {
+    padding: 0.5rem 1.25rem;
+    border-radius: 99px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .billing-save {
+    margin-left: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-success);
+  }
+
+  #billing-month:checked ~ .billing-toggle .billing-option--month,
+  #billing-year:checked ~ .billing-toggle .billing-option--year {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  #billing-year:checked ~ .billing-toggle .billing-option--year .billing-save {
+    color: var(--color-bg);
+  }
+
+  #billing-month:focus-visible ~ .billing-toggle .billing-option--month,
+  #billing-year:focus-visible ~ .billing-toggle .billing-option--year {
+    box-shadow: var(--focus-ring);
+    outline: 2px solid var(--color-accent-hover);
+    outline-offset: 2px;
+  }
+
+  .price--year {
+    display: none;
+  }
+
+  #billing-year:checked ~ .pricing-grid .price--month {
+    display: none;
+  }
+
+  #billing-year:checked ~ .pricing-grid .price--year {
+    display: block;
+  }
+
+  .price-note {
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+
+  .contact-line {
+    margin-top: var(--space-xl);
+    text-align: center;
+    color: var(--color-muted);
+  }
+
+  .compare {
+    margin-top: var(--space-2xl);
+  }
+
+  .compare-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .compare-table {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  .compare-table th,
+  .compare-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+  }
+
+  .compare-table thead th {
+    background-color: var(--color-surface);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .compare-table tbody th[scope='row'] {
+    width: 40%;
+    font-weight: 500;
+    text-align: left;
+    color: var(--color-text);
+  }
+
+  .compare-table td {
+    text-align: center;
+    color: var(--color-muted);
+  }
+
+  .compare-group th {
+    padding-top: 1.25rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 768px) {
+    .compare-table tbody th[scope='row'],
+    .compare-table thead th:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background-color: var(--color-bg);
+    }
+
+    .compare-table thead th:first-child {
+      background-color: var(--color-surface);
+    }
+  }
+
+  .compare-note {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  .compare-table tbody:last-child tr:last-child th,
+  .compare-table tbody:last-child tr:last-child td {
+    border-bottom: none;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
