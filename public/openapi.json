@@ -297,7 +297,7 @@
     "/auth/confirm-auto-renewal": {
       "post": {
         "operationId": "AuthController_confirmAutoRenewal",
-        "summary": "Confirm intent to keep auto-renewal active (free tier)",
+        "summary": "Confirm intent to keep auto-renewal active (Starter plan)",
         "parameters": [],
         "tags": [
           "Authentication"
@@ -659,6 +659,26 @@
         }
       }
     },
+    "/billing/plans": {
+      "get": {
+        "operationId": "BillingController_plans",
+        "summary": "Plans and billing intervals that can be bought with Stripe",
+        "parameters": [],
+        "tags": [
+          "Billing"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Purchasable plans"
+          }
+        }
+      }
+    },
     "/billing/subscription": {
       "get": {
         "operationId": "BillingController_getSubscription",
@@ -687,6 +707,16 @@
         "operationId": "BillingController_createPortal",
         "summary": "Create a Stripe Customer Portal session",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePortalDto"
+              }
+            }
+          }
+        },
         "tags": [
           "Billing"
         ],
@@ -1497,7 +1527,7 @@
             "name": "ifDue",
             "required": false,
             "in": "query",
-            "description": "Only renew if the certificate is inside its renewal window (free: 5 days, paid: 30 days before expiry; at least 30 days for connector-managed certificates, which are due once their renewAfter has passed). Otherwise nothing is queued and the response has skipped: true. Default: false (always renew).",
+            "description": "Only renew if the certificate is inside its renewal window (Starter plan: 10 days, paid plans: 30 days before expiry; at least 30 days for connector-managed certificates, which are due once their renewAfter has passed). Otherwise nothing is queued and the response has skipped: true. Default: false (always renew).",
             "schema": {
               "type": "boolean"
             }
@@ -2133,6 +2163,9 @@
           },
           "404": {
             "description": "Endpoint not found"
+          },
+          "429": {
+            "description": "A scan was requested within the plan's minimum scan interval"
           }
         }
       }
@@ -3128,7 +3161,7 @@
       "post": {
         "operationId": "ReportsController_create",
         "summary": "Create a portfolio TLS report for a list of hosts",
-        "description": "Hosts are scanned in the background; poll GET /reports/:id until status is complete. Free plan: 25 hosts per report, paid plans: 250.",
+        "description": "Hosts are scanned in the background; poll GET /reports/:id until status is complete. Starter plan: 25 hosts per report, Pro: 250, Business and Enterprise: 1000.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -3780,12 +3813,19 @@
           "plan": {
             "type": "string",
             "description": "Plan to subscribe to",
-            "example": "starter",
+            "example": "pro",
             "enum": [
-              "starter",
-              "team",
+              "pro",
               "business",
               "enterprise"
+            ]
+          },
+          "interval": {
+            "type": "string",
+            "description": "Billing interval; `month` when left out",
+            "enum": [
+              "month",
+              "year"
             ]
           }
         },
@@ -3793,19 +3833,42 @@
           "plan"
         ]
       },
+      "CreatePortalDto": {
+        "type": "object",
+        "properties": {
+          "flow": {
+            "type": "string",
+            "description": "Open the portal on confirming a switch between monthly and yearly billing",
+            "enum": [
+              "switch_interval"
+            ]
+          }
+        }
+      },
       "UpgradePlanDto": {
         "type": "object",
         "properties": {
           "plan": {
             "type": "string",
             "description": "Plan to upgrade to",
-            "example": "team",
+            "example": "business",
             "enum": [
-              "starter",
-              "team",
+              "pro",
               "business",
               "enterprise"
             ]
+          },
+          "interval": {
+            "type": "string",
+            "description": "Billing interval after the upgrade; the current one when left out",
+            "enum": [
+              "month",
+              "year"
+            ]
+          },
+          "prorationDate": {
+            "type": "number",
+            "description": "The prorationDate from the upgrade preview, so the charge matches what it showed. Ignored when older than an hour"
           }
         },
         "required": [
@@ -4443,7 +4506,7 @@
             }
           },
           "hostedRegions": {
-            "description": "Hosted probe regions to enable for scanning (Team tier+)",
+            "description": "Hosted probe regions to enable for scanning (the Starter plan includes one hosted endpoint)",
             "example": [
               "us-east-1"
             ],
@@ -4908,6 +4971,7 @@
             "type": "string"
           },
           "results": {
+            "maxItems": 1000,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ScanResultDto"
@@ -4934,7 +4998,7 @@
             "example": "Client sites, October"
           },
           "hosts": {
-            "description": "Hostnames to scan, one per entry, optionally with :port (default 443). Duplicates are dropped. Free plan: up to 25 hosts, paid plans: up to 250.",
+            "description": "Hostnames to scan, one per entry, optionally with :port (default 443). Duplicates are dropped. Starter plan: up to 25 hosts, Pro: up to 250, Business and Enterprise: up to 1000.",
             "example": [
               "example.com",
               "api.example.com:8443"
