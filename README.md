@@ -256,4 +256,4 @@ The site uses CSS custom properties defined in [`src/styles/global.css`](src/sty
 
 ## License
 
-This project is part of [KrakenKey](https://github.com/krakenkey/krakenkey), licensed under the [GNU Affero General Public License v3.0](https://github.com/krakenkey/krakenkey/blob/main/LICENSE).
+Copyright (C) 2026 KrakenKey LLC. This project is part of [KrakenKey](https://github.com/krakenkey/krakenkey) and is licensed under the [GNU Affero General Public License v3.0](LICENSE).
